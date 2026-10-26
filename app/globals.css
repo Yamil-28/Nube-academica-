@@ -1,26 +1,78 @@
+
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --color-primario: #073b70;
+  --color-secundario: #075aa5;
+  --color-acento: #ffd400;
+  --color-fondo: #f4f8fc;
+  --color-blanco: #ffffff;
+  --color-texto: #172b46;
+  --color-texto-secundario: #60758c;
+  --color-borde: #dce6f0;
+
+  --radio-tarjeta: 16px;
+  --radio-boton: 10px;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+* {
+  box-sizing: border-box;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  margin: 0;
+  background: var(--color-fondo);
+  color: var(--color-texto);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  text-decoration: none;
+}
+
+.contenedor {
+  width: min(1200px, 100% - 40px);
+  margin-inline: auto;
+}
+
+.boton-primario {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 13px 22px;
+  border: none;
+  border-radius: var(--radio-boton);
+  background: linear-gradient(
+    120deg,
+    var(--color-primario),
+    var(--color-secundario)
+  );
+  color: white;
+  font-weight: 700;
+  transition: transform 0.2s;
+}
+
+.boton-primario:hover {
+  transform: translateY(-2px);
+}
+
+.tarjeta {
+  background: var(--color-blanco);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-tarjeta);
+  box-shadow: 0 10px 30px #073b7010;
 }

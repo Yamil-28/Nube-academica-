@@ -1,14 +1,7 @@
 
-import type { Metadata } from "next";
-import Encabezado from "@/componentes/Encabezado";
-import PiePagina from "@/componentes/PiePagina";
 import "./globals.css";
-
-export const metadata: Metadata = {
-  title: "SISCloud | Gestión de Proyectos Académicos",
-  description:
-    "Plataforma de gestión, organización y seguimiento de proyectos académicos.",
-};
+import CabeceraSegunRuta from "@/componentes/CabeceraSegunRuta";
+import PiePagina from "@/componentes/PiePagina";
 
 export default function DisenoPrincipal({
   children,
@@ -17,12 +10,16 @@ export default function DisenoPrincipal({
 }>) {
   return (
     <html lang="es">
-      <body className="min-h-screen flex flex-col">
-        <Encabezado />
+      <body>
+        <div className="estructura-sistema">
+          <CabeceraSegunRuta />
 
-        <main className="flex-1">{children}</main>
+          <main className="contenido-sistema">
+            {children}
+          </main>
 
-        <PiePagina />
+          <PiePagina />
+        </div>
       </body>
     </html>
   );

@@ -1,0 +1,126 @@
+
+/* ==========================================
+   NAVEGACIÓN INTERNA - SISCLOUD
+========================================== */
+
+.dashboardNavegacionInterna {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+/* ==========================================
+   MIGAS DE PAN
+========================================== */
+
+.dashboardMigas {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  color: #60758c;
+  font-size: 13px;
+}
+
+.dashboardMigas a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  color: #075aa5;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.dashboardMigas a:hover {
+  text-decoration: underline;
+}
+
+.dashboardMigas strong {
+  color: #172b46;
+  font-weight: 700;
+}
+
+/* ==========================================
+   BOTONES DE NAVEGACIÓN
+========================================== */
+
+.dashboardAccionesNavegacion {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.dashboardBotonVolver,
+.dashboardBotonInicio {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  min-height: 38px;
+  padding: 9px 14px;
+
+  border: 1px solid #dce6f0;
+  border-radius: 9px;
+
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.dashboardBotonVolver {
+  background: #ffffff;
+  color: #075aa5;
+}
+
+.dashboardBotonVolver:hover {
+  background: #eef4fa;
+  border-color: #b8cee3;
+}
+
+.dashboardBotonInicio {
+  background: #075aa5;
+  color: #ffffff;
+  border-color: #075aa5;
+}
+
+.dashboardBotonInicio:hover {
+  background: #073b70;
+  border-color: #073b70;
+}
+
+/* ==========================================
+   ADAPTACIÓN A MÓVILES
+========================================== */
+
+@media (max-width: 600px) {
+  .dashboardNavegacionInterna {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .dashboardMigas {
+    font-size: 12px;
+  }
+
+  .dashboardAccionesNavegacion {
+    width: 100%;
+  }
+
+  .dashboardBotonVolver,
+  .dashboardBotonInicio {
+    flex: 1;
+  }
+}

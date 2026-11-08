@@ -2,23 +2,24 @@
 import Image from "next/image";
 import Link from "next/link";
 import FormularioAcceso from "@/componentes/FormularioAcceso";
+import estilos from "./page.module.css";
 
 export default function PaginaIniciarSesion() {
   return (
-    <section className="pagina-acceso">
-      <div className="contenedor acceso-contenido">
-        <div className="acceso-informacion">
-          <Link href="/" className="acceso-volver">
+    <section className={estilos.paginaAcceso}>
+      <div className={estilos.accesoContenido}>
+        <div className={estilos.accesoInformacion}>
+          <Link href="/" className={estilos.accesoVolver}>
             ← Volver al inicio
           </Link>
 
-          <div className="acceso-identidad">
+          <div className={estilos.accesoIdentidad}>
             <Image
               src="/imagenes/emi.jpg"
               alt="Escuela Militar de Ingeniería"
               width={85}
               height={85}
-              className="acceso-logotipo"
+              className={estilos.accesoLogotipo}
             />
 
             <span>ESCUELA MILITAR DE INGENIERÍA</span>
@@ -28,25 +29,25 @@ export default function PaginaIniciarSesion() {
             Bienvenido a <span>SISCloud</span>
           </h1>
 
-          <p className="acceso-descripcion">
+          <p className={estilos.accesoDescripcion}>
             Gestiona tus proyectos académicos, organiza
             documentos y colabora con tu equipo desde
             un solo lugar.
           </p>
 
-          <div className="acceso-beneficios">
+          <div className={estilos.accesoBeneficios}>
             <p>✓ Organización de proyectos académicos</p>
             <p>✓ Trabajo colaborativo</p>
             <p>✓ Seguimiento y revisión docente</p>
           </div>
 
-          <div className="acceso-carrera">
+          <div className={estilos.accesoCarrera}>
             <Image
               src="/imagenes/sistemas.jpg"
               alt="Ingeniería de Sistemas"
               width={55}
               height={55}
-              className="acceso-logotipo"
+              className={estilos.accesoLogotipo}
             />
 
             <div>
@@ -56,7 +57,7 @@ export default function PaginaIniciarSesion() {
           </div>
         </div>
 
-        <div className="acceso-tarjeta">
+        <div className={estilos.accesoTarjeta}>
           <FormularioAcceso />
         </div>
       </div>

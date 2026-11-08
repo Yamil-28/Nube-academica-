@@ -1,23 +1,29 @@
 
 import Image from "next/image";
 
+import estilos from "./page.module.css";
+
 export default function PaginaPrincipal() {
   return (
-    <div className="emi-inicio">
-      <section className="emi-portada">
+    <div
+     className={estilos.emiInicio}
+     data-pagina="inicio-emi"
+     >
+      {/* PORTADA INSTITUCIONAL */}
+      <section className={estilos.emiPortada}>
         <Image
           src="/logo-body.jpg"
           alt="Instalaciones de la Escuela Militar de Ingeniería"
           fill
           priority
           sizes="100vw"
-          className="emi-portada-imagen"
+          className={estilos.emiPortadaImagen}
         />
 
-        <div className="emi-portada-sombra" />
+        <div className={estilos.emiPortadaSombra} />
 
-        <div className="emi-portada-contenido">
-          <span className="emi-portada-etiqueta">
+        <div className={estilos.emiPortadaContenido}>
+          <span className={estilos.emiPortadaEtiqueta}>
             ESCUELA MILITAR DE INGENIERÍA
           </span>
 
@@ -27,15 +33,14 @@ export default function PaginaPrincipal() {
             e innovación
           </h1>
 
-          <p>
-            Mariscal Antonio José de Sucre
-          </p>
+          <p>Mariscal Antonio José de Sucre</p>
         </div>
       </section>
 
-      <section className="emi-informacion">
-        <div className="emi-informacion-contenedor">
-          <span className="emi-informacion-etiqueta">
+      {/* INFORMACIÓN INSTITUCIONAL */}
+      <section className={estilos.emiInformacion}>
+        <div className={estilos.emiInformacionContenedor}>
+          <span className={estilos.emiInformacionEtiqueta}>
             NUESTRA INSTITUCIÓN
           </span>
 
@@ -47,20 +52,26 @@ export default function PaginaPrincipal() {
             y el desarrollo tecnológico.
           </p>
 
-          <div className="emi-informacion-tarjetas">
+          <div className={estilos.emiInformacionTarjetas}>
             <article>
               <h3>Formación académica</h3>
-              <p>Desarrollo de conocimientos y competencias profesionales.</p>
+              <p>
+                Desarrollo de conocimientos y competencias profesionales.
+              </p>
             </article>
 
             <article>
               <h3>Investigación</h3>
-              <p>Impulso a la ciencia, la tecnología y la innovación.</p>
+              <p>
+                Impulso a la ciencia, la tecnología y la innovación.
+              </p>
             </article>
 
             <article>
               <h3>Interacción social</h3>
-              <p>Vinculación de la formación académica con la sociedad.</p>
+              <p>
+                Vinculación de la formación académica con la sociedad.
+              </p>
             </article>
           </div>
         </div>

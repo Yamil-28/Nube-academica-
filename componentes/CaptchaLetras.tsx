@@ -1,6 +1,8 @@
 
 "use client";
 
+import estilos from "./CaptchaLetras.module.css";
+
 type Propiedades = {
   codigo: string;
   establecerCodigo: (valor: string) => void;
@@ -15,18 +17,20 @@ export default function CaptchaLetras({
   actualizar,
 }: Propiedades) {
   return (
-    <div className="captcha-letras">
-      <div className="captcha-cabecera">
+    <div className={estilos.captcha}>
+      <div className={estilos.cabecera}>
         <span>Verificación de seguridad</span>
-        <span className="captcha-indicador">CAPTCHA</span>
+        <span className={estilos.indicador}>
+          CAPTCHA
+        </span>
       </div>
 
       <p>
         Escribe las letras y números que aparecen en la imagen.
       </p>
 
-      <div className="captcha-fila">
-        <div className="captcha-imagen">
+      <div className={estilos.fila}>
+        <div className={estilos.imagen}>
           <img
             src={`/api/captcha?version=${version}`}
             alt="Código de verificación de cinco caracteres"
@@ -37,7 +41,7 @@ export default function CaptchaLetras({
 
         <button
           type="button"
-          className="captcha-actualizar"
+          className={estilos.actualizar}
           onClick={actualizar}
           title="Generar otro código"
           aria-label="Generar otro CAPTCHA"

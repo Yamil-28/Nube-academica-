@@ -1,0 +1,116 @@
+
+/* ==========================================
+   TARJETAS ESTADÍSTICAS - SISCLOUD
+========================================== */
+
+.tarjetaEstadistica {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+
+  min-width: 0;
+  padding: 21px;
+
+  border: 1px solid #dce6f0;
+  border-radius: 14px;
+
+  background: #ffffff;
+  color: #172b46;
+  text-decoration: none;
+
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.tarjetaEstadistica:hover {
+  transform: translateY(-3px);
+  border-color: #b5cee6;
+  box-shadow: 0 8px 22px rgba(7, 59, 112, 0.1);
+}
+
+/* ==========================================
+   PARTE SUPERIOR
+========================================== */
+
+.tarjetaEstadisticaSuperior {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.tarjetaEstadisticaIcono {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 48px;
+  height: 48px;
+
+  border-radius: 12px;
+}
+
+.tarjetaFlecha {
+  color: #9aaec1;
+  transition: transform 0.2s ease;
+}
+
+.tarjetaEstadistica:hover .tarjetaFlecha {
+  transform: translate(2px, -2px);
+}
+
+/* ==========================================
+   VALORES Y TÍTULOS
+========================================== */
+
+.tarjetaEstadisticaValor {
+  font-size: 30px;
+  font-weight: 800;
+  line-height: 1.1;
+  color: #172b46;
+}
+
+.tarjetaEstadisticaTitulo {
+  color: #60758c;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* ==========================================
+   COLORES DE LAS TARJETAS
+========================================== */
+
+.tarjetaAzul .tarjetaEstadisticaIcono {
+  background: #e8f2fc;
+  color: #075aa5;
+}
+
+.tarjetaDorado .tarjetaEstadisticaIcono {
+  background: #fff4d7;
+  color: #a87900;
+}
+
+.tarjetaVerde .tarjetaEstadisticaIcono {
+  background: #e5f7ed;
+  color: #238348;
+}
+
+.tarjetaMorado .tarjetaEstadisticaIcono {
+  background: #f0eafb;
+  color: #7750b4;
+}
+
+/* ==========================================
+   ADAPTACIÓN A MÓVILES
+========================================== */
+
+@media (max-width: 600px) {
+  .tarjetaEstadistica {
+    padding: 17px;
+  }
+
+  .tarjetaEstadisticaValor {
+    font-size: 26px;
+  }
+}

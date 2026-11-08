@@ -1,6 +1,7 @@
 
 import { Suspense } from "react";
 import Link from "next/link";
+
 import {
   BookOpen,
   ClipboardCheck,
@@ -13,6 +14,8 @@ import {
 
 import EstructuraDashboard from "@/componentes/dashboard/EstructuraDashboard";
 import { protegerRuta } from "@/lib/protegerRuta";
+
+import estilos from "./page.module.css";
 
 const accesos = [
   {
@@ -49,10 +52,12 @@ async function ContenidoDocente() {
       usuario={usuario.usuario}
       rol={usuario.rol}
     >
-      <div className="dashboard-rol">
-        <section className="dashboard-rol-bienvenida">
+      <div className={estilos.dashboardRol}>
+
+        {/* ENCABEZADO DEL DOCENTE */}
+        <section className={estilos.dashboardRolBienvenida}>
           <div>
-            <span className="dashboard-rol-etiqueta">
+            <span className={estilos.dashboardRolEtiqueta}>
               PANEL ACADÉMICO
             </span>
 
@@ -64,21 +69,22 @@ async function ContenidoDocente() {
             </p>
           </div>
 
-          <div className="dashboard-rol-insignia">
+          <div className={estilos.dashboardRolInsignia}>
             <GraduationCap size={20} />
             <span>Docente</span>
           </div>
         </section>
 
-        <section className="dashboard-rol-seccion">
-          <div className="dashboard-rol-titulo">
+        {/* ACCESOS RÁPIDOS */}
+        <section className={estilos.dashboardRolSeccion}>
+          <div className={estilos.dashboardRolTitulo}>
             <h2>Accesos rápidos</h2>
             <p>
               Selecciona el módulo que deseas consultar.
             </p>
           </div>
 
-          <div className="dashboard-rol-cuadricula">
+          <div className={estilos.dashboardRolCuadricula}>
             {accesos.map((acceso) => {
               const Icono = acceso.icono;
 
@@ -86,10 +92,10 @@ async function ContenidoDocente() {
                 <Link
                   href={acceso.ruta}
                   key={acceso.titulo}
-                  className="dashboard-rol-tarjeta"
+                  className={estilos.dashboardRolTarjeta}
                 >
-                  <div className="dashboard-rol-tarjeta-superior">
-                    <div className="dashboard-rol-icono">
+                  <div className={estilos.dashboardRolTarjetaSuperior}>
+                    <div className={estilos.dashboardRolIcono}>
                       <Icono size={23} />
                     </div>
 
@@ -104,14 +110,17 @@ async function ContenidoDocente() {
           </div>
         </section>
 
-        <div className="dashboard-rol-columnas">
-          <section className="dashboard-rol-panel">
-            <div className="dashboard-rol-panel-titulo">
+        {/* PANELES INFERIORES */}
+        <div className={estilos.dashboardRolColumnas}>
+
+          {/* MATERIAS ASIGNADAS */}
+          <section className={estilos.dashboardRolPanel}>
+            <div className={estilos.dashboardRolPanelTitulo}>
               <BookOpen size={21} />
               <h2>Materias asignadas</h2>
             </div>
 
-            <div className="dashboard-rol-vacio">
+            <div className={estilos.dashboardRolVacio}>
               <BookOpen size={35} />
               <h3>Sin información disponible</h3>
               <p>
@@ -121,13 +130,14 @@ async function ContenidoDocente() {
             </div>
           </section>
 
-          <section className="dashboard-rol-panel">
-            <div className="dashboard-rol-panel-titulo">
+          {/* PROYECTOS DE ESTUDIANTES */}
+          <section className={estilos.dashboardRolPanel}>
+            <div className={estilos.dashboardRolPanelTitulo}>
               <Users size={21} />
               <h2>Proyectos de estudiantes</h2>
             </div>
 
-            <div className="dashboard-rol-vacio">
+            <div className={estilos.dashboardRolVacio}>
               <FolderKanban size={35} />
               <h3>Próximamente</h3>
               <p>

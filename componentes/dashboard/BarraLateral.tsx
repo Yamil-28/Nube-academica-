@@ -25,6 +25,7 @@ import {
 } from "@/lib/menusDashboard";
 
 import type { RolUsuario } from "@/lib/sesion";
+import estilos from "./BarraLateral.module.css";
 
 type Propiedades = {
   rol: RolUsuario;
@@ -82,21 +83,23 @@ export default function BarraLateral({
       {abierto && (
         <button
           type="button"
-          className="dashboard-fondo-lateral"
+          className={estilos.dashboardFondoLateral}
           onClick={cerrar}
           aria-label="Cerrar menú lateral"
         />
       )}
 
       <aside
-        className={`dashboard-lateral ${abierto ? "dashboard-lateral-abierto" : ""}`}
+        className={`${estilos.dashboardLateral} ${
+          abierto ? estilos.dashboardLateralAbierto : ""
+        }`}
       >
-        <div className="dashboard-lateral-cabecera">
+        <div className={estilos.dashboardLateralCabecera}>
           <span>MENÚ PRINCIPAL</span>
 
           <button
             type="button"
-            className="dashboard-cerrar-lateral"
+            className={estilos.dashboardCerrarLateral}
             onClick={cerrar}
             aria-label="Cerrar barra lateral"
           >
@@ -104,7 +107,10 @@ export default function BarraLateral({
           </button>
         </div>
 
-        <nav className="dashboard-lista-menus" aria-label="Menú principal">
+        <nav
+          className={estilos.dashboardListaMenus}
+          aria-label="Menú principal"
+        >
           {menus.map((menu) => {
             const Icono = obtenerIcono(menu.icono);
             const expandido = estaAbierto(menu);
@@ -115,9 +121,9 @@ export default function BarraLateral({
                   key={menu.nombre}
                   href={menu.ruta}
                   onClick={cerrar}
-                  className={`dashboard-enlace ${
+                  className={`${estilos.dashboardEnlace} ${
                     rutaActual === menu.ruta
-                      ? "dashboard-enlace-activo"
+                      ? estilos.dashboardEnlaceActivo
                       : ""
                   }`}
                 >
@@ -128,15 +134,17 @@ export default function BarraLateral({
             }
 
             return (
-              <div key={menu.nombre} className="dashboard-grupo-menu">
+              <div
+                key={menu.nombre}
+                className={estilos.dashboardGrupoMenu}
+              >
                 <button
                   type="button"
-                  className="dashboard-enlace dashboard-boton-menu"
+                  className={`${estilos.dashboardEnlace} ${estilos.dashboardBotonMenu}`}
                   onClick={() => alternarMenu(menu.nombre)}
                   aria-expanded={expandido}
                 >
                   <Icono size={19} />
-
                   <span>{menu.nombre}</span>
 
                   {expandido ? (
@@ -147,19 +155,21 @@ export default function BarraLateral({
                 </button>
 
                 {expandido && (
-                  <div className="dashboard-submenus">
+                  <div className={estilos.dashboardSubmenus}>
                     {menu.submenus?.map((submenu) => (
                       <Link
                         key={submenu.ruta}
                         href={submenu.ruta}
                         onClick={cerrar}
-                        className={`dashboard-submenu ${
+                        className={`${estilos.dashboardSubmenu} ${
                           rutaActual === submenu.ruta
-                            ? "dashboard-submenu-activo"
+                            ? estilos.dashboardSubmenuActivo
                             : ""
                         }`}
                       >
-                        <span className="dashboard-punto-submenu" />
+                        <span
+                          className={estilos.dashboardPuntoSubmenu}
+                        />
                         {submenu.nombre}
                       </Link>
                     ))}

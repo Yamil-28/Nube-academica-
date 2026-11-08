@@ -1,0 +1,240 @@
+
+/* ==========================================
+   ENCABEZADO PRINCIPAL DEL DASHBOARD
+========================================== */
+
+.dashboardEncabezado {
+  --dashboard-alto: 76px;
+  --dashboard-azul: #092d55;
+  --dashboard-amarillo: #f4c542;
+
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--dashboard-alto);
+  z-index: 100;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 0 28px;
+  background: var(--dashboard-azul);
+  border-bottom: 3px solid var(--dashboard-amarillo);
+  color: white;
+}
+
+/* ==========================================
+   DISTRIBUCIÓN DEL ENCABEZADO
+========================================== */
+
+.dashboardEncabezadoIzquierda,
+.dashboardEncabezadoDerecha {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+/* ==========================================
+   MARCA SISCLOUD
+========================================== */
+
+.dashboardMarca {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: white;
+}
+
+.dashboardMarcaIcono {
+  display: flex;
+  color: var(--dashboard-amarillo);
+}
+
+.dashboardMarca strong,
+.dashboardMarca small {
+  display: block;
+}
+
+.dashboardMarca strong {
+  font-size: 21px;
+  font-weight: 800;
+}
+
+.dashboardMarca small {
+  font-size: 11px;
+  color: #c4d8eb;
+}
+
+/* ==========================================
+   BOTONES DE ICONOS
+========================================== */
+
+.dashboardBotonIcono {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 40px;
+  height: 40px;
+
+  background: transparent;
+  border: none;
+  border-radius: 9px;
+  color: white;
+  cursor: pointer;
+}
+
+.dashboardBotonIcono:hover {
+  background: #244b74;
+}
+
+/* ==========================================
+   PERFIL DEL USUARIO
+========================================== */
+
+.dashboardPerfilContenedor {
+  position: relative;
+}
+
+.dashboardPerfilBoton {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  padding: 6px 10px;
+  border: none;
+  border-radius: 10px;
+
+  background: transparent;
+  color: white;
+  cursor: pointer;
+}
+
+.dashboardPerfilBoton:hover {
+  background: #244b74;
+}
+
+.dashboardAvatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 40px;
+  height: 40px;
+
+  border-radius: 50%;
+  background: #244b74;
+  color: var(--dashboard-amarillo);
+}
+
+.dashboardPerfilDatos {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+}
+
+.dashboardPerfilDatos strong {
+  font-size: 13px;
+}
+
+.dashboardPerfilDatos small {
+  color: var(--dashboard-amarillo);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* ==========================================
+   MENÚ DESPLEGABLE DEL PERFIL
+========================================== */
+
+.dashboardPerfilMenu {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+
+  width: 230px;
+  padding: 8px;
+
+  border: 1px solid #e1e8f0;
+  border-radius: 12px;
+
+  background: white;
+  color: #243b53;
+  box-shadow: 0 12px 30px #092d5520;
+  z-index: 120;
+}
+
+.dashboardPerfilMenuInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  padding: 12px;
+  border-bottom: 1px solid #e6edf4;
+  margin-bottom: 6px;
+}
+
+.dashboardPerfilMenuInfo span {
+  color: #66788b;
+  font-size: 12px;
+}
+
+.dashboardPerfilMenu a,
+.dashboardPerfilMenu button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  width: 100%;
+  padding: 11px 12px;
+
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+
+  color: #243b53;
+  text-decoration: none;
+  text-align: left;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.dashboardPerfilMenu a:hover,
+.dashboardPerfilMenu button:hover {
+  background: #eef4fa;
+}
+
+.dashboardPerfilMenu .dashboardOpcionSalir {
+  color: #c62828;
+}
+
+/* ==========================================
+   ADAPTACIÓN A MÓVILES
+========================================== */
+
+@media (max-width: 600px) {
+  .dashboardEncabezado {
+    padding: 0 14px;
+  }
+
+  .dashboardEncabezadoIzquierda,
+  .dashboardEncabezadoDerecha {
+    gap: 8px;
+  }
+
+  .dashboardMarca strong {
+    font-size: 17px;
+  }
+
+  .dashboardMarca small {
+    font-size: 9px;
+  }
+
+  .dashboardPerfilDatos {
+    display: none;
+  }
+}

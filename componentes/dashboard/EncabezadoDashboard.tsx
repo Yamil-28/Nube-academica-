@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 
 import type { RolUsuario } from "@/lib/sesion";
+import estilos from "./EncabezadoDashboard.module.css";
 
 type Propiedades = {
   usuario: string;
@@ -65,19 +66,19 @@ export default function EncabezadoDashboard({
   }
 
   return (
-    <header className="dashboard-encabezado">
-      <div className="dashboard-encabezado-izquierda">
+    <header className={estilos.dashboardEncabezado}>
+      <div className={estilos.dashboardEncabezadoIzquierda}>
         <button
           type="button"
-          className="dashboard-boton-icono"
+          className={estilos.dashboardBotonIcono}
           onClick={abrirMenu}
           aria-label="Abrir menú lateral"
         >
           <Menu size={22} />
         </button>
 
-        <Link href={rutaBase} className="dashboard-marca">
-          <div className="dashboard-marca-icono">
+        <Link href={rutaBase} className={estilos.dashboardMarca}>
+          <div className={estilos.dashboardMarcaIcono}>
             <Cloud size={23} />
           </div>
 
@@ -88,28 +89,28 @@ export default function EncabezadoDashboard({
         </Link>
       </div>
 
-      <div className="dashboard-encabezado-derecha">
+      <div className={estilos.dashboardEncabezadoDerecha}>
         <button
           type="button"
-          className="dashboard-boton-icono"
+          className={estilos.dashboardBotonIcono}
           aria-label="Notificaciones"
           title="Notificaciones"
         >
           <Bell size={20} />
         </button>
 
-        <div className="dashboard-perfil-contenedor">
+        <div className={estilos.dashboardPerfilContenedor}>
           <button
             type="button"
-            className="dashboard-perfil-boton"
+            className={estilos.dashboardPerfilBoton}
             onClick={() => establecerPerfilAbierto(!perfilAbierto)}
             aria-expanded={perfilAbierto}
           >
-            <span className="dashboard-avatar">
+            <span className={estilos.dashboardAvatar}>
               <UserRound size={21} />
             </span>
 
-            <span className="dashboard-perfil-datos">
+            <span className={estilos.dashboardPerfilDatos}>
               <strong>Hola, {usuario}</strong>
               <small>{nombresRoles[rol]}</small>
             </span>
@@ -118,8 +119,8 @@ export default function EncabezadoDashboard({
           </button>
 
           {perfilAbierto && (
-            <div className="dashboard-perfil-menu">
-              <div className="dashboard-perfil-menu-info">
+            <div className={estilos.dashboardPerfilMenu}>
+              <div className={estilos.dashboardPerfilMenuInfo}>
                 <strong>{usuario}</strong>
                 <span>{nombresRoles[rol]}</span>
               </div>
@@ -144,7 +145,7 @@ export default function EncabezadoDashboard({
                 type="button"
                 onClick={cerrarSesion}
                 disabled={cerrando}
-                className="dashboard-opcion-salir"
+                className={estilos.dashboardOpcionSalir}
               >
                 <LogOut size={17} />
                 {cerrando ? "Cerrando..." : "Cerrar sesión"}

@@ -1,5 +1,7 @@
 
 import "./globals.css";
+import estilos from "./layout.module.css";
+
 import CabeceraSegunRuta from "@/componentes/CabeceraSegunRuta";
 import PiePagina from "@/componentes/PiePagina";
 
@@ -11,10 +13,10 @@ export default function DisenoPrincipal({
   return (
     <html lang="es">
       <body>
-        <div className="estructura-sistema">
+        <div className={estilos.estructuraSistema}>
           <CabeceraSegunRuta />
 
-          <main className="contenido-sistema">
+          <main className={estilos.contenidoSistema}>
             {children}
           </main>
 

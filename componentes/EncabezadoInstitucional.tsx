@@ -11,22 +11,25 @@ import {
   X,
 } from "lucide-react";
 
+import estilos from "./EncabezadoInstitucional.module.css";
+
 export default function EncabezadoInstitucional() {
   const [menuAbierto, setMenuAbierto] = useState(false);
   const [serviciosAbierto, setServiciosAbierto] = useState(false);
   const [estudiantesAbierto, setEstudiantesAbierto] = useState(false);
 
   return (
-    <header className="emi-encabezado">
-      <div className="emi-navegacion">
-        <div className="emi-marca">
+    <header className={estilos.encabezado}>
+      <div className={estilos.navegacion}>
+        <div className={estilos.marca}>
           <Image
             src="/imagenes/emi.jpg"
             alt="Escudo de la Escuela Militar de Ingeniería"
             width={65}
             height={65}
           />
-          <div className="emi-marca-texto">
+
+          <div className={estilos.marcaTexto}>
             <strong>EMI</strong>
             <span>Escuela Militar de Ingeniería</span>
           </div>
@@ -34,7 +37,7 @@ export default function EncabezadoInstitucional() {
 
         <button
           type="button"
-          className="emi-menu-movil"
+          className={estilos.menuMovil}
           aria-label="Abrir menú"
           aria-expanded={menuAbierto}
           onClick={() => setMenuAbierto(!menuAbierto)}
@@ -42,24 +45,28 @@ export default function EncabezadoInstitucional() {
           {menuAbierto ? <X /> : <Menu />}
         </button>
 
-        <nav className={`emi-enlaces ${menuAbierto ? "emi-enlaces-abiertos" : ""}`}>
-          <span className="emi-enlace-inactivo">
+        <nav
+          className={`${estilos.enlaces} ${
+            menuAbierto ? estilos.enlacesAbiertos : ""
+          }`}
+        >
+          <span className={estilos.enlaceInactivo}>
             ACADÉMICA <ChevronDown size={17} />
           </span>
 
-          <span className="emi-enlace-inactivo">
+          <span className={estilos.enlaceInactivo}>
             INVESTIGACIÓN <ChevronDown size={17} />
           </span>
 
-          <span className="emi-enlace-inactivo">
+          <span className={estilos.enlaceInactivo}>
             INTERACCIÓN SOCIAL <ChevronDown size={17} />
           </span>
 
-          <div className="emi-menu-servicios">
+          <div className={estilos.menuServicios}>
             <button
               type="button"
-              className={`emi-boton-servicios ${
-                serviciosAbierto ? "emi-boton-activo" : ""
+              className={`${estilos.botonServicios} ${
+                serviciosAbierto ? estilos.botonActivo : ""
               }`}
               onClick={() => {
                 setServiciosAbierto(!serviciosAbierto);
@@ -71,17 +78,19 @@ export default function EncabezadoInstitucional() {
             </button>
 
             {serviciosAbierto && (
-              <div className="emi-desplegable">
-                <span className="emi-opcion">
+              <div className={estilos.desplegable}>
+                <span className={estilos.opcion}>
                   Estudiantes Nuevos <ChevronRight size={17} />
                 </span>
 
                 <button
                   type="button"
-                  className={`emi-opcion emi-opcion-boton ${
-                    estudiantesAbierto ? "emi-opcion-activa" : ""
+                  className={`${estilos.opcion} ${estilos.opcionBoton} ${
+                    estudiantesAbierto ? estilos.opcionActiva : ""
                   }`}
-                  onClick={() => setEstudiantesAbierto(!estudiantesAbierto)}
+                  onClick={() =>
+                    setEstudiantesAbierto(!estudiantesAbierto)
+                  }
                   aria-expanded={estudiantesAbierto}
                 >
                   Estudiantes Regulares
@@ -89,7 +98,7 @@ export default function EncabezadoInstitucional() {
                 </button>
 
                 {estudiantesAbierto && (
-                  <div className="emi-submenu">
+                  <div className={estilos.submenu}>
                     <span>Inscripciones</span>
                     <span>Calendario Académico</span>
                     <span>Notas</span>
@@ -97,7 +106,7 @@ export default function EncabezadoInstitucional() {
 
                     <Link
                       href="/iniciar-sesion"
-                      className="emi-enlace-siscloud"
+                      className={estilos.enlaceSiscloud}
                     >
                       SISCloud
                       <ChevronRight size={18} />
@@ -105,27 +114,41 @@ export default function EncabezadoInstitucional() {
                   </div>
                 )}
 
-                <span className="emi-opcion">Posgraduantes</span>
-                <span className="emi-opcion">Docentes</span>
-                <span className="emi-opcion">Personal Administrativo</span>
-                <span className="emi-opcion">Correo Institucional</span>
-                <span className="emi-opcion">Ver Trámite</span>
-                <span className="emi-opcion">Buzón de Sugerencias</span>
-                <span className="emi-opcion">Preguntas Frecuentes</span>
-                <span className="emi-opcion">Modalidades de Pago</span>
-                <span className="emi-opcion">Residencia Universitaria</span>
-                <span className="emi-opcion">Apostilla EMI</span>
-                <span className="emi-opcion">Biblioteca Virtual</span>
+                <span className={estilos.opcion}>Posgraduantes</span>
+                <span className={estilos.opcion}>Docentes</span>
+                <span className={estilos.opcion}>
+                  Personal Administrativo
+                </span>
+                <span className={estilos.opcion}>
+                  Correo Institucional
+                </span>
+                <span className={estilos.opcion}>Ver Trámite</span>
+                <span className={estilos.opcion}>
+                  Buzón de Sugerencias
+                </span>
+                <span className={estilos.opcion}>
+                  Preguntas Frecuentes
+                </span>
+                <span className={estilos.opcion}>
+                  Modalidades de Pago
+                </span>
+                <span className={estilos.opcion}>
+                  Residencia Universitaria
+                </span>
+                <span className={estilos.opcion}>Apostilla EMI</span>
+                <span className={estilos.opcion}>
+                  Biblioteca Virtual
+                </span>
               </div>
             )}
           </div>
 
-          <span className="emi-enlace-inactivo">
+          <span className={estilos.enlaceInactivo}>
             NOSOTROS <ChevronDown size={17} />
           </span>
         </nav>
 
-        <div className="emi-redes" aria-label="Redes sociales">
+        <div className={estilos.redes} aria-label="Redes sociales">
           <span title="Facebook">f</span>
           <span title="X">𝕏</span>
           <span title="YouTube">▶</span>

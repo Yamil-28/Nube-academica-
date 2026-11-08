@@ -1,0 +1,185 @@
+
+/* ==========================================
+   BARRA LATERAL - SISCLOUD
+========================================== */
+
+.dashboardLateral {
+  position: fixed;
+  top: var(--dashboard-alto, 76px);
+  bottom: 0;
+  left: 0;
+
+  width: var(--dashboard-ancho-lateral, 268px);
+  padding: 22px 12px;
+
+  background: #123b65;
+  overflow-y: auto;
+  z-index: 90;
+
+  scrollbar-width: thin;
+  scrollbar-color: #547495 transparent;
+}
+
+/* ==========================================
+   CABECERA DE LA BARRA LATERAL
+========================================== */
+
+.dashboardLateralCabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 14px 20px;
+  color: #a9c2db;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.4px;
+}
+
+/* ==========================================
+   LISTA DE MENÚS
+========================================== */
+
+.dashboardListaMenus {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.dashboardGrupoMenu {
+  width: 100%;
+}
+
+.dashboardEnlace {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  width: 100%;
+  min-height: 44px;
+  padding: 11px 13px;
+
+  border: none;
+  border-radius: 9px;
+  background: transparent;
+
+  color: #e2edf7;
+  font-size: 13px;
+  font-weight: 500;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.dashboardEnlace span {
+  flex: 1;
+}
+
+.dashboardEnlace:hover {
+  background: #245481;
+}
+
+.dashboardEnlaceActivo {
+  background: #245481;
+  color: #ffd65c;
+  font-weight: 700;
+}
+
+.dashboardBotonMenu {
+  font-family: inherit;
+}
+
+/* ==========================================
+   SUBMENÚS
+========================================== */
+
+.dashboardSubmenus {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 5px 0 8px 22px;
+}
+
+.dashboardSubmenu {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  min-height: 36px;
+  padding: 9px 12px;
+
+  border-radius: 7px;
+  color: #c8d9ea;
+  font-size: 12px;
+  text-decoration: none;
+}
+
+.dashboardSubmenu:hover {
+  background: #245481;
+  color: white;
+}
+
+.dashboardSubmenuActivo {
+  background: #244e78;
+  color: #ffd65c;
+}
+
+.dashboardPuntoSubmenu {
+  width: 6px;
+  height: 6px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: #f4c542;
+}
+
+/* ==========================================
+   BOTÓN PARA CERRAR BARRA LATERAL
+========================================== */
+
+.dashboardCerrarLateral {
+  display: none;
+}
+
+/* ==========================================
+   FONDO OSCURO PARA MÓVILES
+========================================== */
+
+.dashboardFondoLateral {
+  display: none;
+}
+
+/* ==========================================
+   RESPONSIVE - TABLETS Y MÓVILES
+========================================== */
+
+@media (max-width: 900px) {
+  .dashboardLateral {
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    z-index: 110;
+  }
+
+  .dashboardLateralAbierto {
+    transform: translateX(0);
+  }
+
+  .dashboardFondoLateral {
+    position: fixed;
+    inset: var(--dashboard-alto, 76px) 0 0;
+
+    display: block;
+    width: 100%;
+
+    border: none;
+    background: #00000070;
+    z-index: 105;
+  }
+
+  .dashboardCerrarLateral {
+    display: flex;
+    border: none;
+    background: transparent;
+    color: white;
+    cursor: pointer;
+  }
+}

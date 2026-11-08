@@ -22,6 +22,8 @@ import { prisma } from "@/lib/prisma";
 import EstructuraDashboard from "@/componentes/dashboard/EstructuraDashboard";
 import TarjetaEstadistica from "@/componentes/dashboard/TarjetaEstadistica";
 
+import estilos from "./page.module.css";
+
 async function ContenidoAdministrador() {
   const usuario = await protegerRuta("ADMINISTRADOR");
 
@@ -65,12 +67,12 @@ async function ContenidoAdministrador() {
       usuario={usuario.usuario}
       rol={usuario.rol}
     >
-      <div className="administrador-dashboard">
+      <div className={estilos.administradorDashboard}>
 
         {/* ENCABEZADO DE LA PÁGINA */}
-        <div className="administrador-bienvenida">
+        <div className={estilos.administradorBienvenida}>
           <div>
-            <span className="administrador-etiqueta">
+            <span className={estilos.administradorEtiqueta}>
               PANEL DE CONTROL
             </span>
 
@@ -82,22 +84,22 @@ async function ContenidoAdministrador() {
             </p>
           </div>
 
-          <div className="administrador-insignia">
+          <div className={estilos.administradorInsignia}>
             <ShieldCheck size={22} />
             <span>Administrador</span>
           </div>
         </div>
 
         {/* TARJETAS ESTADÍSTICAS */}
-        <section className="administrador-seccion">
-          <div className="administrador-titulo-seccion">
+        <section className={estilos.administradorSeccion}>
+          <div className={estilos.administradorTituloSeccion}>
             <div>
               <h2>Resumen general</h2>
               <p>Usuarios registrados en la plataforma</p>
             </div>
           </div>
 
-          <div className="administrador-cuadricula">
+          <div className={estilos.administradorCuadricula}>
             <TarjetaEstadistica
               titulo="Total de usuarios"
               valor={totalUsuarios}
@@ -133,79 +135,87 @@ async function ContenidoAdministrador() {
         </section>
 
         {/* ACCESOS RÁPIDOS */}
-        <section className="administrador-seccion">
-          <div className="administrador-titulo-seccion">
+        <section className={estilos.administradorSeccion}>
+          <div className={estilos.administradorTituloSeccion}>
             <div>
               <h2>Accesos rápidos</h2>
               <p>Funciones principales de administración</p>
             </div>
           </div>
 
-          <div className="administrador-accesos">
+          <div className={estilos.administradorAccesos}>
             <Link
               href="/administrador/usuarios/nuevo"
-              className="administrador-acceso"
+              className={estilos.administradorAcceso}
             >
-              <span className="administrador-acceso-icono">
+              <span className={estilos.administradorAccesoIcono}>
                 <UserPlus size={21} />
               </span>
+
               <span>
                 <strong>Registrar usuario</strong>
                 <small>Crear una cuenta nueva</small>
               </span>
+
               <ArrowRight size={17} />
             </Link>
 
             <Link
               href="/administrador/materias"
-              className="administrador-acceso"
+              className={estilos.administradorAcceso}
             >
-              <span className="administrador-acceso-icono">
+              <span className={estilos.administradorAccesoIcono}>
                 <BookOpen size={21} />
               </span>
+
               <span>
                 <strong>Gestionar materias</strong>
                 <small>Administración académica</small>
               </span>
+
               <ArrowRight size={17} />
             </Link>
 
             <Link
               href="/administrador/proyectos"
-              className="administrador-acceso"
+              className={estilos.administradorAcceso}
             >
-              <span className="administrador-acceso-icono">
+              <span className={estilos.administradorAccesoIcono}>
                 <FolderKanban size={21} />
               </span>
+
               <span>
                 <strong>Ver proyectos</strong>
                 <small>Consultar proyectos académicos</small>
               </span>
+
               <ArrowRight size={17} />
             </Link>
 
             <Link
               href="/administrador/reportes"
-              className="administrador-acceso"
+              className={estilos.administradorAcceso}
             >
-              <span className="administrador-acceso-icono">
+              <span className={estilos.administradorAccesoIcono}>
                 <ChartColumn size={21} />
               </span>
+
               <span>
                 <strong>Generar reportes</strong>
                 <small>Estadísticas e informes</small>
               </span>
+
               <ArrowRight size={17} />
             </Link>
           </div>
         </section>
 
         {/* INFORMACIÓN INFERIOR */}
-        <div className="administrador-columnas">
+        <div className={estilos.administradorColumnas}>
 
           {/* USUARIOS RECIENTES */}
-          <section className="administrador-panel">
-            <div className="administrador-panel-cabecera">
+          <section className={estilos.administradorPanel}>
+            <div className={estilos.administradorPanelCabecera}>
               <div>
                 <h2>Usuarios recientes</h2>
                 <p>Últimas cuentas registradas</p>
@@ -216,21 +226,22 @@ async function ContenidoAdministrador() {
               </Link>
             </div>
 
-            <div className="administrador-lista-usuarios">
+            <div className={estilos.administradorListaUsuarios}>
               {usuariosRecientes.length === 0 ? (
                 <p>No hay usuarios registrados.</p>
               ) : (
                 usuariosRecientes.map((cuenta) => (
                   <div
                     key={cuenta.id}
-                    className="administrador-usuario"
+                    className={estilos.administradorUsuario}
                   >
-                    <div className="administrador-usuario-avatar">
+                    <div className={estilos.administradorUsuarioAvatar}>
                       {cuenta.nombre.charAt(0).toUpperCase()}
                     </div>
 
-                    <div className="administrador-usuario-datos">
+                    <div className={estilos.administradorUsuarioDatos}>
                       <strong>{cuenta.nombre}</strong>
+
                       <span>
                         @{cuenta.usuario} ·{" "}
                         {nombresRoles[cuenta.rol]}
@@ -238,11 +249,11 @@ async function ContenidoAdministrador() {
                     </div>
 
                     <span
-                      className={
+                      className={`${estilos.administradorEstado} ${
                         cuenta.activo
-                          ? "administrador-estado activo"
-                          : "administrador-estado inactivo"
-                      }
+                          ? estilos.activo
+                          : estilos.inactivo
+                      }`}
                     >
                       {cuenta.activo ? "Activo" : "Inactivo"}
                     </span>
@@ -253,16 +264,17 @@ async function ContenidoAdministrador() {
           </section>
 
           {/* ESTADO DE LA PLATAFORMA */}
-          <section className="administrador-panel">
-            <div className="administrador-panel-cabecera">
+          <section className={estilos.administradorPanel}>
+            <div className={estilos.administradorPanelCabecera}>
               <div>
                 <h2>Administración del sistema</h2>
                 <p>Acceso a módulos principales</p>
               </div>
+
               <Activity size={20} />
             </div>
 
-            <div className="administrador-lista-modulos">
+            <div className={estilos.administradorListaModulos}>
               <Link href="/administrador/almacenamiento">
                 <Cloud size={20} />
                 <span>Nube académica</span>

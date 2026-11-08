@@ -1,0 +1,50 @@
+
+/* ==========================================
+   ESTRUCTURA GENERAL DEL DASHBOARD
+========================================== */
+
+.dashboardEstructura {
+  --dashboard-alto: 76px;
+  --dashboard-ancho-lateral: 268px;
+  --dashboard-azul: #092d55;
+  --dashboard-azul-claro: #14558a;
+  --dashboard-amarillo: #f4c542;
+
+  min-height: 100dvh;
+  background: #f4f7fb;
+}
+
+/* ==========================================
+   CONTENIDO PRINCIPAL
+========================================== */
+
+.dashboardContenido {
+  display: block;
+  flex: 1 0 auto;
+  min-height: calc(100dvh - var(--dashboard-alto));
+
+  margin: 0 0 0 var(--dashboard-ancho-lateral);
+  padding: 0 30px 32px;
+
+  align-content: normal;
+  justify-content: flex-start;
+  align-items: stretch;
+}
+
+/* ==========================================
+   ADAPTACIÓN A TABLETS Y MÓVILES
+========================================== */
+
+@media (max-width: 900px) {
+  .dashboardContenido {
+    margin-left: 0;
+    padding: calc(var(--dashboard-alto) + 16px) 20px 28px;
+  }
+}
+
+@media (max-width: 600px) {
+  .dashboardContenido {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+}

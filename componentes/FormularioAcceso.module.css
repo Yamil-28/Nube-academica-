@@ -1,0 +1,206 @@
+
+/* ==========================================
+   FORMULARIO DE ACCESO - SISCLOUD
+========================================== */
+
+.formularioAcceso {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+}
+
+/* ==========================================
+   ENCABEZADO DEL FORMULARIO
+========================================== */
+
+.accesoEncabezado {
+  margin-bottom: 5px;
+}
+
+.accesoEtiqueta {
+  color: var(--color-secundario);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+}
+
+.accesoEncabezado h2 {
+  margin-top: 12px;
+  font-size: 25px;
+  font-weight: 800;
+  color: var(--color-primario);
+}
+
+.accesoEncabezado p {
+  margin-top: 10px;
+  color: var(--color-texto-secundario);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* ==========================================
+   CAMPOS DEL FORMULARIO
+========================================== */
+
+.campoFormulario {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.campoFormulario label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-texto);
+}
+
+.campoFormulario input {
+  width: 100%;
+  height: 42px;
+  padding: 0 14px;
+  border: 1px solid var(--color-borde);
+  border-radius: 9px;
+  outline: none;
+  background: #f9fbfe;
+  color: var(--color-texto);
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+
+.campoFormulario input::placeholder {
+  color: #8293a7;
+}
+
+.campoFormulario input:focus {
+  border-color: var(--color-secundario);
+  box-shadow: 0 0 0 3px rgba(7, 90, 165, 0.12);
+}
+
+/* ==========================================
+   CAMPO DE CONTRASEÑA
+========================================== */
+
+.campoContrasena {
+  position: relative;
+}
+
+.campoContrasena input {
+  padding-right: 85px;
+}
+
+.campoContrasena button {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  color: var(--color-secundario);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.campoContrasena button:hover {
+  color: var(--color-primario);
+}
+
+/* ==========================================
+   BOTÓN DE INICIO DE SESIÓN
+========================================== */
+
+.botonAcceso {
+  width: 100%;
+  padding: 15px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(
+    120deg,
+    var(--color-primario),
+    var(--color-secundario)
+  );
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
+}
+
+.botonAcceso:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(7, 59, 112, 0.2);
+}
+
+.botonAcceso:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ==========================================
+   MENSAJES Y NOTAS
+========================================== */
+
+.mensajeAcceso {
+  padding: 12px;
+  border-radius: 8px;
+  background: #e8f3ff;
+  color: var(--color-primario);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.accesoNota {
+  color: var(--color-texto-secundario);
+  text-align: center;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+/* ==========================================
+   AJUSTES PARA ESCRITORIO
+========================================== */
+
+@media (min-width: 951px) {
+  .formularioAcceso {
+    gap: 10px;
+  }
+
+  .accesoEncabezado h2 {
+    margin-top: 8px;
+    font-size: 26px;
+  }
+
+  .accesoEncabezado p {
+    margin-top: 4px;
+    font-size: 13px;
+  }
+
+  .campoFormulario {
+    gap: 6px;
+  }
+
+  .campoFormulario input {
+    height: 40px;
+  }
+
+  .botonAcceso {
+    padding: 11px;
+  }
+
+  .accesoNota {
+    font-size: 11px;
+    line-height: 1.5;
+  }
+}
+
+/* ==========================================
+   AJUSTES PARA MÓVILES
+========================================== */
+
+@media (max-width: 600px) {
+  .accesoEncabezado h2 {
+    font-size: 24px;
+  }
+}

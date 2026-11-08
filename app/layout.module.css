@@ -1,0 +1,17 @@
+
+/* ==========================================
+   ESTRUCTURA GENERAL - SISCLOUD
+========================================== */
+
+.estructuraSistema {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+.contenidoSistema {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}

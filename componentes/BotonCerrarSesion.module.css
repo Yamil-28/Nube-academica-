@@ -1,0 +1,36 @@
+
+.contenedor {
+  margin-top: 24px;
+}
+
+.boton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 43px;
+  padding: 11px 22px;
+  border: 1px solid #c62828;
+  border-radius: 9px;
+  background: #ffffff;
+  color: #c62828;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.boton:hover {
+  background: #c62828;
+  color: #ffffff;
+}
+
+.boton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.mensaje {
+  margin-top: 10px;
+  color: #c62828;
+  font-size: 13px;
+}

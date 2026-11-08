@@ -2,9 +2,12 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
+
 import BarraLateral from "./BarraLateral";
 import EncabezadoDashboard from "./EncabezadoDashboard";
+
 import type { RolUsuario } from "@/lib/sesion";
+import estilos from "./EstructuraDashboard.module.css";
 
 type Propiedades = {
   usuario: string;
@@ -20,7 +23,10 @@ export default function EstructuraDashboard({
   const [menuAbierto, establecerMenuAbierto] = useState(false);
 
   return (
-    <div className="dashboard-estructura">
+    <div
+      className={estilos.dashboardEstructura}
+      data-dashboard="siscloud"
+    >
       <EncabezadoDashboard
         usuario={usuario}
         rol={rol}
@@ -33,7 +39,7 @@ export default function EstructuraDashboard({
         cerrar={() => establecerMenuAbierto(false)}
       />
 
-      <main className="dashboard-contenido">
+      <main className={estilos.dashboardContenido}>
         {children}
       </main>
     </div>

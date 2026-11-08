@@ -2,6 +2,7 @@
 "use client";
 
 import { useState } from "react";
+import estilos from "./BotonCerrarSesion.module.css";
 
 export default function BotonCerrarSesion() {
   const [cerrando, establecerCerrando] = useState(false);
@@ -27,16 +28,18 @@ export default function BotonCerrarSesion() {
       // el estado anterior de los paneles.
       window.location.replace("/iniciar-sesion");
     } catch {
-      establecerError("Error al cerrar sesión. Inténtalo nuevamente.");
+      establecerError(
+        "Error al cerrar sesión. Inténtalo nuevamente."
+      );
       establecerCerrando(false);
     }
   }
 
   return (
-    <div className="contenedor-cerrar-sesion">
+    <div className={estilos.contenedor}>
       <button
         type="button"
-        className="boton-cerrar-sesion"
+        className={estilos.boton}
         onClick={salir}
         disabled={cerrando}
       >
@@ -44,7 +47,7 @@ export default function BotonCerrarSesion() {
       </button>
 
       {error && (
-        <p className="mensaje-cerrar-sesion" role="alert">
+        <p className={estilos.mensaje} role="alert">
           {error}
         </p>
       )}

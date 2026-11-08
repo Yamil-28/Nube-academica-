@@ -1,0 +1,250 @@
+
+/* ==========================================
+   ENCABEZADO INSTITUCIONAL EMI
+========================================== */
+
+.encabezado {
+  position: relative;
+  z-index: 200;
+  width: 100%;
+  background: #ffffff;
+  border-bottom: 1px solid #e4eaf1;
+}
+
+/* Navegación principal */
+.navegacion {
+  max-width: 1700px;
+  min-height: 112px;
+  margin: 0 auto;
+  padding: 15px 35px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+}
+
+/* ==========================================
+   MARCA INSTITUCIONAL
+========================================== */
+
+.marca {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.marca img {
+  object-fit: contain;
+}
+
+.marcaTexto {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.marcaTexto strong {
+  font-size: 29px;
+  color: #06417d;
+}
+
+.marcaTexto span {
+  font-size: 11px;
+  color: #607b98;
+}
+
+/* ==========================================
+   ENLACES DE NAVEGACIÓN
+========================================== */
+
+.enlaces {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.enlaceInactivo,
+.botonServicios {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  white-space: nowrap;
+  font-size: 14px;
+  font-weight: 500;
+  color: #06417d;
+}
+
+.botonServicios {
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.botonServicios:hover,
+.botonActivo {
+  color: #d5a500;
+}
+
+/* ==========================================
+   MENÚ SERVICIOS
+========================================== */
+
+.menuServicios {
+  position: relative;
+}
+
+.desplegable {
+  position: absolute;
+  top: calc(100% + 28px);
+  left: 0;
+
+  width: 315px;
+  max-height: 75vh;
+  overflow-y: auto;
+
+  background: #ffffff;
+  box-shadow: 0 15px 35px #082f571f;
+  border: 1px solid #e5eaf1;
+  z-index: 300;
+}
+
+/* Opciones del menú */
+.opcion {
+  min-height: 49px;
+  padding: 13px 15px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+
+  font-size: 14px;
+  color: #06417d;
+}
+
+.opcionBoton {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+
+.opcionActiva {
+  background: #f7ca17;
+}
+
+/* ==========================================
+   SUBMENÚ ESTUDIANTES REGULARES
+========================================== */
+
+.submenu {
+  display: flex;
+  flex-direction: column;
+  background: #f5f8fc;
+  border-left: 3px solid #e2b522;
+}
+
+.submenu > span {
+  padding: 13px 20px;
+  color: #06417d;
+  font-size: 14px;
+}
+
+/* Enlace SISCloud */
+.enlaceSiscloud {
+  margin: 8px 12px 12px;
+  padding: 13px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  background: #07539a;
+  color: #ffffff;
+  border-radius: 7px;
+
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.enlaceSiscloud:hover {
+  background: #063b70;
+}
+
+/* ==========================================
+   REDES SOCIALES
+========================================== */
+
+.redes {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  color: #999999;
+}
+
+/* ==========================================
+   MENÚ MÓVIL
+========================================== */
+
+.menuMovil {
+  display: none;
+  border: 0;
+  background: transparent;
+  color: #06417d;
+  cursor: pointer;
+}
+
+/* ==========================================
+   DISEÑO RESPONSIVO
+========================================== */
+
+@media (max-width: 1200px) {
+  .navegacion {
+    flex-wrap: wrap;
+  }
+
+  .enlaces {
+    order: 3;
+    width: 100%;
+    justify-content: center;
+    gap: 22px;
+  }
+}
+
+@media (max-width: 750px) {
+  .navegacion {
+    min-height: 80px;
+    padding: 12px 18px;
+  }
+
+  .menuMovil {
+    display: flex;
+    margin-left: auto;
+  }
+
+  .enlaces {
+    display: none;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 20px;
+  }
+
+  .enlacesAbiertos {
+    display: flex;
+  }
+
+  .desplegable {
+    position: static;
+    width: 100%;
+    max-height: none;
+    margin-top: 12px;
+  }
+
+  .redes {
+    display: none;
+  }
+}

@@ -1,6 +1,7 @@
 
 import { Suspense } from "react";
 import Link from "next/link";
+
 import {
   BookOpen,
   FolderKanban,
@@ -14,6 +15,8 @@ import {
 
 import EstructuraDashboard from "@/componentes/dashboard/EstructuraDashboard";
 import { protegerRuta } from "@/lib/protegerRuta";
+
+import estilos from "./page.module.css";
 
 const accesos = [
   {
@@ -62,10 +65,12 @@ async function ContenidoEstudiante() {
       usuario={usuario.usuario}
       rol={usuario.rol}
     >
-      <div className="dashboard-rol">
-        <section className="dashboard-rol-bienvenida">
+      <div className={estilos.dashboardRol}>
+
+        {/* ENCABEZADO DEL ESTUDIANTE */}
+        <section className={estilos.dashboardRolBienvenida}>
           <div>
-            <span className="dashboard-rol-etiqueta">
+            <span className={estilos.dashboardRolEtiqueta}>
               ESPACIO ACADÉMICO
             </span>
 
@@ -77,14 +82,15 @@ async function ContenidoEstudiante() {
             </p>
           </div>
 
-          <div className="dashboard-rol-insignia">
+          <div className={estilos.dashboardRolInsignia}>
             <GraduationCap size={20} />
             <span>Estudiante</span>
           </div>
         </section>
 
-        <section className="dashboard-rol-seccion">
-          <div className="dashboard-rol-titulo">
+        {/* ACCESOS RÁPIDOS */}
+        <section className={estilos.dashboardRolSeccion}>
+          <div className={estilos.dashboardRolTitulo}>
             <h2>Accesos rápidos</h2>
             <p>
               Accede a las herramientas de tu espacio
@@ -92,7 +98,7 @@ async function ContenidoEstudiante() {
             </p>
           </div>
 
-          <div className="dashboard-rol-cuadricula">
+          <div className={estilos.dashboardRolCuadricula}>
             {accesos.map((acceso) => {
               const Icono = acceso.icono;
 
@@ -100,10 +106,10 @@ async function ContenidoEstudiante() {
                 <Link
                   key={acceso.titulo}
                   href={acceso.ruta}
-                  className="dashboard-rol-tarjeta"
+                  className={estilos.dashboardRolTarjeta}
                 >
-                  <div className="dashboard-rol-tarjeta-superior">
-                    <div className="dashboard-rol-icono">
+                  <div className={estilos.dashboardRolTarjetaSuperior}>
+                    <div className={estilos.dashboardRolIcono}>
                       <Icono size={23} />
                     </div>
 
@@ -118,14 +124,17 @@ async function ContenidoEstudiante() {
           </div>
         </section>
 
-        <div className="dashboard-rol-columnas">
-          <section className="dashboard-rol-panel">
-            <div className="dashboard-rol-panel-titulo">
+        {/* PANELES INFERIORES */}
+        <div className={estilos.dashboardRolColumnas}>
+
+          {/* MIS PROYECTOS */}
+          <section className={estilos.dashboardRolPanel}>
+            <div className={estilos.dashboardRolPanelTitulo}>
               <FolderKanban size={21} />
               <h2>Mis proyectos académicos</h2>
             </div>
 
-            <div className="dashboard-rol-vacio">
+            <div className={estilos.dashboardRolVacio}>
               <FolderKanban size={35} />
               <h3>Proyectos pendientes de implementar</h3>
               <p>
@@ -135,13 +144,14 @@ async function ContenidoEstudiante() {
             </div>
           </section>
 
-          <section className="dashboard-rol-panel">
-            <div className="dashboard-rol-panel-titulo">
+          {/* MIS ARCHIVOS */}
+          <section className={estilos.dashboardRolPanel}>
+            <div className={estilos.dashboardRolPanelTitulo}>
               <CloudUpload size={21} />
               <h2>Mis archivos</h2>
             </div>
 
-            <div className="dashboard-rol-vacio">
+            <div className={estilos.dashboardRolVacio}>
               <CloudUpload size={35} />
               <h3>Almacenamiento académico</h3>
               <p>

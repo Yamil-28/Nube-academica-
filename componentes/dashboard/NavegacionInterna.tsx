@@ -8,6 +8,8 @@ import {
   ChevronRight,
 } from "lucide-react";
 
+import estilos from "./NavegacionInterna.module.css";
+
 type Propiedades = {
   titulo: string;
   rutaInicio: string;
@@ -22,8 +24,8 @@ export default function NavegacionInterna({
   nombreSeccion,
 }: Propiedades) {
   return (
-    <div className="dashboard-navegacion-interna">
-      <div className="dashboard-migas">
+    <div className={estilos.dashboardNavegacionInterna}>
+      <div className={estilos.dashboardMigas}>
         <Link href={rutaInicio}>
           <House size={16} />
           Inicio
@@ -40,10 +42,10 @@ export default function NavegacionInterna({
         <strong>{titulo}</strong>
       </div>
 
-      <div className="dashboard-acciones-navegacion">
+      <div className={estilos.dashboardAccionesNavegacion}>
         <Link
           href={rutaVolver ?? rutaInicio}
-          className="dashboard-boton-volver"
+          className={estilos.dashboardBotonVolver}
         >
           <ArrowLeft size={17} />
           Volver
@@ -51,7 +53,7 @@ export default function NavegacionInterna({
 
         <Link
           href={rutaInicio}
-          className="dashboard-boton-inicio"
+          className={estilos.dashboardBotonInicio}
         >
           <House size={17} />
           Ir al inicio

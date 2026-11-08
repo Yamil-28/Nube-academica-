@@ -3,12 +3,21 @@ import type { LucideIcon } from "lucide-react";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 
+import estilos from "./TarjetaEstadistica.module.css";
+
 type Propiedades = {
   titulo: string;
   valor: number;
   icono: LucideIcon;
   ruta: string;
   color?: "azul" | "dorado" | "verde" | "morado";
+};
+
+const colores = {
+  azul: estilos.tarjetaAzul,
+  dorado: estilos.tarjetaDorado,
+  verde: estilos.tarjetaVerde,
+  morado: estilos.tarjetaMorado,
 };
 
 export default function TarjetaEstadistica({
@@ -21,21 +30,24 @@ export default function TarjetaEstadistica({
   return (
     <Link
       href={ruta}
-      className={`tarjeta-estadistica tarjeta-${color}`}
+      className={`${estilos.tarjetaEstadistica} ${colores[color]}`}
     >
-      <div className="tarjeta-estadistica-superior">
-        <div className="tarjeta-estadistica-icono">
+      <div className={estilos.tarjetaEstadisticaSuperior}>
+        <div className={estilos.tarjetaEstadisticaIcono}>
           <Icono size={23} />
         </div>
 
-        <ArrowUpRight size={18} className="tarjeta-flecha" />
+        <ArrowUpRight
+          size={18}
+          className={estilos.tarjetaFlecha}
+        />
       </div>
 
-      <strong className="tarjeta-estadistica-valor">
+      <strong className={estilos.tarjetaEstadisticaValor}>
         {valor.toLocaleString("es-BO")}
       </strong>
 
-      <span className="tarjeta-estadistica-titulo">
+      <span className={estilos.tarjetaEstadisticaTitulo}>
         {titulo}
       </span>
     </Link>

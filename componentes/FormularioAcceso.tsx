@@ -4,6 +4,7 @@
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import CaptchaLetras from "./CaptchaLetras";
+import estilos from "./FormularioAcceso.module.css";
 
 export default function FormularioAcceso() {
   const router = useRouter();
@@ -91,9 +92,12 @@ export default function FormularioAcceso() {
   }
 
   return (
-    <form className="formulario-acceso" onSubmit={iniciarSesion}>
-      <div className="acceso-encabezado">
-        <span className="acceso-etiqueta">
+    <form
+      className={estilos.formularioAcceso}
+      onSubmit={iniciarSesion}
+    >
+      <div className={estilos.accesoEncabezado}>
+        <span className={estilos.accesoEtiqueta}>
           ACCESO INSTITUCIONAL
         </span>
 
@@ -105,7 +109,7 @@ export default function FormularioAcceso() {
       </div>
 
       {/* USUARIO */}
-      <div className="campo-formulario">
+      <div className={estilos.campoFormulario}>
         <label htmlFor="usuario">Usuario</label>
 
         <input
@@ -123,10 +127,10 @@ export default function FormularioAcceso() {
       </div>
 
       {/* CONTRASEÑA */}
-      <div className="campo-formulario">
+      <div className={estilos.campoFormulario}>
         <label htmlFor="contrasena">Contraseña</label>
 
-        <div className="campo-contrasena">
+        <div className={estilos.campoContrasena}>
           <input
             id="contrasena"
             type={mostrarContrasena ? "text" : "password"}
@@ -162,7 +166,7 @@ export default function FormularioAcceso() {
 
       {/* MENSAJES */}
       {mensaje && (
-        <p className="mensaje-acceso" role="status">
+        <p className={estilos.mensajeAcceso} role="status">
           {mensaje}
         </p>
       )}
@@ -170,7 +174,7 @@ export default function FormularioAcceso() {
       {/* BOTÓN DE INGRESO */}
       <button
         type="submit"
-        className="boton-acceso"
+        className={estilos.botonAcceso}
         disabled={procesando || codigoCaptcha.length !== 5}
       >
         {procesando
@@ -178,7 +182,7 @@ export default function FormularioAcceso() {
           : "Ingresar al sistema →"}
       </button>
 
-      <p className="acceso-nota">
+      <p className={estilos.accesoNota}>
         Sistema de Gestión de Proyectos Académicos
       </p>
     </form>

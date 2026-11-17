@@ -32,16 +32,11 @@ async function ContenidoReportesDocente() {
           insignia={{ texto: "Docente", icono: FileText }}
         />
 
-        <p className={estilos.aviso}>
-          Estos reportes se generan a partir de los proyectos, hitos y
-          avances registrados en SISCloud. Se habilitarán cuando el módulo
-          de Gestión de proyectos académicos esté integrado.
-        </p>
 
         <section className={estilos.seccion}>
           <div className={estilos.tituloSeccion}>
             <h2>Mis reportes</h2>
-            <p>Solo incluyen los proyectos de las materias que tienes asignadas</p>
+            <p>Solo incluyen los proyectos que diriges</p>
           </div>
 
           <CatalogoReportes reportes={reportes} />

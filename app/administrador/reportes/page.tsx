@@ -1,6 +1,7 @@
 
 import { Suspense } from "react";
-import { FileText } from "lucide-react";
+import Link from "next/link";
+import { FileText, History } from "lucide-react";
 
 import { protegerRuta } from "@/lib/protegerRuta";
 import { obtenerCatalogo } from "@/lib/informes/catalogo";
@@ -46,6 +47,22 @@ async function ContenidoReportes() {
           </div>
 
           <CatalogoReportes reportes={reportes} />
+        </section>
+
+        <section className={estilos.seccion}>
+          <div className={estilos.tituloSeccion}>
+            <h2>Trazabilidad</h2>
+            <p>Cada reporte exportado queda registrado con su autor, formato y fecha</p>
+          </div>
+
+          <div className={estilos.exportar}>
+            <Link
+              href="/administrador/reportes/historial"
+              className={`${estilos.botonExportar} ${estilos.botonExportarPrincipal}`}
+            >
+              <History size={16} /> Ver historial de reportes generados
+            </Link>
+          </div>
         </section>
       </div>
     </EstructuraDashboard>

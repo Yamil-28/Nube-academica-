@@ -32,11 +32,6 @@ async function ContenidoReportesEstudiante() {
           insignia={{ texto: "Estudiante", icono: FileText }}
         />
 
-        <p className={estilos.aviso}>
-          Estos reportes se generan a partir de tus proyectos y avances
-          registrados en SISCloud. Se habilitarán cuando el módulo de
-          Gestión de proyectos académicos esté integrado.
-        </p>
 
         <section className={estilos.seccion}>
           <div className={estilos.tituloSeccion}>

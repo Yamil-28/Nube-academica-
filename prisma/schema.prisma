@@ -7,6 +7,10 @@ datasource db {
   provider = "postgresql"
 }
 
+/* ==========================================
+   MÓDULO 1: GESTIÓN DE USUARIOS (existente)
+========================================== */
+
 enum Rol {
   ADMINISTRADOR
   DOCENTE
@@ -22,5 +26,196 @@ model Usuario {
   activo      Boolean  @default(true)
   creadoEn    DateTime @default(now())
 
+  // Relaciones agregadas por los módulos de Diana
+  asignaciones        AsignacionDocente[]
+  proyectosDirigidos  Proyecto[]          @relation("DocenteProyecto")
+  membresias          MiembroProyecto[]
+  avancesEnviados     Avance[]            @relation("AutorAvance")
+  avancesRevisados    Avance[]            @relation("RevisorAvance")
+  reportesGenerados   Reporte[]
+
   @@map("usuarios")
+}
+
+/* ==========================================
+   MÓDULO 2: GESTIÓN ACADÉMICA
+   periodo_academico, materia y docente_materia
+   (modelo relacional del documento)
+========================================== */
+
+enum Semestre {
+  I
+  II
+}
+
+model PeriodoAcademico {
+  id        Int      @id @default(autoincrement())
+  gestion   Int
+  semestre  Semestre
+  vigente   Boolean  @default(false)
+  activo    Boolean  @default(true)
+  creadoEn  DateTime @default(now())
+
+  asignaciones AsignacionDocente[]
+  proyectos    Proyecto[]
+
+  @@unique([gestion, semestre])
+  @@map("periodos_academicos")
+}
+
+model Materia {
+  id          Int      @id @default(autoincrement())
+  codigo      String?  @unique
+  nombre      String   @unique
+  nivel       Int
+  descripcion String   @default("")
+  activa      Boolean  @default(true)
+  creadoEn    DateTime @default(now())
+
+  asignaciones AsignacionDocente[]
+  proyectos    Proyecto[]
+
+  @@map("materias")
+}
+
+model AsignacionDocente {
+  id         Int      @id @default(autoincrement())
+  idDocente  Int
+  idMateria  Int
+  idPeriodo  Int
+  creadoEn   DateTime @default(now())
+
+  docente  Usuario          @relation(fields: [idDocente], references: [id], onDelete: Cascade)
+  materia  Materia          @relation(fields: [idMateria], references: [id], onDelete: Cascade)
+  periodo  PeriodoAcademico @relation(fields: [idPeriodo], references: [id], onDelete: Cascade)
+
+  @@unique([idDocente, idMateria, idPeriodo])
+  @@map("asignaciones_docentes")
+}
+
+/* ==========================================
+   MÓDULO 5: PROYECTOS ACADÉMICOS (DEMOSTRACIÓN)
+   Tablas mínimas según el DER del documento
+   (seg_proyectos, seg_miembros, seg_hitos,
+   seg_avances) para alimentar los reportes.
+   La gestión completa de proyectos pertenece al
+   módulo de Proyectos académicos.
+========================================== */
+
+enum EstadoProyecto {
+  PLANIFICADO
+  EN_PROGRESO
+  EN_REVISION
+  COMPLETADO
+  CANCELADO
+}
+
+enum EstadoHito {
+  PENDIENTE
+  EN_PROGRESO
+  COMPLETADO
+}
+
+enum EstadoRevision {
+  PENDIENTE
+  APROBADO
+  OBSERVADO
+}
+
+model Proyecto {
+  id            Int            @id @default(autoincrement())
+  titulo        String
+  descripcion   String         @default("")
+  idMateria     Int?
+  idPeriodo     Int?
+  idDocente     Int
+  estado        EstadoProyecto @default(PLANIFICADO)
+  fechaInicio   DateTime
+  fechaFin      DateTime?
+  creadoEn      DateTime       @default(now())
+  actualizadoEn DateTime       @updatedAt
+
+  materia  Materia?          @relation(fields: [idMateria], references: [id], onDelete: SetNull)
+  periodo  PeriodoAcademico? @relation(fields: [idPeriodo], references: [id], onDelete: SetNull)
+  docente  Usuario           @relation("DocenteProyecto", fields: [idDocente], references: [id])
+
+  miembros MiembroProyecto[]
+  hitos    Hito[]
+  avances  Avance[]
+  reportes Reporte[]
+
+  @@map("seg_proyectos")
+}
+
+model MiembroProyecto {
+  idProyecto Int
+  idUsuario  Int
+  rolEquipo  String @default("integrante")
+
+  proyecto Proyecto @relation(fields: [idProyecto], references: [id], onDelete: Cascade)
+  usuario  Usuario  @relation(fields: [idUsuario], references: [id], onDelete: Cascade)
+
+  @@id([idProyecto, idUsuario])
+  @@map("seg_miembros")
+}
+
+model Hito {
+  id          Int        @id @default(autoincrement())
+  idProyecto  Int
+  titulo      String
+  descripcion String     @default("")
+  fechaLimite DateTime
+  estado      EstadoHito @default(PENDIENTE)
+  creadoEn    DateTime   @default(now())
+
+  proyecto Proyecto @relation(fields: [idProyecto], references: [id], onDelete: Cascade)
+  avances  Avance[]
+
+  @@map("seg_hitos")
+}
+
+model Avance {
+  id                Int            @id @default(autoincrement())
+  idProyecto        Int
+  idHito            Int?
+  idAutor           Int
+  titulo            String
+  descripcion       String         @default("")
+  enlace            String?
+  revisionEstado    EstadoRevision @default(PENDIENTE)
+  retroalimentacion String?
+  calificacion      Int?
+  idRevisor         Int?
+  revisadoEn        DateTime?
+  creadoEn          DateTime       @default(now())
+
+  proyecto Proyecto @relation(fields: [idProyecto], references: [id], onDelete: Cascade)
+  hito     Hito?    @relation(fields: [idHito], references: [id], onDelete: SetNull)
+  autor    Usuario  @relation("AutorAvance", fields: [idAutor], references: [id])
+  revisor  Usuario? @relation("RevisorAvance", fields: [idRevisor], references: [id])
+
+  @@map("seg_avances")
+}
+
+/* ==========================================
+   MÓDULO 7: INFORMES Y REPORTES
+   reporte (id_reporte, id_usuario, id_proyecto,
+   tipo_reporte, formato, fecha_generacion)
+   El contenido no se guarda: solo quién generó
+   qué reporte y cuándo (trazabilidad).
+========================================== */
+
+model Reporte {
+  id              Int      @id @default(autoincrement())
+  idUsuario       Int
+  idProyecto      Int?
+  tipoReporte     String
+  formato         String
+  fechaGeneracion DateTime @default(now())
+
+  usuario  Usuario   @relation(fields: [idUsuario], references: [id], onDelete: Cascade)
+  proyecto Proyecto? @relation(fields: [idProyecto], references: [id], onDelete: SetNull)
+
+  @@index([fechaGeneracion])
+  @@map("reportes")
 }

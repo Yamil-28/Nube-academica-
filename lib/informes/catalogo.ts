@@ -27,8 +27,6 @@ export type DefinicionReporte = {
   referencia: string;
 };
 
-const MODULO_PROYECTOS = "Gestión de proyectos académicos";
-const MODULO_ACADEMICO = "Gestión académica";
 const MODULO_AUDITORIA = "Auditoría, seguridad y control";
 const MODULO_NUBE = "Administración del espacio en la nube";
 
@@ -49,7 +47,7 @@ const catalogo: Record<RolUsuario, DefinicionReporte[]> = {
       descripcion:
         "Proyectos por periodo, materia, docente y estado, con su avance.",
       icono: "proyectos",
-      moduloRequerido: MODULO_PROYECTOS,
+      ruta: "/administrador/reportes/proyectos",
       referencia: "HU-18 · RF14",
     },
     {
@@ -58,7 +56,7 @@ const catalogo: Record<RolUsuario, DefinicionReporte[]> = {
       descripcion:
         "Avances enviados por proyecto e hito y su estado de revisión.",
       icono: "avances",
-      moduloRequerido: MODULO_PROYECTOS,
+      ruta: "/administrador/reportes/avances",
       referencia: "RF14",
     },
     {
@@ -67,7 +65,7 @@ const catalogo: Record<RolUsuario, DefinicionReporte[]> = {
       descripcion:
         "Materias de la Carrera y docentes asignados por periodo académico.",
       icono: "academico",
-      moduloRequerido: MODULO_ACADEMICO,
+      ruta: "/administrador/reportes/academico",
       referencia: "RF03 · RF14",
     },
     {
@@ -95,18 +93,18 @@ const catalogo: Record<RolUsuario, DefinicionReporte[]> = {
       id: "avance-proyectos",
       titulo: "Reporte de avance de proyectos",
       descripcion:
-        "Estado y avance de los proyectos de mis materias, para presentarlo a la Carrera.",
+        "Estado y avance de los proyectos que diriges, para presentarlo a la Carrera.",
       icono: "proyectos",
-      moduloRequerido: MODULO_PROYECTOS,
+      ruta: "/docente/reportes/avance-proyectos",
       referencia: "HU-11 · HU14",
     },
     {
       id: "revisiones",
       titulo: "Reporte de revisiones y observaciones",
       descripcion:
-        "Avances revisados, pendientes y observados en mis materias.",
+        "Avances de tus proyectos: revisados, pendientes y observados.",
       icono: "avances",
-      moduloRequerido: MODULO_PROYECTOS,
+      ruta: "/docente/reportes/revisiones",
       referencia: "RF13 · RF14",
     },
   ],
@@ -116,18 +114,18 @@ const catalogo: Record<RolUsuario, DefinicionReporte[]> = {
       id: "mis-proyectos",
       titulo: "Reporte de mis proyectos",
       descripcion:
-        "Estado y avance de mis proyectos para presentarlo al docente.",
+        "Estado y avance de tus proyectos para presentarlo al docente.",
       icono: "proyectos",
-      moduloRequerido: MODULO_PROYECTOS,
+      ruta: "/estudiante/reportes/mis-proyectos",
       referencia: "HU-17",
     },
     {
       id: "mis-avances",
       titulo: "Historial de mis avances",
       descripcion:
-        "Avances enviados, su revisión y las observaciones del docente.",
+        "Avances que enviaste, su revisión y las observaciones del docente.",
       icono: "avances",
-      moduloRequerido: MODULO_PROYECTOS,
+      ruta: "/estudiante/reportes/mis-avances",
       referencia: "RF13 · RF14",
     },
   ],

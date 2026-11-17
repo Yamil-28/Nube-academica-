@@ -128,3 +128,12 @@
     justify-content: center;
   }
 }
+
+/* Filtros de cantidad variable (motor genérico de reportes) */
+.filtros.filtrosAjustables {
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+}
+
+.filtrosAjustables .campo:first-child {
+  grid-column: auto;
+}

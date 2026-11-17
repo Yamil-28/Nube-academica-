@@ -5,9 +5,11 @@ import {
   BookOpen,
   CalendarClock,
   ChartColumn,
+  ClipboardCheck,
   Cloud,
   FolderKanban,
   History,
+  UsersRound,
   UserCheck,
   UserPlus,
   Users,
@@ -16,6 +18,7 @@ import {
 
 import { protegerRuta } from "@/lib/protegerRuta";
 import { obtenerEstadisticasUsuarios } from "@/lib/informes/estadisticasUsuarios";
+import { obtenerEstadisticasAcademicas } from "@/lib/informes/estadisticasAcademicas";
 import { formatearFechaHora, pluralizar } from "@/lib/informes/formato";
 
 import EstructuraDashboard from "@/componentes/dashboard/EstructuraDashboard";
@@ -42,17 +45,6 @@ const coloresRoles: Record<string, ColorBarra> = {
 // Al integrar cada módulo, su sección se reemplaza por datos reales.
 const indicadoresPendientes = [
   {
-    titulo: "Gestión académica",
-    descripcion: "Materias, docentes asignados y periodos académicos.",
-    icono: BookOpen,
-  },
-  {
-    titulo: "Proyectos académicos",
-    descripcion:
-      "Proyectos por estado, materia y docente; avances y revisiones.",
-    icono: FolderKanban,
-  },
-  {
     titulo: "Actividad del sistema",
     descripcion: "Acciones registradas por la auditoría, por día y tipo.",
     icono: History,
@@ -72,8 +64,11 @@ async function ContenidoEstadisticas() {
   // 1. Solo administradores (rol verificado en Neon)
   const usuario = await protegerRuta("ADMINISTRADOR");
 
-  // 2. Datos del módulo de usuarios
-  const estadisticas = await obtenerEstadisticasUsuarios();
+  // 2. Datos de usuarios, gestión académica y proyectos (en paralelo)
+  const [estadisticas, academico] = await Promise.all([
+    obtenerEstadisticasUsuarios(),
+    obtenerEstadisticasAcademicas(),
+  ]);
 
   const fechaGeneracion = formatearFechaHora(estadisticas.generadoEn);
 
@@ -199,6 +194,84 @@ async function ContenidoEstadisticas() {
                   etiqueta: mes.etiqueta,
                   valor: mes.total,
                 }))}
+              />
+            </div>
+          </section>
+        </div>
+
+        {/* GESTIÓN ACADÉMICA Y PROYECTOS */}
+        <section className={estilos.estadisticasSeccion}>
+          <div className={estilos.estadisticasTituloSeccion}>
+            <h2>Gestión académica y proyectos</h2>
+            <p>
+              Periodo vigente: {academico.periodoVigente ?? "sin periodo vigente"}
+            </p>
+          </div>
+
+          <div className={estilos.estadisticasCuadricula}>
+            <TarjetaEstadistica
+              titulo="Materias activas"
+              valor={academico.materiasActivas}
+              icono={BookOpen}
+              ruta="/administrador/materias"
+              color="azul"
+            />
+            <TarjetaEstadistica
+              titulo="Asignaciones en el periodo"
+              valor={academico.asignacionesVigentes}
+              icono={UsersRound}
+              ruta="/administrador/docentes"
+              color="verde"
+            />
+            <TarjetaEstadistica
+              titulo="Proyectos registrados"
+              valor={academico.totalProyectos}
+              icono={FolderKanban}
+              ruta="/administrador/reportes/proyectos"
+              color="morado"
+            />
+            <TarjetaEstadistica
+              titulo="Avances por revisar"
+              valor={academico.avancesPendientes}
+              icono={ClipboardCheck}
+              ruta="/administrador/reportes/avances?revision=PENDIENTE"
+              color="dorado"
+            />
+          </div>
+        </section>
+
+        <div className={estilos.estadisticasColumnas}>
+          <section className={estilos.estadisticasPanel}>
+            <div className={estilos.estadisticasPanelCabecera}>
+              <div>
+                <h2>Proyectos por estado</h2>
+                <p>Todos los periodos</p>
+              </div>
+              <FolderKanban size={20} />
+            </div>
+            <div className={estilos.estadisticasPanelCuerpo}>
+              <GraficoBarrasHorizontales
+                descripcion="Cantidad de proyectos por estado"
+                datos={academico.porEstado.map((dato, indice) => ({
+                  ...dato,
+                  color: (["azul", "morado", "dorado", "verde", "dorado"] as const)[indice],
+                }))}
+              />
+            </div>
+          </section>
+
+          <section className={estilos.estadisticasPanel}>
+            <div className={estilos.estadisticasPanelCabecera}>
+              <div>
+                <h2>Proyectos por materia</h2>
+                <p>Periodo {academico.periodoVigente ?? "vigente"}</p>
+              </div>
+              <BookOpen size={20} />
+            </div>
+            <div className={estilos.estadisticasPanelCuerpo}>
+              <GraficoBarrasHorizontales
+                descripcion="Cantidad de proyectos por materia en el periodo vigente"
+                datos={academico.porMateria.map((dato) => ({ ...dato, color: "azul" as const }))}
               />
             </div>
           </section>

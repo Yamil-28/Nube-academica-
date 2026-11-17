@@ -1,8 +1,9 @@
 
 import { Suspense } from "react";
-import { BookOpen, FolderKanban, Info, UsersRound } from "lucide-react";
+import { BookOpen, FolderKanban, UsersRound } from "lucide-react";
 
 import { protegerRuta } from "@/lib/protegerRuta";
+import { prisma } from "@/lib/prisma";
 import { listarAsignaciones, obtenerPeriodoVigente } from "@/lib/academico/repositorio";
 import { nombrePeriodo } from "@/lib/academico/tipos";
 
@@ -16,18 +17,31 @@ import estilos from "@/componentes/academico/Academico.module.css";
    MIS ESTUDIANTES (DOCENTE)
    El documento no contempla inscripciones
    (Capítulo 1, límites). El docente conoce a sus
-   estudiantes a través de los PROYECTOS de sus
-   materias (Tabla 6, Módulo 5), por lo que esta
-   vista se completa al integrar ese módulo.
+   estudiantes a través de los PROYECTOS que dirige
+   en sus materias (Tabla 6, Módulo 5).
 ========================================== */
 
 async function ContenidoMisEstudiantes() {
   const usuario = await protegerRuta("DOCENTE");
 
   const vigente = await obtenerPeriodoVigente();
-  const asignaciones = vigente
-    ? await listarAsignaciones({ idDocente: usuario.id, idPeriodo: vigente.id })
-    : [];
+
+  const [asignaciones, proyectos] = vigente
+    ? await Promise.all([
+        listarAsignaciones({ idDocente: usuario.id, idPeriodo: vigente.id }),
+        prisma.proyecto.findMany({
+          where: { idDocente: usuario.id, idPeriodo: vigente.id },
+          include: {
+            miembros: { include: { usuario: { select: { id: true, nombre: true, usuario: true } } } },
+          },
+          orderBy: { titulo: "asc" },
+        }),
+      ])
+    : [[], []];
+
+  const totalEstudiantes = new Set(
+    proyectos.flatMap((p) => p.miembros.map((m) => m.usuario.id))
+  ).size;
 
   return (
     <EstructuraDashboard usuario={usuario.usuario} rol={usuario.rol}>
@@ -41,56 +55,82 @@ async function ContenidoMisEstudiantes() {
         <EncabezadoAcademico
           etiqueta="GESTIÓN ACADÉMICA"
           titulo="Mis estudiantes"
-          descripcion="Estudiantes que desarrollan proyectos en las materias que tienes asignadas."
-          insignia={{ texto: "Docente", icono: UsersRound }}
+          descripcion="Estudiantes que desarrollan proyectos bajo tu dirección en tus materias."
+          insignia={{
+            texto: `${totalEstudiantes} estudiantes · ${vigente ? nombrePeriodo(vigente) : "sin periodo"}`,
+            icono: UsersRound,
+          }}
         />
 
-        <p className={`${estilos.mensaje} ${estilos.mensajeExito}`} role="note">
-          <Info size={14} style={{ verticalAlign: "-2px", marginRight: 6 }} />
-          SISCloud no gestiona inscripciones. Los estudiantes se vinculan a tus
-          materias al registrar sus proyectos, y aparecerán aquí cuando se
-          integre el módulo de Gestión de proyectos académicos.
-        </p>
+        {asignaciones.length === 0 ? (
+          <section className={estilos.panel}>
+            <p className={estilos.vacio}>
+              No tienes materias asignadas en el periodo vigente.
+            </p>
+          </section>
+        ) : (
+          asignaciones.map((asignacion) => {
+            const proyectosMateria = proyectos.filter(
+              (p) => p.idMateria === asignacion.materia.id
+            );
 
-        <section className={estilos.panel}>
-          <div className={estilos.panelCabecera}>
-            <div>
-              <h2>Materias del periodo {vigente ? nombrePeriodo(vigente) : "vigente"}</h2>
-              <p>Estudiantes vinculados por medio de proyectos</p>
-            </div>
-          </div>
+            return (
+              <section key={asignacion.id} className={estilos.panel}>
+                <div className={estilos.panelCabecera}>
+                  <div>
+                    <h2>
+                      <BookOpen size={17} style={{ verticalAlign: "-3px", marginRight: 6 }} />
+                      {asignacion.materia.nombre}
+                    </h2>
+                    <p>
+                      {proyectosMateria.length === 1
+                        ? "1 proyecto"
+                        : `${proyectosMateria.length} proyectos`}{" "}
+                      en {nombrePeriodo(asignacion.periodo)}
+                    </p>
+                  </div>
+                </div>
 
-          <div className={estilos.panelCuerpo}>
-            {asignaciones.length === 0 ? (
-              <p className={estilos.vacio}>
-                No tienes materias asignadas en el periodo vigente.
-              </p>
-            ) : (
-              <div className={estilos.tarjetas}>
-                {asignaciones.map((asignacion) => (
-                  <article key={asignacion.id} className={estilos.tarjeta}>
-                    <div className={estilos.tarjetaSuperior}>
-                      <span className={estilos.tarjetaIcono}>
-                        <BookOpen size={20} />
-                      </span>
-                      {asignacion.materia.codigo && <span className={estilos.codigo}>{asignacion.materia.codigo}</span>}
-                    </div>
-
-                    <h3>{asignacion.materia.nombre}</h3>
-                    <p>Aún no hay proyectos registrados en esta materia.</p>
-
-                    <div className={estilos.tarjetaPie}>
-                      <FolderKanban size={14} />
-                      <span>
-                        <strong>0</strong> estudiantes con proyectos
-                      </span>
-                    </div>
-                  </article>
-                ))}
-              </div>
-            )}
-          </div>
-        </section>
+                {proyectosMateria.length === 0 ? (
+                  <p className={estilos.vacio}>
+                    Aún no hay proyectos registrados en esta materia.
+                  </p>
+                ) : (
+                  <div className={estilos.tablaContenedor}>
+                    <table className={estilos.tabla}>
+                      <thead>
+                        <tr>
+                          <th scope="col">Estudiante</th>
+                          <th scope="col">Usuario</th>
+                          <th scope="col">Proyecto</th>
+                          <th scope="col">Rol en el equipo</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {proyectosMateria.flatMap((proyecto) =>
+                          proyecto.miembros.map((miembro) => (
+                            <tr key={`${proyecto.id}-${miembro.usuario.id}`}>
+                              <td>{miembro.usuario.nombre}</td>
+                              <td>@{miembro.usuario.usuario}</td>
+                              <td>
+                                <FolderKanban
+                                  size={13}
+                                  style={{ verticalAlign: "-2px", marginRight: 5, color: "#075aa5" }}
+                                />
+                                {proyecto.titulo}
+                              </td>
+                              <td style={{ textTransform: "capitalize" }}>{miembro.rolEquipo}</td>
+                            </tr>
+                          ))
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </section>
+            );
+          })
+        )}
       </div>
     </EstructuraDashboard>
   );

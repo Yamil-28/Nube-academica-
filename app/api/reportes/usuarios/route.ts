@@ -16,6 +16,7 @@ import {
   type FormatoExportacion,
 } from "@/lib/informes/exportadores";
 import { pluralizar } from "@/lib/informes/formato";
+import { registrarReporte } from "@/lib/informes/historial";
 
 /* ==========================================
    EXPORTAR INFORME DE USUARIOS
@@ -78,6 +79,12 @@ export async function GET(solicitud: NextRequest) {
             "es-BO"
           )} registros: solo se incluyen los primeros. Usa filtros para acotarlo.`
         : undefined,
+    });
+
+    await registrarReporte({
+      idUsuario: usuario.id,
+      tipoReporte: "usuarios",
+      formato,
     });
 
     return new NextResponse(archivo.contenido, {

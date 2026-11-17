@@ -1,0 +1,65 @@
+
+/* ==========================================
+   TABLA DE REPORTES - SISCLOUD
+========================================== */
+
+.contenedor {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.tabla {
+  width: 100%;
+  min-width: 640px;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.tabla th {
+  padding: 12px 14px;
+  border-bottom: 2px solid #dce6f0;
+  background: #f4f8fc;
+  color: #073b70;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-align: left;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.tabla td {
+  padding: 12px 14px;
+  border-bottom: 1px solid #edf1f6;
+  color: #172b46;
+}
+
+.tabla tbody tr:hover {
+  background: #fafcfe;
+}
+
+.centro {
+  text-align: center !important;
+}
+
+.derecha {
+  text-align: right !important;
+}
+
+.vacio {
+  margin: 0;
+  padding: 32px 20px;
+  color: #60758c;
+  font-size: 13px;
+  text-align: center;
+}
+
+/* Visible solo para lectores de pantalla */
+.oculto {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}

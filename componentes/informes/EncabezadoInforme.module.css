@@ -1,0 +1,53 @@
+
+/* ==========================================
+   ENCABEZADO DE LAS PÁGINAS DE INFORMES
+========================================== */
+
+.encabezado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 18px;
+}
+
+.etiqueta {
+  display: inline-block;
+  margin-bottom: 9px;
+  color: #075aa5;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+}
+
+.encabezado h1 {
+  margin: 0;
+  color: #172b46;
+  font-size: clamp(23px, 3vw, 30px);
+  font-weight: 800;
+}
+
+.encabezado p {
+  margin: 9px 0 0;
+  color: #60758c;
+  font-size: 14px;
+}
+
+.insignia {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border: 1px solid #cfe0f1;
+  border-radius: 12px;
+  background: #eef5fc;
+  color: #075aa5;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+@media (max-width: 700px) {
+  .insignia {
+    padding: 9px 12px;
+  }
+}

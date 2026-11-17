@@ -6,6 +6,9 @@ const nextConfig: NextConfig = {
     agentFeedback: true,
   },
   cacheComponents: true,
+  // Librerías de exportación de reportes (PDF y Excel): se cargan
+  // directamente desde node_modules en el servidor, sin empaquetarlas.
+  serverExternalPackages: ["exceljs", "jspdf", "jspdf-autotable"],
   partialPrefetching: true,
   turbopack: {
     rules: {

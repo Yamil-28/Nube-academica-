@@ -13,14 +13,137 @@ enum Rol {
   ESTUDIANTE
 }
 
+enum TipoEventoAuditoria {
+  INICIO_SESION
+  INICIO_SESION_FALLIDO
+  CIERRE_SESION
+  REGISTRO_USUARIO
+  EDICION_USUARIO
+  ACTIVACION_USUARIO
+  DESACTIVACION_USUARIO
+  RESTABLECIMIENTO_CONTRASENA
+  ACCESO_DENEGADO
+}
+
 model Usuario {
-  id          Int      @id @default(autoincrement())
-  usuario     String   @unique
-  nombre      String
-  contrasena  String
-  rol         Rol
-  activo      Boolean  @default(true)
-  creadoEn    DateTime @default(now())
+  id            Int      @id @default(autoincrement())
+  usuario       String   @unique
+  nombre        String
+  contrasena    String
+  rol           Rol
+  activo        Boolean  @default(true)
+  creadoEn      DateTime @default(now())
+  versionSesion Int      @default(0)
+
+  auditorias    Auditoria[]
 
   @@map("usuarios")
+}
+
+model Auditoria {
+  id          Int                 @id @default(autoincrement())
+  tipo        TipoEventoAuditoria
+  descripcion String
+  usuarioId   Int?
+  usuario     Usuario?            @relation(fields: [usuarioId], references: [id], onDelete: SetNull)
+  usuarioNombre String?
+  entidadId   Int?
+  fecha       DateTime            @default(now())
+  detalles    Json?
+
+  @@index([fecha])
+  @@index([tipo])
+  @@index([usuarioId])
+  @@map("auditorias")
+}
+
+// ===== MÓDULO PROYECTOS ACADÉMICOS =====
+
+enum EstadoProyecto {
+  REGISTRADO
+  EN_DESARROLLO
+  EN_REVISION
+  FINALIZADO
+}
+
+model Proyecto {
+  id          Int            @id @default(autoincrement())
+  titulo      String
+  descripcion String
+  materiaId   Int
+  docenteId   Int
+  creadoPorId Int
+  gestion     Int
+  semestre    Int
+  estado      EstadoProyecto @default(REGISTRADO)
+  fechaInicio DateTime       @default(now())
+  fechaCierre DateTime?
+
+  avances       AvanceProyecto[]
+  observaciones ObservacionProyecto[]
+  equipo        Equipo?
+
+  @@index([docenteId])
+  @@index([creadoPorId])
+  @@map("proyectos")
+}
+
+model AvanceProyecto {
+  id          Int      @id @default(autoincrement())
+  proyectoId  Int
+  autorId     Int
+  descripcion String
+  fecha       DateTime @default(now())
+
+  proyecto Proyecto @relation(fields: [proyectoId], references: [id], onDelete: Cascade)
+
+  @@index([proyectoId])
+  @@map("avances_proyecto")
+}
+
+model ObservacionProyecto {
+  id         Int      @id @default(autoincrement())
+  proyectoId Int
+  docenteId  Int
+  texto      String
+  fecha      DateTime @default(now())
+
+  proyecto Proyecto @relation(fields: [proyectoId], references: [id], onDelete: Cascade)
+
+  @@index([proyectoId])
+  @@map("observaciones_proyecto")
+}
+// ===== MÓDULO EQUIPOS DE TRABAJO =====
+
+enum RolEquipo {
+  LIDER
+  INTEGRANTE
+}
+
+model Equipo {
+  id          Int      @id @default(autoincrement())
+  nombre      String
+  proyectoId  Int      @unique
+  creadoPorId Int
+  creadoEn    DateTime @default(now())
+
+  proyecto Proyecto        @relation(fields: [proyectoId], references: [id], onDelete: Cascade)
+  miembros MiembroEquipo[]
+
+  @@index([creadoPorId])
+  @@map("equipos")
+}
+
+model MiembroEquipo {
+  id           Int       @id @default(autoincrement())
+  equipoId     Int
+  usuarioId    Int
+  rolEquipo    RolEquipo @default(INTEGRANTE)
+  fechaIngreso DateTime  @default(now())
+
+  equipo Equipo @relation(fields: [equipoId], references: [id], onDelete: Cascade)
+
+  @@unique([equipoId, usuarioId])
+  @@index([usuarioId])
+  @@map("miembros_equipo")
 }

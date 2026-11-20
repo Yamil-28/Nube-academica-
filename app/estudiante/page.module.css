@@ -242,3 +242,112 @@
     padding: 9px 12px;
   }
 }
+
+
+/* ==========================================
+   MODO OSCURO - DASHBOARD DEL ESTUDIANTE
+========================================== */
+
+/* ==========================================
+   BIENVENIDA
+========================================== */
+
+:global(html[data-tema="oscuro"]) .dashboardRolEtiqueta {
+  color: var(--color-secundario);
+}
+
+:global(html[data-tema="oscuro"]) .dashboardRolBienvenida h1 {
+  color: var(--color-texto);
+}
+
+:global(html[data-tema="oscuro"]) .dashboardRolBienvenida p {
+  color: var(--color-texto-secundario);
+}
+
+/* ==========================================
+   INSIGNIA DEL ESTUDIANTE
+========================================== */
+
+:global(html[data-tema="oscuro"]) .dashboardRolInsignia {
+  background: #1e3a5f;
+  border-color: #315a85;
+  color: #93c5fd;
+}
+
+/* ==========================================
+   TÍTULOS DE SECCIONES
+========================================== */
+
+:global(html[data-tema="oscuro"]) .dashboardRolTitulo h2 {
+  color: var(--color-texto);
+}
+
+:global(html[data-tema="oscuro"]) .dashboardRolTitulo p {
+  color: var(--color-texto-secundario);
+}
+
+/* ==========================================
+   TARJETAS DE ACCESOS RÁPIDOS
+========================================== */
+
+:global(html[data-tema="oscuro"]) .dashboardRolTarjeta {
+  background: var(--color-blanco);
+  border-color: var(--color-borde);
+  color: var(--color-texto);
+}
+
+:global(html[data-tema="oscuro"]) .dashboardRolTarjeta:hover {
+  border-color: var(--color-secundario);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.3);
+}
+
+:global(html[data-tema="oscuro"]) .dashboardRolTarjetaSuperior > svg {
+  color: #94a3b8;
+}
+
+:global(html[data-tema="oscuro"]) .dashboardRolIcono {
+  background: #243d5c;
+  color: #93c5fd;
+}
+
+:global(html[data-tema="oscuro"]) .dashboardRolTarjeta h3 {
+  color: var(--color-texto);
+}
+
+:global(html[data-tema="oscuro"]) .dashboardRolTarjeta p {
+  color: var(--color-texto-secundario);
+}
+
+/* ==========================================
+   PANELES INFERIORES
+========================================== */
+
+:global(html[data-tema="oscuro"]) .dashboardRolPanel {
+  background: var(--color-blanco);
+  border-color: var(--color-borde);
+}
+
+:global(html[data-tema="oscuro"]) .dashboardRolPanelTitulo {
+  border-bottom-color: var(--color-borde);
+  color: var(--color-secundario);
+}
+
+:global(html[data-tema="oscuro"]) .dashboardRolPanelTitulo h2 {
+  color: var(--color-texto);
+}
+
+/* ==========================================
+   ESTADOS SIN INFORMACIÓN
+========================================== */
+
+:global(html[data-tema="oscuro"]) .dashboardRolVacio > svg {
+  color: #94a3b8;
+}
+
+:global(html[data-tema="oscuro"]) .dashboardRolVacio h3 {
+  color: var(--color-texto);
+}
+
+:global(html[data-tema="oscuro"]) .dashboardRolVacio p {
+  color: var(--color-texto-secundario);
+}

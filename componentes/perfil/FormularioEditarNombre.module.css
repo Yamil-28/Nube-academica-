@@ -1,0 +1,262 @@
+
+/* =========================================
+   SISCloud - EDITAR INFORMACIÓN PERSONAL
+========================================= */
+
+.tarjeta {
+  width: 100%;
+  padding: 28px;
+  border: 1px solid #dce6f0;
+  border-radius: 16px;
+  background: #ffffff;
+}
+
+.encabezado {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.icono {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  background: #e8f3ff;
+  color: #075aa5;
+}
+
+.encabezado h2 {
+  margin: 0 0 6px;
+  color: #073b70;
+  font-size: 21px;
+  font-weight: 700;
+}
+
+.encabezado p {
+  margin: 0;
+  color: #60758c;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.formulario {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+  width: 100%;
+  max-width: 600px;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  width: 100%;
+}
+
+.campo label {
+  color: #172b46;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.campo input {
+  width: 100%;
+  min-height: 46px;
+  padding: 12px 14px;
+  border: 1px solid #dce6f0;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #172b46;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.campo input:focus {
+  border-color: #075aa5;
+  box-shadow: 0 0 0 3px rgba(7, 90, 165, 0.1);
+}
+
+.campo input:disabled {
+  background: #f4f8fc;
+  cursor: not-allowed;
+}
+
+.campo input::placeholder {
+  color: #94a3b8;
+}
+
+.ayuda {
+  color: #60758c;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.error {
+  width: 100%;
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px solid #fecaca;
+  border-radius: 9px;
+  background: #fef2f2;
+  color: #b91c1c;
+  font-size: 13px;
+}
+
+.exito {
+  width: 100%;
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px solid #bbf7d0;
+  border-radius: 9px;
+  background: #f0fdf4;
+  color: #166534;
+  font-size: 13px;
+}
+
+.botonGuardar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 10px;
+  background: #073b70;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.botonGuardar:hover:not(:disabled) {
+  background: #075aa5;
+}
+
+.botonGuardar:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* =========================================
+   DISEÑO RESPONSIVO
+========================================= */
+
+@media (max-width: 700px) {
+  .tarjeta {
+    padding: 20px;
+  }
+
+  .encabezado {
+    align-items: flex-start;
+  }
+
+  .encabezado h2 {
+    font-size: 18px;
+  }
+
+  .botonGuardar {
+    width: 100%;
+  }
+}
+
+
+/* ==========================================
+   MODO OSCURO - EDITAR INFORMACIÓN PERSONAL
+========================================== */
+
+/* TARJETA PRINCIPAL */
+
+:global(html[data-tema="oscuro"]) .tarjeta {
+  background: var(--color-blanco);
+  border-color: var(--color-borde);
+}
+
+/* ICONO DEL FORMULARIO */
+
+:global(html[data-tema="oscuro"]) .icono {
+  background: #243d5c;
+  color: #93c5fd;
+}
+
+/* ENCABEZADO */
+
+:global(html[data-tema="oscuro"]) .encabezado h2 {
+  color: var(--color-texto);
+}
+
+:global(html[data-tema="oscuro"]) .encabezado p {
+  color: var(--color-texto-secundario);
+}
+
+/* ETIQUETAS */
+
+:global(html[data-tema="oscuro"]) .campo label {
+  color: var(--color-texto);
+}
+
+/* CAMPO DE TEXTO */
+
+:global(html[data-tema="oscuro"]) .campo input {
+  background: #111e33;
+  border-color: var(--color-borde);
+  color: var(--color-texto);
+}
+
+:global(html[data-tema="oscuro"]) .campo input:focus {
+  border-color: var(--color-secundario);
+  box-shadow: 0 0 0 3px rgba(147, 197, 253, 0.15);
+}
+
+:global(html[data-tema="oscuro"]) .campo input:disabled {
+  background: #1e293b;
+  color: #94a3b8;
+}
+
+:global(html[data-tema="oscuro"]) .campo input::placeholder {
+  color: #94a3b8;
+}
+
+/* TEXTO DE AYUDA */
+
+:global(html[data-tema="oscuro"]) .ayuda {
+  color: var(--color-texto-secundario);
+}
+
+/* MENSAJE DE ERROR */
+
+:global(html[data-tema="oscuro"]) .error {
+  background: #482329;
+  border-color: #7f3540;
+  color: #fca5a5;
+}
+
+/* MENSAJE DE ÉXITO */
+
+:global(html[data-tema="oscuro"]) .exito {
+  background: #153c2b;
+  border-color: #286749;
+  color: #86efac;
+}
+
+/* BOTÓN GUARDAR */
+
+:global(html[data-tema="oscuro"]) .botonGuardar {
+  background: #2563a6;
+  color: #ffffff;
+}
+
+:global(html[data-tema="oscuro"])
+.botonGuardar:hover:not(:disabled) {
+  background: #3479c5;
+}

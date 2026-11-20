@@ -1,3 +1,4 @@
+
 generator client {
   provider = "prisma-client"
   output   = "../app/generated/prisma"
@@ -8,7 +9,7 @@ datasource db {
 }
 
 /* ==========================================
-   MÓDULO 1: GESTIÓN DE USUARIOS (existente)
+   MÓDULO 1: GESTIÓN DE USUARIOS Y SEGURIDAD
 ========================================== */
 
 enum Rol {
@@ -17,30 +18,65 @@ enum Rol {
   ESTUDIANTE
 }
 
-model Usuario {
-  id          Int      @id @default(autoincrement())
-  usuario     String   @unique
-  nombre      String
-  contrasena  String
-  rol         Rol
-  activo      Boolean  @default(true)
-  creadoEn    DateTime @default(now())
+enum TipoEventoAuditoria {
+  INICIO_SESION
+  INICIO_SESION_FALLIDO
+  CIERRE_SESION
+  REGISTRO_USUARIO
+  EDICION_USUARIO
+  ACTIVACION_USUARIO
+  DESACTIVACION_USUARIO
+  RESTABLECIMIENTO_CONTRASENA
+  ACCESO_DENEGADO
+}
 
-  // Relaciones agregadas por los módulos de Diana
-  asignaciones        AsignacionDocente[]
-  proyectosDirigidos  Proyecto[]          @relation("DocenteProyecto")
-  membresias          MiembroProyecto[]
-  avancesEnviados     Avance[]            @relation("AutorAvance")
-  avancesRevisados    Avance[]            @relation("RevisorAvance")
-  reportesGenerados   Reporte[]
+model Usuario {
+  id            Int      @id @default(autoincrement())
+  usuario       String   @unique
+  nombre        String
+  contrasena    String
+  rol           Rol
+  activo        Boolean  @default(true)
+  creadoEn      DateTime @default(now())
+  versionSesion Int      @default(0)
+
+  // Seguridad y auditoría
+  auditorias Auditoria[]
+
+  // Gestión académica
+  asignaciones AsignacionDocente[]
+
+  // Proyectos y seguimiento
+  proyectosDirigidos Proyecto[] @relation("DocenteProyecto")
+  membresias         MiembroProyecto[]
+  avancesEnviados    Avance[]   @relation("AutorAvance")
+  avancesRevisados   Avance[]   @relation("RevisorAvance")
+
+  // Informes y reportes
+  reportesGenerados Reporte[]
 
   @@map("usuarios")
 }
 
+model Auditoria {
+  id            Int                 @id @default(autoincrement())
+  tipo          TipoEventoAuditoria
+  descripcion   String
+  usuarioId     Int?
+  usuario       Usuario?            @relation(fields: [usuarioId], references: [id], onDelete: SetNull)
+  usuarioNombre String?
+  entidadId     Int?
+  fecha         DateTime            @default(now())
+  detalles      Json?
+
+  @@index([fecha])
+  @@index([tipo])
+  @@index([usuarioId])
+  @@map("auditorias")
+}
+
 /* ==========================================
    MÓDULO 2: GESTIÓN ACADÉMICA
-   periodo_academico, materia y docente_materia
-   (modelo relacional del documento)
 ========================================== */
 
 enum Semestre {
@@ -79,27 +115,25 @@ model Materia {
 }
 
 model AsignacionDocente {
-  id         Int      @id @default(autoincrement())
-  idDocente  Int
-  idMateria  Int
-  idPeriodo  Int
-  creadoEn   DateTime @default(now())
+  id        Int      @id @default(autoincrement())
+  idDocente Int
+  idMateria Int
+  idPeriodo Int
+  creadoEn  DateTime @default(now())
 
-  docente  Usuario          @relation(fields: [idDocente], references: [id], onDelete: Cascade)
-  materia  Materia          @relation(fields: [idMateria], references: [id], onDelete: Cascade)
-  periodo  PeriodoAcademico @relation(fields: [idPeriodo], references: [id], onDelete: Cascade)
+  docente Usuario          @relation(fields: [idDocente], references: [id], onDelete: Cascade)
+  materia Materia          @relation(fields: [idMateria], references: [id], onDelete: Cascade)
+  periodo PeriodoAcademico @relation(fields: [idPeriodo], references: [id], onDelete: Cascade)
 
   @@unique([idDocente, idMateria, idPeriodo])
   @@map("asignaciones_docentes")
 }
 
 /* ==========================================
-   MÓDULO 5: PROYECTOS ACADÉMICOS (DEMOSTRACIÓN)
-   Tablas mínimas según el DER del documento
-   (seg_proyectos, seg_miembros, seg_hitos,
-   seg_avances) para alimentar los reportes.
-   La gestión completa de proyectos pertenece al
-   módulo de Proyectos académicos.
+   MÓDULO 5: PROYECTOS ACADÉMICOS
+   MODELOS TEMPORALES DE DEMOSTRACIÓN
+   Se adaptarán al módulo definitivo durante
+   la siguiente etapa de integración.
 ========================================== */
 
 enum EstadoProyecto {
@@ -135,9 +169,9 @@ model Proyecto {
   creadoEn      DateTime       @default(now())
   actualizadoEn DateTime       @updatedAt
 
-  materia  Materia?          @relation(fields: [idMateria], references: [id], onDelete: SetNull)
-  periodo  PeriodoAcademico? @relation(fields: [idPeriodo], references: [id], onDelete: SetNull)
-  docente  Usuario           @relation("DocenteProyecto", fields: [idDocente], references: [id])
+  materia Materia?          @relation(fields: [idMateria], references: [id], onDelete: SetNull)
+  periodo PeriodoAcademico? @relation(fields: [idPeriodo], references: [id], onDelete: SetNull)
+  docente Usuario           @relation("DocenteProyecto", fields: [idDocente], references: [id])
 
   miembros MiembroProyecto[]
   hitos    Hito[]
@@ -199,10 +233,6 @@ model Avance {
 
 /* ==========================================
    MÓDULO 7: INFORMES Y REPORTES
-   reporte (id_reporte, id_usuario, id_proyecto,
-   tipo_reporte, formato, fecha_generacion)
-   El contenido no se guarda: solo quién generó
-   qué reporte y cuándo (trazabilidad).
 ========================================== */
 
 model Reporte {

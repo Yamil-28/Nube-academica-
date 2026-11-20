@@ -7,6 +7,8 @@
   --dashboard-alto: 76px;
   --dashboard-azul: #092d55;
   --dashboard-amarillo: #f4c542;
+  --dashboard-hover: #244b74;
+  --dashboard-texto-suave: #c4d8eb;
 
   position: fixed;
   top: 0;
@@ -23,6 +25,18 @@
   background: var(--dashboard-azul);
   border-bottom: 3px solid var(--dashboard-amarillo);
   color: white;
+
+  transition: background-color 0.2s ease;
+}
+
+/* ==========================================
+   MODO OSCURO DEL ENCABEZADO
+========================================== */
+
+:global(html[data-tema="oscuro"]) .dashboardEncabezado {
+  --dashboard-azul: #111e33;
+  --dashboard-hover: #253b59;
+  --dashboard-texto-suave: #a9b9ce;
 }
 
 /* ==========================================
@@ -65,7 +79,7 @@
 
 .dashboardMarca small {
   font-size: 11px;
-  color: #c4d8eb;
+  color: var(--dashboard-texto-suave);
 }
 
 /* ==========================================
@@ -88,7 +102,7 @@
 }
 
 .dashboardBotonIcono:hover {
-  background: #244b74;
+  background: var(--dashboard-hover);
 }
 
 /* ==========================================
@@ -114,7 +128,7 @@
 }
 
 .dashboardPerfilBoton:hover {
-  background: #244b74;
+  background: var(--dashboard-hover);
 }
 
 .dashboardAvatar {
@@ -126,7 +140,7 @@
   height: 40px;
 
   border-radius: 50%;
-  background: #244b74;
+  background: var(--dashboard-hover);
   color: var(--dashboard-amarillo);
 }
 
@@ -159,12 +173,12 @@
   width: 230px;
   padding: 8px;
 
-  border: 1px solid #e1e8f0;
+  border: 1px solid var(--color-borde);
   border-radius: 12px;
 
-  background: white;
-  color: #243b53;
-  box-shadow: 0 12px 30px #092d5520;
+  background: var(--color-blanco);
+  color: var(--color-texto);
+  box-shadow: var(--sombra-tarjeta);
   z-index: 120;
 }
 
@@ -174,12 +188,12 @@
   gap: 4px;
 
   padding: 12px;
-  border-bottom: 1px solid #e6edf4;
+  border-bottom: 1px solid var(--color-borde);
   margin-bottom: 6px;
 }
 
 .dashboardPerfilMenuInfo span {
-  color: #66788b;
+  color: var(--color-texto-secundario);
   font-size: 12px;
 }
 
@@ -196,7 +210,7 @@
   border-radius: 8px;
   background: transparent;
 
-  color: #243b53;
+  color: var(--color-texto);
   text-decoration: none;
   text-align: left;
   font-size: 13px;
@@ -205,11 +219,20 @@
 
 .dashboardPerfilMenu a:hover,
 .dashboardPerfilMenu button:hover {
-  background: #eef4fa;
+  background: var(--color-fondo);
 }
 
 .dashboardPerfilMenu .dashboardOpcionSalir {
   color: #c62828;
+}
+
+/* ==========================================
+   MODO OSCURO DEL MENÚ DESPLEGABLE
+========================================== */
+
+:global(html[data-tema="oscuro"])
+.dashboardPerfilMenu .dashboardOpcionSalir {
+  color: #fca5a5;
 }
 
 /* ==========================================

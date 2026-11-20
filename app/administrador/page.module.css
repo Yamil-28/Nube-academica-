@@ -344,3 +344,132 @@
     padding: 9px 12px;
   }
 }
+
+
+/* ==========================================
+   MODO OSCURO - DASHBOARD ADMINISTRADOR
+========================================== */
+
+/* ENCABEZADO Y BIENVENIDA */
+
+:global(html[data-tema="oscuro"]) .administradorEtiqueta {
+  color: var(--color-secundario);
+}
+
+:global(html[data-tema="oscuro"]) .administradorBienvenida h1 {
+  color: var(--color-texto);
+}
+
+:global(html[data-tema="oscuro"]) .administradorBienvenida p {
+  color: var(--color-texto-secundario);
+}
+
+:global(html[data-tema="oscuro"]) .administradorInsignia {
+  background: #3b321c;
+  border-color: #665124;
+  color: #fcd34d;
+}
+
+/* TÍTULOS DE SECCIONES */
+
+:global(html[data-tema="oscuro"]) .administradorTituloSeccion h2,
+:global(html[data-tema="oscuro"]) .administradorPanelCabecera h2 {
+  color: var(--color-texto);
+}
+
+:global(html[data-tema="oscuro"]) .administradorTituloSeccion p,
+:global(html[data-tema="oscuro"]) .administradorPanelCabecera p {
+  color: var(--color-texto-secundario);
+}
+
+/* ACCESOS RÁPIDOS */
+
+:global(html[data-tema="oscuro"]) .administradorAcceso {
+  background: var(--color-blanco);
+  border-color: var(--color-borde);
+  color: var(--color-texto);
+}
+
+:global(html[data-tema="oscuro"]) .administradorAcceso:hover {
+  border-color: var(--color-secundario);
+  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.25);
+}
+
+:global(html[data-tema="oscuro"]) .administradorAccesoIcono {
+  background: #243d5c;
+  color: #93c5fd;
+}
+
+:global(html[data-tema="oscuro"]) .administradorAcceso small,
+:global(html[data-tema="oscuro"]) .administradorAcceso > svg:last-child {
+  color: var(--color-texto-secundario);
+}
+
+/* PANELES INFERIORES */
+
+:global(html[data-tema="oscuro"]) .administradorPanel {
+  background: var(--color-blanco);
+  border-color: var(--color-borde);
+}
+
+:global(html[data-tema="oscuro"]) .administradorPanelCabecera {
+  border-bottom-color: var(--color-borde);
+}
+
+:global(html[data-tema="oscuro"]) .administradorPanelCabecera a {
+  color: var(--color-secundario);
+}
+
+/* USUARIOS RECIENTES */
+
+:global(html[data-tema="oscuro"]) .administradorUsuario {
+  border-bottom-color: var(--color-borde);
+}
+
+:global(html[data-tema="oscuro"]) .administradorUsuarioAvatar {
+  background: #243d5c;
+  color: #93c5fd;
+}
+
+:global(html[data-tema="oscuro"]) .administradorUsuarioDatos strong {
+  color: var(--color-texto);
+}
+
+:global(html[data-tema="oscuro"]) .administradorUsuarioDatos span {
+  color: var(--color-texto-secundario);
+}
+
+:global(html[data-tema="oscuro"]) .administradorListaUsuarios > p {
+  color: var(--color-texto-secundario);
+}
+
+/* ESTADOS DE USUARIOS */
+
+:global(html[data-tema="oscuro"]) .activo {
+  background: #153c2b;
+  color: #86efac;
+}
+
+:global(html[data-tema="oscuro"]) .inactivo {
+  background: #482329;
+  color: #fca5a5;
+}
+
+/* MÓDULOS DEL SISTEMA */
+
+:global(html[data-tema="oscuro"]) .administradorListaModulos a {
+  border-bottom-color: var(--color-borde);
+  color: var(--color-texto);
+}
+
+:global(html[data-tema="oscuro"]) .administradorListaModulos a:hover {
+  color: var(--color-secundario);
+}
+
+:global(html[data-tema="oscuro"]) .administradorListaModulos a svg:first-child {
+  color: var(--color-secundario);
+}
+
+:global(html[data-tema="oscuro"]) .administradorListaModulos a svg:last-child {
+  color: var(--color-texto-secundario);
+}

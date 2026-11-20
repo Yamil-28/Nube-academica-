@@ -114,3 +114,73 @@
     font-size: 26px;
   }
 }
+
+
+/* ==========================================
+   MODO OSCURO - TARJETAS ESTADÍSTICAS
+========================================== */
+
+/* TARJETA PRINCIPAL */
+
+:global(html[data-tema="oscuro"]) .tarjetaEstadistica {
+  background: var(--color-blanco);
+  border-color: var(--color-borde);
+  color: var(--color-texto);
+}
+
+:global(html[data-tema="oscuro"]) .tarjetaEstadistica:hover {
+  border-color: var(--color-secundario);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.3);
+}
+
+/* FLECHA SUPERIOR */
+
+:global(html[data-tema="oscuro"]) .tarjetaFlecha {
+  color: #94a3b8;
+}
+
+/* VALORES Y TÍTULOS */
+
+:global(html[data-tema="oscuro"]) .tarjetaEstadisticaValor {
+  color: var(--color-texto);
+}
+
+:global(html[data-tema="oscuro"]) .tarjetaEstadisticaTitulo {
+  color: var(--color-texto-secundario);
+}
+
+/* ==========================================
+   COLORES DE LOS ICONOS EN MODO OSCURO
+========================================== */
+
+/* AZUL - TOTAL DE USUARIOS */
+
+:global(html[data-tema="oscuro"])
+.tarjetaAzul .tarjetaEstadisticaIcono {
+  background: #1e3a5f;
+  color: #93c5fd;
+}
+
+/* DORADO - ADMINISTRADORES */
+
+:global(html[data-tema="oscuro"])
+.tarjetaDorado .tarjetaEstadisticaIcono {
+  background: #453719;
+  color: #fcd34d;
+}
+
+/* VERDE - DOCENTES */
+
+:global(html[data-tema="oscuro"])
+.tarjetaVerde .tarjetaEstadisticaIcono {
+  background: #153c2b;
+  color: #86efac;
+}
+
+/* MORADO - ESTUDIANTES */
+
+:global(html[data-tema="oscuro"])
+.tarjetaMorado .tarjetaEstadisticaIcono {
+  background: #35244e;
+  color: #c4b5fd;
+}

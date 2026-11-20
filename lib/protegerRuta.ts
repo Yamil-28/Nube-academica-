@@ -10,14 +10,14 @@ import {
 } from "@/lib/sesion";
 
 export async function protegerRuta(rolPermitido: RolUsuario) {
-  // Comprobar si existe una sesión válida
+  // 1. Comprobar si existe una sesión válida
   const sesion = await obtenerSesion();
 
   if (!sesion) {
     redirect("/iniciar-sesion");
   }
 
-  // Consultar el estado y rol actuales en Neon
+  // 2. Consultar los datos actuales del usuario en Neon
   const usuario = await prisma.usuario.findUnique({
     where: { id: sesion.id },
     select: {
@@ -26,10 +26,11 @@ export async function protegerRuta(rolPermitido: RolUsuario) {
       nombre: true,
       rol: true,
       activo: true,
+      versionSesion: true,
     },
   });
 
-  // Bloquear cuentas inexistentes o deshabilitadas
+  // 3. Verificar que la cuenta exista y esté activa
   if (
     !usuario ||
     !usuario.activo ||
@@ -38,7 +39,12 @@ export async function protegerRuta(rolPermitido: RolUsuario) {
     redirect("/iniciar-sesion");
   }
 
-  // Comprobar el rol real almacenado en la base de datos
+  // 4. Comprobar que la sesión no haya sido invalidada
+  if (usuario.versionSesion !== sesion.versionSesion) {
+    redirect("/iniciar-sesion");
+  }
+
+  // 5. Verificar el rol actual del usuario
   if (usuario.rol !== rolPermitido) {
     redirect(obtenerRutaPorRol(usuario.rol));
   }

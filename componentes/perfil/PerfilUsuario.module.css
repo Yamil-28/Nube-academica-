@@ -1,0 +1,482 @@
+
+.pagina {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.volver {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: 9px;
+  padding: 10px 15px;
+  border: 1px solid #dce6f0;
+  border-radius: 9px;
+  background: #ffffff;
+  color: #073b70;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.volver:hover {
+  background: #e8f3ff;
+}
+
+.encabezado h1 {
+  margin: 8px 0;
+  color: #073b70;
+  font-size: 29px;
+}
+
+.encabezado p {
+  margin: 0;
+  color: #60758c;
+  font-size: 14px;
+}
+
+.etiqueta {
+  color: #075aa5;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.4px;
+}
+
+.tarjeta {
+  padding: 28px;
+  border: 1px solid #dce6f0;
+  border-radius: 16px;
+  background: #ffffff;
+}
+
+.perfilSuperior {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #dce6f0;
+}
+
+.avatar {
+  width: 76px;
+  height: 76px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: 18px;
+  background: #e8f3ff;
+  color: #075aa5;
+}
+
+.perfilSuperior h2 {
+  margin: 0 0 6px;
+  color: #073b70;
+  font-size: 23px;
+}
+
+.perfilSuperior p {
+  margin: 0 0 10px;
+  color: #60758c;
+  font-size: 14px;
+}
+
+.insignia {
+  display: inline-block;
+  padding: 6px 11px;
+  border-radius: 20px;
+  background: #fff5c2;
+  color: #073b70;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.informacion {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  margin-top: 26px;
+}
+
+.dato {
+  display: flex;
+  align-items: flex-start;
+  gap: 13px;
+  color: #075aa5;
+}
+
+.dato div {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.dato span {
+  color: #60758c;
+  font-size: 12px;
+}
+
+.dato strong {
+  color: #172b46;
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 700px) {
+  .pagina {
+    padding: 16px;
+  }
+
+  .tarjeta {
+    padding: 20px;
+  }
+
+  .informacion {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* =========================================
+   FORMULARIO DE CAMBIO DE CONTRASEÑA
+========================================= */
+
+.formularioContrasena {
+  padding: 28px;
+  border: 1px solid #dce6f0;
+  border-radius: 16px;
+  background: #ffffff;
+}
+
+.formularioEncabezado {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 24px;
+  color: #075aa5;
+}
+
+.formularioEncabezado h2 {
+  margin: 0 0 6px;
+  color: #073b70;
+  font-size: 21px;
+}
+
+.formularioEncabezado p {
+  margin: 0;
+  color: #60758c;
+  font-size: 13px;
+}
+
+.formularioCampos {
+  display: flex;
+  flex-direction: column;
+  gap: 19px;
+  max-width: 600px;
+}
+
+.formularioCampo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.formularioCampo label {
+  color: #172b46;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.formularioEntrada {
+  display: flex;
+  align-items: center;
+  border: 1px solid #dce6f0;
+  border-radius: 10px;
+  background: #ffffff;
+  overflow: hidden;
+}
+
+.formularioEntrada:focus-within {
+  border-color: #075aa5;
+  box-shadow: 0 0 0 3px rgba(7, 90, 165, 0.1);
+}
+
+.formularioEntrada input {
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  padding: 12px 14px;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #172b46;
+  font-size: 14px;
+}
+
+.formularioEntrada button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  min-height: 44px;
+  border: none;
+  background: transparent;
+  color: #60758c;
+  cursor: pointer;
+}
+
+.formularioEntrada button:hover {
+  color: #075aa5;
+  background: #e8f3ff;
+}
+
+.formularioAyuda {
+  margin: 0;
+  color: #60758c;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.formularioError {
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px solid #fecaca;
+  border-radius: 9px;
+  background: #fef2f2;
+  color: #b91c1c;
+  font-size: 13px;
+}
+
+.formularioExito {
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px solid #bbf7d0;
+  border-radius: 9px;
+  background: #f0fdf4;
+  color: #166534;
+  font-size: 13px;
+}
+
+.formularioGuardar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-start;
+  gap: 10px;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 10px;
+  background: #073b70;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.formularioGuardar:hover:not(:disabled) {
+  background: #075aa5;
+}
+
+.formularioGuardar:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Adaptación a dispositivos móviles */
+@media (max-width: 700px) {
+  .formularioContrasena {
+    padding: 20px;
+  }
+
+  .formularioEncabezado h2 {
+    font-size: 18px;
+  }
+
+  .formularioGuardar {
+    width: 100%;
+  }
+}
+
+
+/* ==========================================
+   MODO OSCURO - PERFIL DE USUARIO
+========================================== */
+
+/* BOTÓN VOLVER */
+
+:global(html[data-tema="oscuro"]) .volver {
+  background: var(--color-blanco);
+  border-color: var(--color-borde);
+  color: var(--color-secundario);
+}
+
+:global(html[data-tema="oscuro"]) .volver:hover {
+  background: #243d5c;
+}
+
+/* ENCABEZADO */
+
+:global(html[data-tema="oscuro"]) .encabezado h1 {
+  color: var(--color-texto);
+}
+
+:global(html[data-tema="oscuro"]) .encabezado p {
+  color: var(--color-texto-secundario);
+}
+
+:global(html[data-tema="oscuro"]) .etiqueta {
+  color: var(--color-secundario);
+}
+
+/* TARJETA DEL PERFIL */
+
+:global(html[data-tema="oscuro"]) .tarjeta {
+  background: var(--color-blanco);
+  border-color: var(--color-borde);
+}
+
+:global(html[data-tema="oscuro"]) .perfilSuperior {
+  border-bottom-color: var(--color-borde);
+}
+
+/* AVATAR */
+
+:global(html[data-tema="oscuro"]) .avatar {
+  background: #243d5c;
+  color: #93c5fd;
+}
+
+/* INFORMACIÓN SUPERIOR */
+
+:global(html[data-tema="oscuro"]) .perfilSuperior h2 {
+  color: var(--color-texto);
+}
+
+:global(html[data-tema="oscuro"]) .perfilSuperior p {
+  color: var(--color-texto-secundario);
+}
+
+/* INSIGNIA DEL ROL */
+
+:global(html[data-tema="oscuro"]) .insignia {
+  background: #453719;
+  color: #fcd34d;
+}
+
+/* DATOS PERSONALES */
+
+:global(html[data-tema="oscuro"]) .dato {
+  color: var(--color-secundario);
+}
+
+:global(html[data-tema="oscuro"]) .dato span {
+  color: var(--color-texto-secundario);
+}
+
+:global(html[data-tema="oscuro"]) .dato strong {
+  color: var(--color-texto);
+}
+
+/* ==========================================
+   MODO OSCURO - CAMBIO DE CONTRASEÑA
+========================================== */
+
+/* TARJETA DEL FORMULARIO */
+
+:global(html[data-tema="oscuro"]) .formularioContrasena {
+  background: var(--color-blanco);
+  border-color: var(--color-borde);
+}
+
+/* ENCABEZADO DEL FORMULARIO */
+
+:global(html[data-tema="oscuro"]) .formularioEncabezado {
+  color: var(--color-secundario);
+}
+
+:global(html[data-tema="oscuro"]) .formularioEncabezado h2 {
+  color: var(--color-texto);
+}
+
+:global(html[data-tema="oscuro"]) .formularioEncabezado p {
+  color: var(--color-texto-secundario);
+}
+
+/* ETIQUETAS DE LOS CAMPOS */
+
+:global(html[data-tema="oscuro"]) .formularioCampo label {
+  color: var(--color-texto);
+}
+
+/* ENTRADAS DE CONTRASEÑA */
+
+:global(html[data-tema="oscuro"]) .formularioEntrada {
+  background: #111e33;
+  border-color: var(--color-borde);
+}
+
+:global(html[data-tema="oscuro"]) .formularioEntrada:focus-within {
+  border-color: var(--color-secundario);
+  box-shadow: 0 0 0 3px rgba(147, 197, 253, 0.15);
+}
+
+:global(html[data-tema="oscuro"]) .formularioEntrada input {
+  color: var(--color-texto);
+  background: transparent;
+}
+
+:global(html[data-tema="oscuro"]) .formularioEntrada input::placeholder {
+  color: #94a3b8;
+}
+
+/* BOTÓN MOSTRAR / OCULTAR CONTRASEÑA */
+
+:global(html[data-tema="oscuro"]) .formularioEntrada button {
+  color: var(--color-texto-secundario);
+}
+
+:global(html[data-tema="oscuro"]) .formularioEntrada button:hover {
+  background: #243d5c;
+  color: #93c5fd;
+}
+
+/* TEXTO DE AYUDA */
+
+:global(html[data-tema="oscuro"]) .formularioAyuda {
+  color: var(--color-texto-secundario);
+}
+
+/* MENSAJES DE ERROR */
+
+:global(html[data-tema="oscuro"]) .formularioError {
+  background: #482329;
+  border-color: #7f3540;
+  color: #fca5a5;
+}
+
+/* MENSAJES DE ÉXITO */
+
+:global(html[data-tema="oscuro"]) .formularioExito {
+  background: #153c2b;
+  border-color: #286749;
+  color: #86efac;
+}
+
+/* BOTÓN GUARDAR CONTRASEÑA */
+
+:global(html[data-tema="oscuro"]) .formularioGuardar {
+  background: #2563a6;
+  color: #ffffff;
+}
+
+:global(html[data-tema="oscuro"])
+.formularioGuardar:hover:not(:disabled) {
+  background: #3479c5;
+}

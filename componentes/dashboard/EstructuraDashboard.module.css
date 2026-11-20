@@ -12,6 +12,23 @@
 
   min-height: 100dvh;
   background: #f4f7fb;
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+/* ==========================================
+   MODO OSCURO DEL DASHBOARD
+========================================== */
+
+:global(html[data-tema="oscuro"]) .dashboardEstructura {
+  --dashboard-azul: #111e33;
+  --dashboard-azul-claro: #1e3554;
+  --dashboard-amarillo: #f4c542;
+
+  background: var(--color-fondo);
+  color: var(--color-texto);
 }
 
 /* ==========================================

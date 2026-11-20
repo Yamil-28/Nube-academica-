@@ -1,3 +1,4 @@
+
 generator client {
   provider = "prisma-client"
   output   = "../app/generated/prisma"
@@ -13,14 +14,46 @@ enum Rol {
   ESTUDIANTE
 }
 
+enum TipoEventoAuditoria {
+  INICIO_SESION
+  INICIO_SESION_FALLIDO
+  CIERRE_SESION
+  REGISTRO_USUARIO
+  EDICION_USUARIO
+  ACTIVACION_USUARIO
+  DESACTIVACION_USUARIO
+  RESTABLECIMIENTO_CONTRASENA
+  ACCESO_DENEGADO
+}
+
 model Usuario {
-  id          Int      @id @default(autoincrement())
-  usuario     String   @unique
-  nombre      String
-  contrasena  String
-  rol         Rol
-  activo      Boolean  @default(true)
-  creadoEn    DateTime @default(now())
+  id            Int      @id @default(autoincrement())
+  usuario       String   @unique
+  nombre        String
+  contrasena    String
+  rol           Rol
+  activo        Boolean  @default(true)
+  creadoEn      DateTime @default(now())
+  versionSesion Int      @default(0)
+
+  auditorias    Auditoria[]
 
   @@map("usuarios")
+}
+
+model Auditoria {
+  id          Int                 @id @default(autoincrement())
+  tipo        TipoEventoAuditoria
+  descripcion String
+  usuarioId   Int?
+  usuario     Usuario?            @relation(fields: [usuarioId], references: [id], onDelete: SetNull)
+  usuarioNombre String?
+  entidadId   Int?
+  fecha       DateTime            @default(now())
+  detalles    Json?
+
+  @@index([fecha])
+  @@index([tipo])
+  @@index([usuarioId])
+  @@map("auditorias")
 }

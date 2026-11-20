@@ -1,0 +1,248 @@
+
+.pagina {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.botonVolver {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: 9px;
+  padding: 10px 15px;
+  border: 1px solid #dce6f0;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #073b70;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.botonVolver:hover {
+  background: #e8f3ff;
+}
+
+.encabezado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  color: #073b70;
+}
+
+.etiqueta {
+  color: #075aa5;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+}
+
+.encabezado h1 {
+  margin: 10px 0;
+  color: #073b70;
+  font-size: 30px;
+  font-weight: 800;
+}
+
+.encabezado p {
+  color: #60758c;
+  font-size: 14px;
+}
+
+.tarjetas {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.tarjeta {
+  padding: 24px;
+  background: #ffffff;
+  border: 1px solid #dce6f0;
+  border-radius: 16px;
+}
+
+.tarjetaIcono {
+  display: inline-flex;
+  padding: 12px;
+  border-radius: 12px;
+  background: #e8f3ff;
+  color: #075aa5;
+}
+
+.tarjeta h2 {
+  margin: 16px 0 8px;
+  color: #073b70;
+  font-size: 19px;
+}
+
+.tarjeta p {
+  min-height: 38px;
+  margin: 0;
+  color: #60758c;
+  font-size: 13px;
+}
+
+.tarjetaCantidad {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid #dce6f0;
+  color: #075aa5;
+  font-size: 13px;
+}
+
+.tarjetaCantidad strong {
+  font-size: 21px;
+}
+
+.panel {
+  overflow: hidden;
+  background: #ffffff;
+  border: 1px solid #dce6f0;
+  border-radius: 16px;
+}
+
+.panelEncabezado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 25px;
+  color: #073b70;
+}
+
+.panelEncabezado h2 {
+  margin: 0 0 8px;
+  font-size: 21px;
+  font-weight: 700;
+}
+
+.panelEncabezado p {
+  margin: 0;
+  color: #60758c;
+  font-size: 13px;
+}
+
+.tablaContenedor {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.tabla {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.tabla th {
+  padding: 17px 22px;
+  background: #f4f8fc;
+  color: #073b70;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.tabla td {
+  padding: 14px 22px;
+  border-top: 1px solid #e4edf5;
+  color: #172b46;
+  font-size: 13px;
+}
+
+.tabla th:not(:first-child),
+.tabla td:not(:first-child) {
+  text-align: center;
+}
+
+.filaModulo td {
+  padding: 14px 22px;
+  background: #eaf2fb;
+  color: #073b70;
+  font-weight: 800;
+  text-align: left !important;
+}
+
+.celdaPermiso {
+  text-align: center;
+}
+
+.permitido,
+.denegado {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+}
+
+.permitido {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.denegado {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.aviso {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 18px;
+  border: 1px solid #bfdbfe;
+  border-radius: 12px;
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+.aviso p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.acciones {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.botonUsuarios {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 13px 20px;
+  border-radius: 9px;
+  background: #073b70;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.botonUsuarios:hover {
+  background: #075aa5;
+}
+
+@media (max-width: 800px) {
+  .tarjetas {
+    grid-template-columns: 1fr;
+  }
+
+  .pagina {
+    padding: 16px;
+  }
+
+  .tabla {
+    min-width: 680px;
+  }
+}

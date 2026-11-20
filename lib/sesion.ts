@@ -13,10 +13,11 @@ export type DatosSesion = {
   id: number;
   usuario: string;
   rol: RolUsuario;
+  versionSesion: number;
 };
 
 const NOMBRE_COOKIE = "siscloud_sesion";
-const DURACION_SESION = 60 * 60 * 8; // 8 horas
+const DURACION_SESION = 60 * 60 * 8;
 
 function obtenerClaveSecreta() {
   const clave = process.env.CLAVE_SECRETA_SESION;
@@ -30,11 +31,12 @@ function obtenerClaveSecreta() {
   return new TextEncoder().encode(clave);
 }
 
-// Crear una sesión después de validar las credenciales
+// Crear una sesión con su versión actual
 export async function crearSesion(datos: DatosSesion) {
   const token = await new SignJWT({
     usuario: datos.usuario,
     rol: datos.rol,
+    versionSesion: datos.versionSesion,
   })
     .setProtectedHeader({ alg: "HS256" })
     .setSubject(String(datos.id))
@@ -53,7 +55,7 @@ export async function crearSesion(datos: DatosSesion) {
   });
 }
 
-// Obtener y comprobar la sesión actual
+// Obtener y verificar la sesión
 export async function obtenerSesion(): Promise<DatosSesion | null> {
   const almacenCookies = await cookies();
   const token = almacenCookies.get(NOMBRE_COOKIE)?.value;
@@ -72,6 +74,7 @@ export async function obtenerSesion(): Promise<DatosSesion | null> {
     const id = Number(payload.sub);
     const usuario = payload.usuario;
     const rol = payload.rol;
+    const versionSesion = payload.versionSesion;
 
     if (
       !Number.isSafeInteger(id) ||
@@ -79,7 +82,10 @@ export async function obtenerSesion(): Promise<DatosSesion | null> {
       typeof usuario !== "string" ||
       !["ADMINISTRADOR", "DOCENTE", "ESTUDIANTE"].includes(
         String(rol)
-      )
+      ) ||
+      typeof versionSesion !== "number" ||
+      !Number.isSafeInteger(versionSesion) ||
+      versionSesion < 0
     ) {
       return null;
     }
@@ -88,6 +94,7 @@ export async function obtenerSesion(): Promise<DatosSesion | null> {
       id,
       usuario,
       rol: rol as RolUsuario,
+      versionSesion,
     };
   } catch {
     return null;
@@ -101,7 +108,7 @@ export async function cerrarSesion() {
   almacenCookies.delete(NOMBRE_COOKIE);
 }
 
-// Obtener la ruta correspondiente a cada rol
+// Obtener la ruta según el rol
 export function obtenerRutaPorRol(rol: RolUsuario): string {
   switch (rol) {
     case "ADMINISTRADOR":

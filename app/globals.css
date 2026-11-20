@@ -21,7 +21,28 @@
 }
 
 /* ==========================================
-   2. CONFIGURACIÓN GENERAL
+   2. TEMA OSCURO DE SISCLOUD
+========================================== */
+
+:root[data-tema="oscuro"] {
+  color-scheme: dark;
+
+  --color-primario: #60a5fa;
+  --color-secundario: #93c5fd;
+  --color-acento: #ffd400;
+
+  --color-fondo: #0b1220;
+  --color-blanco: #172338;
+
+  --color-texto: #f1f5f9;
+  --color-texto-secundario: #a9b9ce;
+  --color-borde: #334155;
+
+  --sombra-tarjeta: 0 15px 45px rgba(0, 0, 0, 0.3);
+}
+
+/* ==========================================
+   3. CONFIGURACIÓN GENERAL
 ========================================== */
 
 * {
@@ -43,10 +64,14 @@ body {
   background: var(--color-fondo);
   color: var(--color-texto);
   font-family: Arial, Helvetica, sans-serif;
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
 }
 
 /* ==========================================
-   3. ELEMENTOS GENERALES
+   4. ELEMENTOS GENERALES
 ========================================== */
 
 button,
@@ -63,7 +88,7 @@ a {
 }
 
 /* ==========================================
-   4. ACCESIBILIDAD
+   5. ACCESIBILIDAD
 ========================================== */
 
 a:focus-visible,
@@ -73,7 +98,7 @@ button:focus-visible {
 }
 
 /* ==========================================
-   5. PIE DE PÁGINA DE SISCLOUD
+   6. PIE DE PÁGINA DE SISCLOUD
 ========================================== */
 
 /* Ocultar únicamente el pie de SISCloud

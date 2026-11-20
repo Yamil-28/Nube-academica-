@@ -4,6 +4,16 @@
 ========================================== */
 
 .dashboardLateral {
+  --lateral-fondo: #123b65;
+  --lateral-hover: #245481;
+  --lateral-activo: #245481;
+  --lateral-submenu-activo: #244e78;
+  --lateral-texto: #e2edf7;
+  --lateral-texto-secundario: #c8d9ea;
+  --lateral-cabecera: #a9c2db;
+  --lateral-acento: #ffd65c;
+  --lateral-scroll: #547495;
+
   position: fixed;
   top: var(--dashboard-alto, 76px);
   bottom: 0;
@@ -12,12 +22,30 @@
   width: var(--dashboard-ancho-lateral, 268px);
   padding: 22px 12px;
 
-  background: #123b65;
+  background: var(--lateral-fondo);
   overflow-y: auto;
   z-index: 90;
 
   scrollbar-width: thin;
-  scrollbar-color: #547495 transparent;
+  scrollbar-color: var(--lateral-scroll) transparent;
+
+  transition: background-color 0.2s ease;
+}
+
+/* ==========================================
+   MODO OSCURO DE LA BARRA LATERAL
+========================================== */
+
+:global(html[data-tema="oscuro"]) .dashboardLateral {
+  --lateral-fondo: #111e33;
+  --lateral-hover: #253b59;
+  --lateral-activo: #2b4668;
+  --lateral-submenu-activo: #243d5c;
+  --lateral-texto: #f1f5f9;
+  --lateral-texto-secundario: #cbd5e1;
+  --lateral-cabecera: #a9b9ce;
+  --lateral-acento: #ffd65c;
+  --lateral-scroll: #475569;
 }
 
 /* ==========================================
@@ -30,7 +58,7 @@
   justify-content: space-between;
 
   padding: 0 14px 20px;
-  color: #a9c2db;
+  color: var(--lateral-cabecera);
   font-size: 11px;
   font-weight: 800;
   letter-spacing: 1.4px;
@@ -63,7 +91,7 @@
   border-radius: 9px;
   background: transparent;
 
-  color: #e2edf7;
+  color: var(--lateral-texto);
   font-size: 13px;
   font-weight: 500;
   text-align: left;
@@ -76,12 +104,12 @@
 }
 
 .dashboardEnlace:hover {
-  background: #245481;
+  background: var(--lateral-hover);
 }
 
 .dashboardEnlaceActivo {
-  background: #245481;
-  color: #ffd65c;
+  background: var(--lateral-activo);
+  color: var(--lateral-acento);
   font-weight: 700;
 }
 
@@ -109,19 +137,19 @@
   padding: 9px 12px;
 
   border-radius: 7px;
-  color: #c8d9ea;
+  color: var(--lateral-texto-secundario);
   font-size: 12px;
   text-decoration: none;
 }
 
 .dashboardSubmenu:hover {
-  background: #245481;
+  background: var(--lateral-hover);
   color: white;
 }
 
 .dashboardSubmenuActivo {
-  background: #244e78;
-  color: #ffd65c;
+  background: var(--lateral-submenu-activo);
+  color: var(--lateral-acento);
 }
 
 .dashboardPuntoSubmenu {
@@ -155,7 +183,9 @@
 @media (max-width: 900px) {
   .dashboardLateral {
     transform: translateX(-100%);
-    transition: transform 0.25s ease;
+    transition:
+      transform 0.25s ease,
+      background-color 0.2s ease;
     z-index: 110;
   }
 

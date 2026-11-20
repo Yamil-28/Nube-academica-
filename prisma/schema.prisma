@@ -14,13 +14,166 @@ enum Rol {
 }
 
 model Usuario {
-  id          Int      @id @default(autoincrement())
-  usuario     String   @unique
-  nombre      String
-  contrasena  String
-  rol         Rol
-  activo      Boolean  @default(true)
-  creadoEn    DateTime @default(now())
+  id            Int              @id @default(autoincrement())
+  usuario       String           @unique
+  nombre        String
+  contrasena    String
+  rol           Rol
+  activo        Boolean          @default(true)
+  creadoEn      DateTime         @default(now())
+  archivosNube  Archivo[]        @relation("ArchivoPropietario")
+  versionesNube VersionArchivo[] @relation("VersionAutor")
+  permisosNube  PermisoArchivo[] @relation("PermisoUsuario")
 
   @@map("usuarios")
 }
+
+// === PEGAR AL FINAL de prisma/schema.prisma ===========================================
+// Supone Usuario.id Int. Si tu id es String, cambia los campos *Id a String.
+
+enum NivelPermisoArchivo {
+  LECTURA
+  EDICION
+}
+
+model TipoRecurso {
+  id       Int       @id @default(autoincrement())
+  nombre   String    @unique @db.VarChar(40)
+  archivos Archivo[]
+
+  @@map("tipo_recurso")
+}
+
+model Carpeta {
+  id             Int       @id @default(autoincrement())
+  proyectoId     Int
+  carpetaPadreId Int?
+  nombre         String    @db.VarChar(255)
+  creadaPorId    Int
+  creadaEn       DateTime  @default(now())
+  eliminadaEn    DateTime?
+
+  proyecto Proyecto  @relation(fields: [proyectoId], references: [id], onDelete: Cascade)
+  padre    Carpeta?  @relation("ArbolCarpetas", fields: [carpetaPadreId], references: [id])
+  hijas    Carpeta[] @relation("ArbolCarpetas")
+  archivos Archivo[]
+
+  @@index([proyectoId, carpetaPadreId])
+  @@map("carpeta")
+}
+
+model Archivo {
+  id            Int       @id @default(autoincrement())
+  proyectoId    Int
+  carpetaId     Int?
+  tipoRecursoId Int?
+  propietarioId Int
+  nombre        String    @db.VarChar(255)
+  extension     String?   @db.VarChar(20)
+  mime          String?   @db.VarChar(150)
+  tamanoBytes   BigInt
+  versionActual Int       @default(1)
+  creadoEn      DateTime  @default(now())
+  actualizadoEn DateTime  @updatedAt
+  eliminadoEn   DateTime?
+
+  proyecto    Proyecto         @relation(fields: [proyectoId], references: [id], onDelete: Cascade)
+  carpeta     Carpeta?         @relation(fields: [carpetaId], references: [id])
+  tipoRecurso TipoRecurso?     @relation(fields: [tipoRecursoId], references: [id])
+  propietario Usuario          @relation("ArchivoPropietario", fields: [propietarioId], references: [id])
+  versiones   VersionArchivo[]
+  permisos    PermisoArchivo[]
+
+  @@index([proyectoId, carpetaId])
+  @@map("archivo")
+}
+
+model VersionArchivo {
+  id                  Int      @id @default(autoincrement())
+  archivoId           Int
+  usuarioId           Int
+  numeroVersion       Int
+  claveAlmacenamiento String
+  tamanoBytes         BigInt
+  mime                String?  @db.VarChar(150)
+  comentario          String?
+  creadaEn            DateTime @default(now())
+
+  archivo Archivo @relation(fields: [archivoId], references: [id], onDelete: Cascade)
+  usuario Usuario @relation("VersionAutor", fields: [usuarioId], references: [id])
+
+  @@unique([archivoId, numeroVersion])
+  @@map("version_archivo")
+}
+
+model PermisoArchivo {
+  archivoId     Int
+  usuarioId     Int
+  nivel         NivelPermisoArchivo @default(LECTURA)
+  otorgadoPorId Int
+  creadoEn      DateTime            @default(now())
+
+  archivo Archivo @relation(fields: [archivoId], references: [id], onDelete: Cascade)
+  usuario Usuario @relation("PermisoUsuario", fields: [usuarioId], references: [id])
+
+  @@id([archivoId, usuarioId])
+  @@map("permiso_archivo")
+}
+
+model CuotaAlmacenamiento {
+  id              Int      @id @default(autoincrement())
+  proyectoId      Int      @unique
+  administradorId Int
+  limiteBytes     BigInt
+  fechaAsignacion DateTime @default(now())
+
+  proyecto Proyecto @relation(fields: [proyectoId], references: [id], onDelete: Cascade)
+
+  @@map("cuota_almacenamiento")
+}
+
+// ---- TEMPORALES: reemplázalos por los modelos de tus compañeros (Seguimiento / Equipos / Auditoría) ----
+model Proyecto {
+  id        Int      @id @default(autoincrement())
+  titulo    String   @db.VarChar(150)
+  docenteId Int?
+  creadorId Int
+  creadoEn  DateTime @default(now())
+
+  miembros MiembroProyecto[]
+  carpetas Carpeta[]
+  archivos Archivo[]
+  cuota    CuotaAlmacenamiento?
+
+  @@map("proyecto")
+}
+
+model MiembroProyecto {
+  proyectoId Int
+  usuarioId  Int
+  rolEquipo  String? @db.VarChar(80)
+
+  proyecto Proyecto @relation(fields: [proyectoId], references: [id], onDelete: Cascade)
+
+  @@id([proyectoId, usuarioId])
+  @@map("integrante_proyecto")
+}
+
+model RegistroActividad {
+  id        Int      @id @default(autoincrement())
+  usuarioId Int
+  accion    String   @db.VarChar(60)
+  entidad   String   @db.VarChar(40)
+  entidadId Int?
+  detalle   Json?
+  ip        String?  @db.VarChar(60)
+  fecha     DateTime @default(now())
+
+  @@index([usuarioId, fecha])
+  @@map("registro_actividad")
+}
+
+// ---- AGREGAR dentro de tu model Usuario existente ----
+//   archivosNube   Archivo[]        @relation("ArchivoPropietario")
+//   versionesNube  VersionArchivo[] @relation("VersionAutor")
+//   permisosNube   PermisoArchivo[] @relation("PermisoUsuario")

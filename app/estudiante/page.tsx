@@ -46,7 +46,7 @@ const accesos = [
   {
     titulo: "Archivos en la nube",
     descripcion: "Gestionar documentos y versiones",
-    ruta: "/estudiante/archivos",
+    ruta: "/estudiante/nube",
     icono: CloudUpload,
   },
   {

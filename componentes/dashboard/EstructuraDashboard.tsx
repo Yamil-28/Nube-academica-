@@ -1,13 +1,14 @@
-
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { createContext, useContext, useState, type ReactNode } from "react";
 
 import BarraLateral from "./BarraLateral";
 import EncabezadoDashboard from "./EncabezadoDashboard";
 
 import type { RolUsuario } from "@/lib/sesion";
 import estilos from "./EstructuraDashboard.module.css";
+
+const DashboardContext = createContext(false);
 
 type Propiedades = {
   usuario: string;
@@ -20,9 +21,13 @@ export default function EstructuraDashboard({
   rol,
   children,
 }: Propiedades) {
+  const dashboardExistente = useContext(DashboardContext);
   const [menuAbierto, establecerMenuAbierto] = useState(false);
 
+  if (dashboardExistente) return <>{children}</>;
+
   return (
+    <DashboardContext.Provider value={true}>
     <div
       className={estilos.dashboardEstructura}
       data-dashboard="siscloud"
@@ -43,5 +48,6 @@ export default function EstructuraDashboard({
         {children}
       </main>
     </div>
+    </DashboardContext.Provider>
   );
 }

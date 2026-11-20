@@ -1,4 +1,3 @@
-
 import { Suspense } from "react";
 import { BookOpen, FolderKanban, UsersRound } from "lucide-react";
 
@@ -30,9 +29,9 @@ async function ContenidoMisEstudiantes() {
     ? await Promise.all([
         listarAsignaciones({ idDocente: usuario.id, idPeriodo: vigente.id }),
         prisma.proyecto.findMany({
-          where: { idDocente: usuario.id, idPeriodo: vigente.id },
+          where: { docenteId: usuario.id, idPeriodo: vigente.id },
           include: {
-            miembros: { include: { usuario: { select: { id: true, nombre: true, usuario: true } } } },
+            equipo: { include: { miembros: { include: { usuario: { select: { id: true, nombre: true, usuario: true } } } } } },
           },
           orderBy: { titulo: "asc" },
         }),
@@ -40,7 +39,7 @@ async function ContenidoMisEstudiantes() {
     : [[], []];
 
   const totalEstudiantes = new Set(
-    proyectos.flatMap((p) => p.miembros.map((m) => m.usuario.id))
+    proyectos.flatMap((p) => (p.equipo?.miembros ?? []).map((m) => m.usuario.id))
   ).size;
 
   return (
@@ -71,7 +70,7 @@ async function ContenidoMisEstudiantes() {
         ) : (
           asignaciones.map((asignacion) => {
             const proyectosMateria = proyectos.filter(
-              (p) => p.idMateria === asignacion.materia.id
+              (p) => p.materiaId === asignacion.materia.id
             );
 
             return (
@@ -108,7 +107,7 @@ async function ContenidoMisEstudiantes() {
                       </thead>
                       <tbody>
                         {proyectosMateria.flatMap((proyecto) =>
-                          proyecto.miembros.map((miembro) => (
+                          (proyecto.equipo?.miembros ?? []).map((miembro) => (
                             <tr key={`${proyecto.id}-${miembro.usuario.id}`}>
                               <td>{miembro.usuario.nombre}</td>
                               <td>@{miembro.usuario.usuario}</td>

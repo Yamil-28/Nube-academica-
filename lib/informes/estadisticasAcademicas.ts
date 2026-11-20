@@ -1,4 +1,3 @@
-
 import "server-only";
 
 import { prisma } from "@/lib/prisma";
@@ -11,11 +10,10 @@ import { etiquetaMateria, nombrePeriodo } from "@/lib/academico/tipos";
 ========================================== */
 
 const ESTADOS_PROYECTO = [
-  { valor: "PLANIFICADO", texto: "Planificados" },
-  { valor: "EN_PROGRESO", texto: "En progreso" },
+  { valor: "REGISTRADO", texto: "Registrados" },
+  { valor: "EN_DESARROLLO", texto: "En desarrollo" },
   { valor: "EN_REVISION", texto: "En revisión" },
-  { valor: "COMPLETADO", texto: "Completados" },
-  { valor: "CANCELADO", texto: "Cancelados" },
+  { valor: "FINALIZADO", texto: "Finalizados" },
 ] as const;
 
 export async function obtenerEstadisticasAcademicas() {
@@ -34,9 +32,9 @@ export async function obtenerEstadisticasAcademicas() {
     vigente ? prisma.asignacionDocente.count({ where: { idPeriodo: vigente.id } }) : 0,
     prisma.proyecto.count(),
     prisma.proyecto.groupBy({ by: ["estado"], _count: { _all: true } }),
-    prisma.avance.count({ where: { revisionEstado: "PENDIENTE" } }),
+    prisma.avanceProyecto.count({ where: { revisionEstado: "PENDIENTE" } }),
     prisma.proyecto.groupBy({
-      by: ["idMateria"],
+      by: ["materiaId"],
       where: vigente ? { idPeriodo: vigente.id } : {},
       _count: { _all: true },
     }),
@@ -57,7 +55,7 @@ export async function obtenerEstadisticasAcademicas() {
     porMateria: materias.map((materia) => ({
       etiqueta: etiquetaMateria(materia),
       valor:
-        proyectosPorMateria.find((fila) => fila.idMateria === materia.id)?._count._all ?? 0,
+        proyectosPorMateria.find((fila) => fila.materiaId === materia.id)?._count._all ?? 0,
     })),
   };
 }

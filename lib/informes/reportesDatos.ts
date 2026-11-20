@@ -1,4 +1,3 @@
-
 import "server-only";
 
 import { prisma } from "@/lib/prisma";
@@ -24,11 +23,10 @@ import {
 ========================================== */
 
 const ESTADOS_PROYECTO: OpcionFiltro[] = [
-  { valor: "PLANIFICADO", texto: "Planificado" },
-  { valor: "EN_PROGRESO", texto: "En progreso" },
+  { valor: "REGISTRADO", texto: "Registrado" },
+  { valor: "EN_DESARROLLO", texto: "En desarrollo" },
   { valor: "EN_REVISION", texto: "En revisión" },
-  { valor: "COMPLETADO", texto: "Completado" },
-  { valor: "CANCELADO", texto: "Cancelado" },
+  { valor: "FINALIZADO", texto: "Finalizado" },
 ];
 
 const ESTADOS_REVISION: OpcionFiltro[] = [
@@ -106,7 +104,7 @@ const incluirProyecto = {
   materia: true,
   periodo: true,
   docente: { select: { nombre: true } },
-  miembros: { include: { usuario: { select: { id: true, nombre: true } } } },
+  equipo: { include: { miembros: { include: { usuario: { select: { id: true, nombre: true } } } } } },
   hitos: { select: { estado: true } },
 } satisfies Prisma.ProyectoInclude;
 
@@ -122,8 +120,8 @@ function porcentajeAvance(proyecto: ProyectoCompleto) {
 function condicionProyectos(filtros: Record<string, string>): Prisma.ProyectoWhereInput {
   return {
     ...(idFiltro(filtros.periodo) ? { idPeriodo: idFiltro(filtros.periodo) } : {}),
-    ...(idFiltro(filtros.materia) ? { idMateria: idFiltro(filtros.materia) } : {}),
-    ...(idFiltro(filtros.docente) ? { idDocente: idFiltro(filtros.docente) } : {}),
+    ...(idFiltro(filtros.materia) ? { materiaId: idFiltro(filtros.materia) } : {}),
+    ...(idFiltro(filtros.docente) ? { docenteId: idFiltro(filtros.docente) } : {}),
     ...(filtros.estado
       ? { estado: filtros.estado as Prisma.ProyectoWhereInput["estado"] }
       : {}),
@@ -162,29 +160,29 @@ async function consultarProyectos(where: Prisma.ProyectoWhereInput, limite: numb
    AVANCES (consulta común)
 ========================================== */
 
-async function consultarAvances(where: Prisma.AvanceWhereInput, limite: number) {
-  return prisma.avance.findMany({
+async function consultarAvances(where: Prisma.AvanceProyectoWhereInput, limite: number) {
+  return prisma.avanceProyecto.findMany({
     where,
     include: {
       proyecto: { select: { titulo: true } },
       hito: { select: { titulo: true } },
       autor: { select: { nombre: true } },
     },
-    orderBy: { creadoEn: "desc" },
+    orderBy: { fecha: "desc" },
     take: limite,
   });
 }
 
 type AvanceCompleto = Awaited<ReturnType<typeof consultarAvances>>[number];
 
-function condicionAvances(filtros: Record<string, string>): Prisma.AvanceWhereInput {
+function condicionAvances(filtros: Record<string, string>): Prisma.AvanceProyectoWhereInput {
   return {
     ...(filtros.revision
-      ? { revisionEstado: filtros.revision as Prisma.AvanceWhereInput["revisionEstado"] }
+      ? { revisionEstado: filtros.revision as Prisma.AvanceProyectoWhereInput["revisionEstado"] }
       : {}),
     proyecto: {
       ...(idFiltro(filtros.periodo) ? { idPeriodo: idFiltro(filtros.periodo) } : {}),
-      ...(idFiltro(filtros.materia) ? { idMateria: idFiltro(filtros.materia) } : {}),
+      ...(idFiltro(filtros.materia) ? { materiaId: idFiltro(filtros.materia) } : {}),
     },
   };
 }
@@ -224,7 +222,7 @@ const COLUMNAS_AVANCES = [
 function filasAvances(avances: AvanceCompleto[]) {
   return avances.map((a, i) => [
     i + 1,
-    formatearFecha(a.creadoEn),
+    formatearFecha(a.fecha),
     a.proyecto.titulo,
     a.titulo,
     a.hito?.titulo ?? "—",
@@ -269,7 +267,7 @@ const reportes: DefinicionReporteDatos[] = [
             p.materia ? etiquetaMateria(p.materia) : "—",
             p.periodo ? nombrePeriodo(p.periodo) : "—",
             p.docente.nombre,
-            p.miembros.map((m) => m.usuario.nombre).join(", "),
+            (p.equipo?.miembros ?? []).map((m) => m.usuario.nombre).join(", "),
             texto(ESTADOS_PROYECTO, p.estado),
             `${porcentajeAvance(p)}%`,
           ]),
@@ -317,12 +315,12 @@ const reportes: DefinicionReporteDatos[] = [
 
       // Proyectos por materia y periodo
       const conteos = await prisma.proyecto.groupBy({
-        by: ["idMateria", "idPeriodo"],
+        by: ["materiaId", "idPeriodo"],
         _count: { _all: true },
       });
 
       const proyectosDe = (idMateria: number, idPeriodo: number) =>
-        conteos.find((c) => c.idMateria === idMateria && c.idPeriodo === idPeriodo)?._count
+        conteos.find((c) => c.materiaId === idMateria && c.idPeriodo === idPeriodo)?._count
           ._all ?? 0;
 
       return {
@@ -370,7 +368,7 @@ const reportes: DefinicionReporteDatos[] = [
     async generar({ usuario, filtros, limite }) {
       // Solo los proyectos del docente que genera el reporte
       const proyectos = await consultarProyectos(
-        { ...condicionProyectos(filtros), idDocente: usuario.id },
+        { ...condicionProyectos(filtros), docenteId: usuario.id },
         limite
       );
 
@@ -391,7 +389,7 @@ const reportes: DefinicionReporteDatos[] = [
             p.titulo,
             p.materia ? etiquetaMateria(p.materia) : "—",
             p.periodo ? nombrePeriodo(p.periodo) : "—",
-            p.miembros.map((m) => m.usuario.nombre).join(", "),
+            (p.equipo?.miembros ?? []).map((m) => m.usuario.nombre).join(", "),
             texto(ESTADOS_PROYECTO, p.estado),
             `${porcentajeAvance(p)}%`,
           ]),
@@ -411,7 +409,7 @@ const reportes: DefinicionReporteDatos[] = [
       const avances = await consultarAvances(
         {
           ...condicion,
-          proyecto: { ...(condicion.proyecto as Prisma.ProyectoWhereInput), idDocente: usuario.id },
+          proyecto: { ...(condicion.proyecto as Prisma.ProyectoWhereInput), docenteId: usuario.id },
         },
         limite
       );
@@ -434,7 +432,7 @@ const reportes: DefinicionReporteDatos[] = [
     async generar({ usuario, filtros, limite }) {
       // Solo los proyectos en los que participa el estudiante
       const proyectos = await consultarProyectos(
-        { ...condicionProyectos(filtros), miembros: { some: { idUsuario: usuario.id } } },
+        { ...condicionProyectos(filtros), OR: [{ creadoPorId: usuario.id }, { equipo: { is: { miembros: { some: { usuarioId: usuario.id } } } } }] },
         limite
       );
 
@@ -457,7 +455,7 @@ const reportes: DefinicionReporteDatos[] = [
             p.materia ? etiquetaMateria(p.materia) : "—",
             p.periodo ? nombrePeriodo(p.periodo) : "—",
             p.docente.nombre,
-            p.miembros.find((m) => m.usuario.id === usuario.id)?.rolEquipo ?? "—",
+            (p.equipo?.miembros ?? []).find((m) => m.usuario.id === usuario.id)?.rolEquipo ?? "—",
             texto(ESTADOS_PROYECTO, p.estado),
             `${porcentajeAvance(p)}%`,
           ]),
@@ -473,10 +471,10 @@ const reportes: DefinicionReporteDatos[] = [
     roles: ["ESTUDIANTE"],
     filtros: [filtroPeriodo, filtroRevision],
     async generar({ usuario, filtros, limite }) {
-      const avances = await prisma.avance.findMany({
-        where: { ...condicionAvances(filtros), idAutor: usuario.id },
+      const avances = await prisma.avanceProyecto.findMany({
+        where: { ...condicionAvances(filtros), autorId: usuario.id },
         include: { proyecto: { select: { titulo: true } }, hito: { select: { titulo: true } } },
-        orderBy: { creadoEn: "desc" },
+        orderBy: { fecha: "desc" },
         take: limite,
       });
 
@@ -500,7 +498,7 @@ const reportes: DefinicionReporteDatos[] = [
           ],
           filas: avances.map((a, i) => [
             i + 1,
-            formatearFecha(a.creadoEn),
+            formatearFecha(a.fecha),
             a.proyecto.titulo,
             a.titulo,
             texto(ESTADOS_REVISION, a.revisionEstado),

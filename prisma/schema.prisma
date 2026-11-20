@@ -9,7 +9,7 @@ datasource db {
 }
 
 /* ==========================================
-   MÓDULO 1: GESTIÓN DE USUARIOS Y SEGURIDAD
+   MODULO 1: USUARIOS Y SEGURIDAD
 ========================================== */
 
 enum Rol {
@@ -40,19 +40,19 @@ model Usuario {
   creadoEn      DateTime @default(now())
   versionSesion Int      @default(0)
 
-  // Seguridad y auditoría
   auditorias Auditoria[]
-
-  // Gestión académica
   asignaciones AsignacionDocente[]
 
-  // Proyectos y seguimiento
   proyectosDirigidos Proyecto[] @relation("DocenteProyecto")
-  membresias         MiembroProyecto[]
-  avancesEnviados    Avance[]   @relation("AutorAvance")
-  avancesRevisados   Avance[]   @relation("RevisorAvance")
+  proyectosCreados Proyecto[] @relation("CreadorProyecto")
 
-  // Informes y reportes
+  equiposCreados Equipo[]
+  membresias MiembroEquipo[]
+
+  avancesEnviados AvanceProyecto[] @relation("AutorAvance")
+  avancesRevisados AvanceProyecto[] @relation("RevisorAvance")
+
+  observaciones ObservacionProyecto[]
   reportesGenerados Reporte[]
 
   @@map("usuarios")
@@ -63,10 +63,10 @@ model Auditoria {
   tipo          TipoEventoAuditoria
   descripcion   String
   usuarioId     Int?
-  usuario       Usuario?            @relation(fields: [usuarioId], references: [id], onDelete: SetNull)
+  usuario       Usuario? @relation(fields: [usuarioId], references: [id], onDelete: SetNull)
   usuarioNombre String?
   entidadId     Int?
-  fecha         DateTime            @default(now())
+  fecha         DateTime @default(now())
   detalles      Json?
 
   @@index([fecha])
@@ -76,7 +76,7 @@ model Auditoria {
 }
 
 /* ==========================================
-   MÓDULO 2: GESTIÓN ACADÉMICA
+   MODULO 2: GESTION ACADEMICA
 ========================================== */
 
 enum Semestre {
@@ -93,7 +93,7 @@ model PeriodoAcademico {
   creadoEn  DateTime @default(now())
 
   asignaciones AsignacionDocente[]
-  proyectos    Proyecto[]
+  proyectos Proyecto[]
 
   @@unique([gestion, semestre])
   @@map("periodos_academicos")
@@ -109,7 +109,7 @@ model Materia {
   creadoEn    DateTime @default(now())
 
   asignaciones AsignacionDocente[]
-  proyectos    Proyecto[]
+  proyectos Proyecto[]
 
   @@map("materias")
 }
@@ -121,8 +121,8 @@ model AsignacionDocente {
   idPeriodo Int
   creadoEn  DateTime @default(now())
 
-  docente Usuario          @relation(fields: [idDocente], references: [id], onDelete: Cascade)
-  materia Materia          @relation(fields: [idMateria], references: [id], onDelete: Cascade)
+  docente Usuario @relation(fields: [idDocente], references: [id], onDelete: Cascade)
+  materia Materia @relation(fields: [idMateria], references: [id], onDelete: Cascade)
   periodo PeriodoAcademico @relation(fields: [idPeriodo], references: [id], onDelete: Cascade)
 
   @@unique([idDocente, idMateria, idPeriodo])
@@ -130,19 +130,92 @@ model AsignacionDocente {
 }
 
 /* ==========================================
-   MÓDULO 5: PROYECTOS ACADÉMICOS
-   MODELOS TEMPORALES DE DEMOSTRACIÓN
-   Se adaptarán al módulo definitivo durante
-   la siguiente etapa de integración.
+   MODULO: PROYECTOS ACADEMICOS
 ========================================== */
 
 enum EstadoProyecto {
-  PLANIFICADO
-  EN_PROGRESO
+  REGISTRADO
+  EN_DESARROLLO
   EN_REVISION
-  COMPLETADO
-  CANCELADO
+  FINALIZADO
 }
+
+model Proyecto {
+  id            Int            @id @default(autoincrement())
+  titulo        String
+  descripcion   String
+  materiaId     Int
+  docenteId     Int
+  creadoPorId   Int
+  idPeriodo     Int?
+  gestion       Int
+  semestre      Int
+  estado        EstadoProyecto @default(REGISTRADO)
+  fechaInicio   DateTime       @default(now())
+  fechaCierre   DateTime?
+  creadoEn      DateTime       @default(now())
+  actualizadoEn DateTime       @updatedAt
+
+  materia Materia @relation(fields: [materiaId], references: [id])
+  docente Usuario @relation("DocenteProyecto", fields: [docenteId], references: [id])
+  creador Usuario @relation("CreadorProyecto", fields: [creadoPorId], references: [id])
+  periodo PeriodoAcademico? @relation(fields: [idPeriodo], references: [id], onDelete: SetNull)
+
+  avances AvanceProyecto[]
+  observaciones ObservacionProyecto[]
+  equipo Equipo?
+  hitos Hito[]
+  reportes Reporte[]
+
+  @@index([docenteId])
+  @@index([creadoPorId])
+  @@index([materiaId])
+  @@index([idPeriodo])
+  @@map("proyectos")
+}
+
+/* ==========================================
+   MODULO: EQUIPOS DE TRABAJO
+========================================== */
+
+enum RolEquipo {
+  LIDER
+  INTEGRANTE
+}
+
+model Equipo {
+  id          Int      @id @default(autoincrement())
+  nombre      String
+  proyectoId  Int      @unique
+  creadoPorId Int
+  creadoEn    DateTime @default(now())
+
+  proyecto Proyecto @relation(fields: [proyectoId], references: [id], onDelete: Cascade)
+  creador Usuario @relation(fields: [creadoPorId], references: [id])
+  miembros MiembroEquipo[]
+
+  @@index([creadoPorId])
+  @@map("equipos")
+}
+
+model MiembroEquipo {
+  id           Int       @id @default(autoincrement())
+  equipoId     Int
+  usuarioId    Int
+  rolEquipo    RolEquipo @default(INTEGRANTE)
+  fechaIngreso DateTime  @default(now())
+
+  equipo Equipo @relation(fields: [equipoId], references: [id], onDelete: Cascade)
+  usuario Usuario @relation(fields: [usuarioId], references: [id])
+
+  @@unique([equipoId, usuarioId])
+  @@index([usuarioId])
+  @@map("miembros_equipo")
+}
+
+/* ==========================================
+   MODULO: SEGUIMIENTO DE PROYECTOS
+========================================== */
 
 enum EstadoHito {
   PENDIENTE
@@ -156,43 +229,6 @@ enum EstadoRevision {
   OBSERVADO
 }
 
-model Proyecto {
-  id            Int            @id @default(autoincrement())
-  titulo        String
-  descripcion   String         @default("")
-  idMateria     Int?
-  idPeriodo     Int?
-  idDocente     Int
-  estado        EstadoProyecto @default(PLANIFICADO)
-  fechaInicio   DateTime
-  fechaFin      DateTime?
-  creadoEn      DateTime       @default(now())
-  actualizadoEn DateTime       @updatedAt
-
-  materia Materia?          @relation(fields: [idMateria], references: [id], onDelete: SetNull)
-  periodo PeriodoAcademico? @relation(fields: [idPeriodo], references: [id], onDelete: SetNull)
-  docente Usuario           @relation("DocenteProyecto", fields: [idDocente], references: [id])
-
-  miembros MiembroProyecto[]
-  hitos    Hito[]
-  avances  Avance[]
-  reportes Reporte[]
-
-  @@map("seg_proyectos")
-}
-
-model MiembroProyecto {
-  idProyecto Int
-  idUsuario  Int
-  rolEquipo  String @default("integrante")
-
-  proyecto Proyecto @relation(fields: [idProyecto], references: [id], onDelete: Cascade)
-  usuario  Usuario  @relation(fields: [idUsuario], references: [id], onDelete: Cascade)
-
-  @@id([idProyecto, idUsuario])
-  @@map("seg_miembros")
-}
-
 model Hito {
   id          Int        @id @default(autoincrement())
   idProyecto  Int
@@ -203,36 +239,53 @@ model Hito {
   creadoEn    DateTime   @default(now())
 
   proyecto Proyecto @relation(fields: [idProyecto], references: [id], onDelete: Cascade)
-  avances  Avance[]
+  avances AvanceProyecto[]
 
   @@map("seg_hitos")
 }
 
-model Avance {
+model AvanceProyecto {
   id                Int            @id @default(autoincrement())
-  idProyecto        Int
+  proyectoId        Int
+  autorId           Int
+  descripcion       String
+  fecha             DateTime       @default(now())
+
+  // Campos adicionales para seguimiento y reportes
   idHito            Int?
-  idAutor           Int
-  titulo            String
-  descripcion       String         @default("")
+  titulo            String         @default("Avance")
   enlace            String?
   revisionEstado    EstadoRevision @default(PENDIENTE)
   retroalimentacion String?
   calificacion      Int?
   idRevisor         Int?
   revisadoEn        DateTime?
-  creadoEn          DateTime       @default(now())
 
-  proyecto Proyecto @relation(fields: [idProyecto], references: [id], onDelete: Cascade)
-  hito     Hito?    @relation(fields: [idHito], references: [id], onDelete: SetNull)
-  autor    Usuario  @relation("AutorAvance", fields: [idAutor], references: [id])
-  revisor  Usuario? @relation("RevisorAvance", fields: [idRevisor], references: [id])
+  proyecto Proyecto @relation(fields: [proyectoId], references: [id], onDelete: Cascade)
+  autor Usuario @relation("AutorAvance", fields: [autorId], references: [id])
+  hito Hito? @relation(fields: [idHito], references: [id], onDelete: SetNull)
+  revisor Usuario? @relation("RevisorAvance", fields: [idRevisor], references: [id])
 
-  @@map("seg_avances")
+  @@index([proyectoId])
+  @@map("avances_proyecto")
+}
+
+model ObservacionProyecto {
+  id         Int      @id @default(autoincrement())
+  proyectoId Int
+  docenteId  Int
+  texto      String
+  fecha      DateTime @default(now())
+
+  proyecto Proyecto @relation(fields: [proyectoId], references: [id], onDelete: Cascade)
+  docente Usuario @relation(fields: [docenteId], references: [id])
+
+  @@index([proyectoId])
+  @@map("observaciones_proyecto")
 }
 
 /* ==========================================
-   MÓDULO 7: INFORMES Y REPORTES
+   MODULO 7: INFORMES Y REPORTES
 ========================================== */
 
 model Reporte {
@@ -243,7 +296,7 @@ model Reporte {
   formato         String
   fechaGeneracion DateTime @default(now())
 
-  usuario  Usuario   @relation(fields: [idUsuario], references: [id], onDelete: Cascade)
+  usuario Usuario @relation(fields: [idUsuario], references: [id], onDelete: Cascade)
   proyecto Proyecto? @relation(fields: [idProyecto], references: [id], onDelete: SetNull)
 
   @@index([fechaGeneracion])

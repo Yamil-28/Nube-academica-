@@ -114,7 +114,7 @@ const proyectos: ProyectoDemo[] = [
     materia: "Sistemas de Información II",
     semestre: "II",
     docente: "docente",
-    estado: "EN_PROGRESO",
+    estado: "EN_DESARROLLO",
     inicio: "2026-08-10",
     miembros: [["estudiante", "líder"], ["aflores", "integrante"]],
     hitos: [
@@ -153,7 +153,7 @@ const proyectos: ProyectoDemo[] = [
     materia: "Ingeniería de Sistemas II",
     semestre: "II",
     docente: "docente",
-    estado: "PLANIFICADO",
+    estado: "REGISTRADO",
     inicio: "2026-10-01",
     miembros: [["rcondori", "líder"], ["dpacheco", "integrante"]],
     hitos: [
@@ -168,7 +168,7 @@ const proyectos: ProyectoDemo[] = [
     materia: "Redes Avanzadas",
     semestre: "II",
     docente: "mrojas",
-    estado: "EN_PROGRESO",
+    estado: "EN_DESARROLLO",
     inicio: "2026-08-15",
     miembros: [["lgutierrez", "líder"], ["estudiante", "integrante"]],
     hitos: [
@@ -187,7 +187,7 @@ const proyectos: ProyectoDemo[] = [
     materia: "Big Data",
     semestre: "II",
     docente: "mrojas",
-    estado: "COMPLETADO",
+    estado: "FINALIZADO",
     inicio: "2026-08-05",
     fin: "2026-11-05",
     miembros: [["aflores", "líder"], ["jmamani", "integrante"]],
@@ -208,7 +208,7 @@ const proyectos: ProyectoDemo[] = [
     materia: "Desarrollo de Aplicaciones Móviles",
     semestre: "II",
     docente: "lquispe",
-    estado: "EN_PROGRESO",
+    estado: "EN_DESARROLLO",
     inicio: "2026-08-20",
     miembros: [["cvargas", "líder"], ["rcondori", "integrante"]],
     hitos: [
@@ -226,7 +226,7 @@ const proyectos: ProyectoDemo[] = [
     materia: "Big Data",
     semestre: "I",
     docente: "docente",
-    estado: "COMPLETADO",
+    estado: "FINALIZADO",
     inicio: "2026-02-15",
     fin: "2026-06-20",
     miembros: [["dpacheco", "líder"], ["lgutierrez", "integrante"]],
@@ -245,7 +245,7 @@ const proyectos: ProyectoDemo[] = [
     materia: "Desarrollo de Aplicaciones Móviles",
     semestre: "II",
     docente: "lquispe",
-    estado: "CANCELADO",
+    estado: "REGISTRADO", // El esquema integrado no contempla cancelación. Ejemplo replanificado.
     inicio: "2026-08-25",
     miembros: [["jmamani", "líder"]],
     hitos: [["Prototipo conversacional", "2026-10-01", "PENDIENTE"]],
@@ -346,17 +346,24 @@ async function main() {
       data: {
         titulo: p.titulo,
         descripcion: p.descripcion,
-        idMateria: idsMaterias.get(p.materia),
+        materiaId: idsMaterias.get(p.materia)!,
         idPeriodo: periodos.get(p.semestre),
-        idDocente: idUsuario(p.docente),
+        docenteId: idUsuario(p.docente),
+        creadoPorId: idUsuario(p.miembros[0][0]),
+        gestion: 2026,
+        semestre: p.semestre === "I" ? 1 : 2,
         estado: p.estado,
         fechaInicio: fecha(p.inicio),
-        fechaFin: p.fin ? fecha(p.fin) : null,
-        miembros: {
-          create: p.miembros.map(([usuario, rolEquipo]) => ({
-            idUsuario: idUsuario(usuario),
-            rolEquipo,
-          })),
+        fechaCierre: p.fin ? fecha(p.fin) : null,
+        equipo: {
+          create: {
+            nombre: `Equipo - ${p.titulo}`,
+            creadoPorId: idUsuario(p.miembros[0][0]),
+            miembros: { create: p.miembros.map(([usuario, rolEquipo]) => ({
+              usuarioId: idUsuario(usuario),
+              rolEquipo: rolEquipo === "líder" ? "LIDER" as const : "INTEGRANTE" as const,
+            })) },
+          },
         },
         hitos: {
           create: p.hitos.map(([titulo, limite, estado]) => ({
@@ -372,18 +379,19 @@ async function main() {
     for (const a of p.avances) {
       const revisado = a.revision !== "PENDIENTE";
 
-      await prisma.avance.create({
+      await prisma.avanceProyecto.create({
         data: {
-          idProyecto: proyecto.id,
+          proyectoId: proyecto.id,
           idHito: proyecto.hitos.find((h) => h.titulo === a.hito)?.id,
-          idAutor: idUsuario(a.autor),
+          autorId: idUsuario(a.autor),
           titulo: a.titulo,
           revisionEstado: a.revision,
           calificacion: a.calificacion,
           retroalimentacion: a.retro,
           idRevisor: revisado ? idUsuario(p.docente) : null,
           revisadoEn: revisado ? fecha(a.fecha) : null,
-          creadoEn: fecha(a.fecha),
+          fecha: fecha(a.fecha),
+           descripcion: a.titulo,
         },
       });
     }

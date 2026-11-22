@@ -1,4 +1,3 @@
-
 generator client {
   provider = "prisma-client"
   output   = "../app/generated/prisma"
@@ -8,19 +7,15 @@ datasource db {
   provider = "postgresql"
 }
 
-// ==========================================
-// ROLES DEL SISTEMA
-// ==========================================
+/* ==========================================
+   MODULO 1: USUARIOS Y SEGURIDAD
+========================================== */
 
 enum Rol {
   ADMINISTRADOR
   DOCENTE
   ESTUDIANTE
 }
-
-// ==========================================
-// MÓDULO: USUARIOS Y SEGURIDAD
-// ==========================================
 
 enum TipoEventoAuditoria {
   INICIO_SESION
@@ -45,6 +40,23 @@ model Usuario {
   versionSesion Int      @default(0)
 
   auditorias Auditoria[]
+  asignaciones AsignacionDocente[]
+
+  proyectosDirigidos Proyecto[] @relation("DocenteProyecto")
+  proyectosCreados Proyecto[] @relation("CreadorProyecto")
+
+  equiposCreados Equipo[]
+  membresias MiembroEquipo[]
+
+  avancesEnviados AvanceProyecto[] @relation("AutorAvance")
+  avancesRevisados AvanceProyecto[] @relation("RevisorAvance")
+
+  observaciones ObservacionProyecto[]
+  reportesGenerados Reporte[]
+
+  archivosNube Archivo[] @relation("ArchivoPropietario")
+  versionesNube VersionArchivo[] @relation("VersionAutor")
+  permisosNube PermisoArchivo[] @relation("PermisoUsuario")
 
   @@map("usuarios")
 }
@@ -54,10 +66,10 @@ model Auditoria {
   tipo          TipoEventoAuditoria
   descripcion   String
   usuarioId     Int?
-  usuario       Usuario?            @relation(fields: [usuarioId], references: [id], onDelete: SetNull)
+  usuario       Usuario? @relation(fields: [usuarioId], references: [id], onDelete: SetNull)
   usuarioNombre String?
   entidadId     Int?
-  fecha         DateTime            @default(now())
+  fecha         DateTime @default(now())
   detalles      Json?
 
   @@index([fecha])
@@ -66,9 +78,63 @@ model Auditoria {
   @@map("auditorias")
 }
 
-// ==========================================
-// MÓDULO: PROYECTOS ACADÉMICOS
-// ==========================================
+/* ==========================================
+   MODULO 2: GESTION ACADEMICA
+========================================== */
+
+enum Semestre {
+  I
+  II
+}
+
+model PeriodoAcademico {
+  id        Int      @id @default(autoincrement())
+  gestion   Int
+  semestre  Semestre
+  vigente   Boolean  @default(false)
+  activo    Boolean  @default(true)
+  creadoEn  DateTime @default(now())
+
+  asignaciones AsignacionDocente[]
+  proyectos Proyecto[]
+
+  @@unique([gestion, semestre])
+  @@map("periodos_academicos")
+}
+
+model Materia {
+  id          Int      @id @default(autoincrement())
+  codigo      String?  @unique
+  nombre      String   @unique
+  nivel       Int
+  descripcion String   @default("")
+  activa      Boolean  @default(true)
+  creadoEn    DateTime @default(now())
+
+  asignaciones AsignacionDocente[]
+  proyectos Proyecto[]
+
+  @@map("materias")
+}
+
+model AsignacionDocente {
+  id        Int      @id @default(autoincrement())
+  idDocente Int
+  idMateria Int
+  idPeriodo Int
+  creadoEn  DateTime @default(now())
+
+  docente Usuario @relation(fields: [idDocente], references: [id], onDelete: Cascade)
+  materia Materia @relation(fields: [idMateria], references: [id], onDelete: Cascade)
+  periodo PeriodoAcademico @relation(fields: [idPeriodo], references: [id], onDelete: Cascade)
+
+  @@unique([idDocente, idMateria, idPeriodo])
+  @@map("asignaciones_docentes")
+}
+
+/* ==========================================
+   MODULO: PROYECTOS ACADEMICOS
+========================================== */
 
 enum EstadoProyecto {
   REGISTRADO
@@ -78,56 +144,46 @@ enum EstadoProyecto {
 }
 
 model Proyecto {
-  id          Int            @id @default(autoincrement())
-  titulo      String
-  descripcion String
-  materiaId   Int
-  docenteId   Int
-  creadoPorId Int
-  gestion     Int
-  semestre    Int
-  estado      EstadoProyecto @default(REGISTRADO)
-  fechaInicio DateTime       @default(now())
-  fechaCierre DateTime?
+  id            Int            @id @default(autoincrement())
+  titulo        String
+  descripcion   String
+  materiaId     Int
+  docenteId     Int
+  creadoPorId   Int
+  idPeriodo     Int?
+  gestion       Int
+  semestre      Int
+  estado        EstadoProyecto @default(REGISTRADO)
+  fechaInicio   DateTime       @default(now())
+  fechaCierre   DateTime?
+  creadoEn      DateTime       @default(now())
+  actualizadoEn DateTime       @updatedAt
 
-  avances       AvanceProyecto[]
+  materia Materia @relation(fields: [materiaId], references: [id])
+  docente Usuario @relation("DocenteProyecto", fields: [docenteId], references: [id])
+  creador Usuario @relation("CreadorProyecto", fields: [creadoPorId], references: [id])
+  periodo PeriodoAcademico? @relation(fields: [idPeriodo], references: [id], onDelete: SetNull)
+
+  avances AvanceProyecto[]
   observaciones ObservacionProyecto[]
-  equipo        Equipo?
+  equipo Equipo?
+  hitos Hito[]
+  reportes Reporte[]
 
   @@index([docenteId])
   @@index([creadoPorId])
+  @@index([materiaId])
+  @@index([idPeriodo])
+  carpetas Carpeta[]
+  archivos Archivo[]
+  cuota CuotaAlmacenamiento?
+
   @@map("proyectos")
 }
 
-model AvanceProyecto {
-  id          Int      @id @default(autoincrement())
-  proyectoId  Int
-  autorId     Int
-  descripcion String
-  fecha       DateTime @default(now())
-
-  proyecto Proyecto @relation(fields: [proyectoId], references: [id], onDelete: Cascade)
-
-  @@index([proyectoId])
-  @@map("avances_proyecto")
-}
-
-model ObservacionProyecto {
-  id         Int      @id @default(autoincrement())
-  proyectoId Int
-  docenteId  Int
-  texto      String
-  fecha      DateTime @default(now())
-
-  proyecto Proyecto @relation(fields: [proyectoId], references: [id], onDelete: Cascade)
-
-  @@index([proyectoId])
-  @@map("observaciones_proyecto")
-}
-
-// ==========================================
-// MÓDULO: EQUIPOS DE TRABAJO
-// ==========================================
+/* ==========================================
+   MODULO: EQUIPOS DE TRABAJO
+========================================== */
 
 enum RolEquipo {
   LIDER
@@ -141,8 +197,9 @@ model Equipo {
   creadoPorId Int
   creadoEn    DateTime @default(now())
 
-  proyecto Proyecto        @relation(fields: [proyectoId], references: [id], onDelete: Cascade)
-  miembros  MiembroEquipo[]
+  proyecto Proyecto @relation(fields: [proyectoId], references: [id], onDelete: Cascade)
+  creador Usuario @relation(fields: [creadoPorId], references: [id])
+  miembros MiembroEquipo[]
 
   @@index([creadoPorId])
   @@map("equipos")
@@ -156,8 +213,214 @@ model MiembroEquipo {
   fechaIngreso DateTime  @default(now())
 
   equipo Equipo @relation(fields: [equipoId], references: [id], onDelete: Cascade)
+  usuario Usuario @relation(fields: [usuarioId], references: [id])
 
   @@unique([equipoId, usuarioId])
   @@index([usuarioId])
   @@map("miembros_equipo")
+}
+
+/* ==========================================
+   MODULO: SEGUIMIENTO DE PROYECTOS
+========================================== */
+
+enum EstadoHito {
+  PENDIENTE
+  EN_PROGRESO
+  COMPLETADO
+}
+
+enum EstadoRevision {
+  PENDIENTE
+  APROBADO
+  OBSERVADO
+}
+
+model Hito {
+  id          Int        @id @default(autoincrement())
+  idProyecto  Int
+  titulo      String
+  descripcion String     @default("")
+  fechaLimite DateTime
+  estado      EstadoHito @default(PENDIENTE)
+  creadoEn    DateTime   @default(now())
+
+  proyecto Proyecto @relation(fields: [idProyecto], references: [id], onDelete: Cascade)
+  avances AvanceProyecto[]
+
+  @@map("seg_hitos")
+}
+
+model AvanceProyecto {
+  id                Int            @id @default(autoincrement())
+  proyectoId        Int
+  autorId           Int
+  descripcion       String
+  fecha             DateTime       @default(now())
+
+  // Campos adicionales para seguimiento y reportes
+  idHito            Int?
+  titulo            String         @default("Avance")
+  enlace            String?
+  revisionEstado    EstadoRevision @default(PENDIENTE)
+  retroalimentacion String?
+  calificacion      Int?
+  idRevisor         Int?
+  revisadoEn        DateTime?
+
+  proyecto Proyecto @relation(fields: [proyectoId], references: [id], onDelete: Cascade)
+  autor Usuario @relation("AutorAvance", fields: [autorId], references: [id])
+  hito Hito? @relation(fields: [idHito], references: [id], onDelete: SetNull)
+  revisor Usuario? @relation("RevisorAvance", fields: [idRevisor], references: [id])
+
+  @@index([proyectoId])
+  @@map("avances_proyecto")
+}
+
+model ObservacionProyecto {
+  id         Int      @id @default(autoincrement())
+  proyectoId Int
+  docenteId  Int
+  texto      String
+  fecha      DateTime @default(now())
+
+  proyecto Proyecto @relation(fields: [proyectoId], references: [id], onDelete: Cascade)
+  docente Usuario @relation(fields: [docenteId], references: [id])
+
+  @@index([proyectoId])
+  @@map("observaciones_proyecto")
+}
+
+/* ==========================================
+   MODULO 7: INFORMES Y REPORTES
+========================================== */
+
+model Reporte {
+  id              Int      @id @default(autoincrement())
+  idUsuario       Int
+  idProyecto      Int?
+  tipoReporte     String
+  formato         String
+  fechaGeneracion DateTime @default(now())
+
+  usuario Usuario @relation(fields: [idUsuario], references: [id], onDelete: Cascade)
+  proyecto Proyecto? @relation(fields: [idProyecto], references: [id], onDelete: SetNull)
+
+  @@index([fechaGeneracion])
+  @@map("reportes")
+}
+
+enum NivelPermisoArchivo {
+  LECTURA
+  EDICION
+}
+
+model TipoRecurso {
+  id       Int       @id @default(autoincrement())
+  nombre   String    @unique @db.VarChar(40)
+  archivos Archivo[]
+
+  @@map("tipo_recurso")
+}
+
+model Carpeta {
+  id             Int       @id @default(autoincrement())
+  proyectoId     Int
+  carpetaPadreId Int?
+  nombre         String    @db.VarChar(255)
+  creadaPorId    Int
+  creadaEn       DateTime  @default(now())
+  eliminadaEn    DateTime?
+
+  proyecto Proyecto  @relation(fields: [proyectoId], references: [id], onDelete: Cascade)
+  padre    Carpeta?  @relation("ArbolCarpetas", fields: [carpetaPadreId], references: [id])
+  hijas    Carpeta[] @relation("ArbolCarpetas")
+  archivos Archivo[]
+
+  @@index([proyectoId, carpetaPadreId])
+  @@map("carpeta")
+}
+
+model Archivo {
+  id            Int       @id @default(autoincrement())
+  proyectoId    Int
+  carpetaId     Int?
+  tipoRecursoId Int?
+  propietarioId Int
+  nombre        String    @db.VarChar(255)
+  extension     String?   @db.VarChar(20)
+  mime          String?   @db.VarChar(150)
+  tamanoBytes   BigInt
+  versionActual Int       @default(1)
+  creadoEn      DateTime  @default(now())
+  actualizadoEn DateTime  @updatedAt
+  eliminadoEn   DateTime?
+
+  proyecto    Proyecto         @relation(fields: [proyectoId], references: [id], onDelete: Cascade)
+  carpeta     Carpeta?         @relation(fields: [carpetaId], references: [id])
+  tipoRecurso TipoRecurso?     @relation(fields: [tipoRecursoId], references: [id])
+  propietario Usuario          @relation("ArchivoPropietario", fields: [propietarioId], references: [id])
+  versiones   VersionArchivo[]
+  permisos    PermisoArchivo[]
+
+  @@index([proyectoId, carpetaId])
+  @@map("archivo")
+}
+
+model VersionArchivo {
+  id                  Int      @id @default(autoincrement())
+  archivoId           Int
+  usuarioId           Int
+  numeroVersion       Int
+  claveAlmacenamiento String
+  tamanoBytes         BigInt
+  mime                String?  @db.VarChar(150)
+  comentario          String?
+  creadaEn            DateTime @default(now())
+
+  archivo Archivo @relation(fields: [archivoId], references: [id], onDelete: Cascade)
+  usuario Usuario @relation("VersionAutor", fields: [usuarioId], references: [id])
+
+  @@unique([archivoId, numeroVersion])
+  @@map("version_archivo")
+}
+
+model PermisoArchivo {
+  archivoId     Int
+  usuarioId     Int
+  nivel         NivelPermisoArchivo @default(LECTURA)
+  otorgadoPorId Int
+  creadoEn      DateTime            @default(now())
+
+  archivo Archivo @relation(fields: [archivoId], references: [id], onDelete: Cascade)
+  usuario Usuario @relation("PermisoUsuario", fields: [usuarioId], references: [id])
+
+  @@id([archivoId, usuarioId])
+  @@map("permiso_archivo")
+}
+
+model CuotaAlmacenamiento {
+  id              Int      @id @default(autoincrement())
+  proyectoId      Int      @unique
+  administradorId Int
+  limiteBytes     BigInt
+  fechaAsignacion DateTime @default(now())
+
+  proyecto Proyecto @relation(fields: [proyectoId], references: [id], onDelete: Cascade)
+
+  @@map("cuota_almacenamiento")
+}
+
+model RegistroActividad {
+  id        Int      @id @default(autoincrement())
+  usuarioId Int
+  accion    String   @db.VarChar(60)
+  entidad   String   @db.VarChar(40)
+  entidadId Int?
+  detalle   Json?
+  ip        String?  @db.VarChar(60)
+  fecha     DateTime @default(now())
+
+  @@index([usuarioId, fecha])
+  @@map("registro_actividad")
 }

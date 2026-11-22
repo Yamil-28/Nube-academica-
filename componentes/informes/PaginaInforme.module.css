@@ -1,0 +1,165 @@
+
+/* ==========================================
+   ESTRUCTURA COMÚN DE LAS PÁGINAS DE INFORMES
+========================================== */
+
+.contenedor {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+  padding-top: 24px;
+}
+
+/* La navegación interna trae su propio margen inferior */
+.contenedor > div:first-child {
+  margin-bottom: 0;
+}
+
+.cargando {
+  padding: 40px;
+  color: #60758c;
+  font-size: 14px;
+  text-align: center;
+}
+
+/* ==========================================
+   SECCIONES Y PANELES
+========================================== */
+
+.seccion {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.tituloSeccion h2,
+.panelCabecera h2 {
+  margin: 0;
+  color: #172b46;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.tituloSeccion p,
+.panelCabecera p {
+  margin: 5px 0 0;
+  color: #60758c;
+  font-size: 13px;
+}
+
+.panel {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid #dce6f0;
+  border-radius: 14px;
+  background: #ffffff;
+}
+
+.panelCabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 20px;
+  border-bottom: 1px solid #e7eef5;
+}
+
+.panelCuerpo {
+  padding: 20px;
+}
+
+/* ==========================================
+   MENSAJES
+========================================== */
+
+.aviso {
+  margin: 0;
+  padding: 13px 16px;
+  border: 1px solid #f2dfaa;
+  border-radius: 10px;
+  background: #fff9e9;
+  color: #8a6200;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.error {
+  margin: 0;
+  padding: 13px 16px;
+  border: 1px solid #f3c9c9;
+  border-radius: 10px;
+  background: #fcecec;
+  color: #a23434;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* ==========================================
+   RESUMEN EN CIFRAS
+========================================== */
+
+.resumen {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.resumen span {
+  padding: 7px 12px;
+  border-radius: 20px;
+  background: #eef5fc;
+  color: #073b70;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* ==========================================
+   BOTONES DE EXPORTACIÓN
+========================================== */
+
+.exportar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.botonExportar {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 38px;
+  padding: 9px 14px;
+  border: 1px solid #dce6f0;
+  border-radius: 9px;
+  background: #ffffff;
+  color: #075aa5;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.botonExportar:hover {
+  border-color: #b8cee3;
+  background: #eef4fa;
+}
+
+.botonExportarPrincipal {
+  border-color: #075aa5;
+  background: #075aa5;
+  color: #ffffff;
+}
+
+.botonExportarPrincipal:hover {
+  border-color: #073b70;
+  background: #073b70;
+}
+
+.botonExportarDeshabilitado {
+  opacity: 0.5;
+  pointer-events: none;
+}

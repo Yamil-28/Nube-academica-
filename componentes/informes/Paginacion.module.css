@@ -1,0 +1,49 @@
+
+/* ==========================================
+   PAGINACIÓN - SISCLOUD
+========================================== */
+
+.paginacion {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 16px 20px;
+  border-top: 1px solid #e7eef5;
+}
+
+.informacion {
+  color: #60758c;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.botones {
+  display: flex;
+  gap: 8px;
+}
+
+.boton {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 7px 12px;
+  border: 1px solid #dce6f0;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #075aa5;
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+a.boton:hover {
+  border-color: #b8cee3;
+  background: #eef4fa;
+}
+
+.deshabilitado {
+  color: #9aaec1;
+  cursor: not-allowed;
+}

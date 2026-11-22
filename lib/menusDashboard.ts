@@ -51,7 +51,7 @@ export function obtenerMenus(rol: RolUsuario): MenuDashboard[] {
         icono: "nube",
         submenus: [
           { nombre: "Almacenamiento", ruta: "/administrador/almacenamiento" },
-          { nombre: "Archivos y carpetas", ruta: "/administrador/archivos" },
+          { nombre: "Archivos y carpetas", ruta: "/administrador/nube" },
         ],
       },
       {
@@ -114,7 +114,7 @@ export function obtenerMenus(rol: RolUsuario): MenuDashboard[] {
         nombre: "Nube académica",
         icono: "nube",
         submenus: [
-          { nombre: "Archivos de proyectos", ruta: "/docente/archivos" },
+          { nombre: "Archivos de proyectos", ruta: "/docente/nube" },
           { nombre: "Espacios compartidos", ruta: "/docente/compartidos" },
         ],
       },
@@ -167,9 +167,7 @@ export function obtenerMenus(rol: RolUsuario): MenuDashboard[] {
       nombre: "Nube académica",
       icono: "nube",
       submenus: [
-        { nombre: "Mis archivos", ruta: "/estudiante/archivos" },
-        { nombre: "Carpetas", ruta: "/estudiante/carpetas" },
-        { nombre: "Versiones", ruta: "/estudiante/versiones" },
+        { nombre: "Mis archivos", ruta: "/estudiante/nube" },
       ],
     },
     {

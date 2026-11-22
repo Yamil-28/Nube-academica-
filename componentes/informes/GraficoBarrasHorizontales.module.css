@@ -1,0 +1,83 @@
+
+/* ==========================================
+   GRÁFICO DE BARRAS HORIZONTALES - SISCLOUD
+========================================== */
+
+.grafico {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.fila {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cabecera {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.cabecera strong {
+  color: #172b46;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.cabecera span {
+  color: #60758c;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.pista {
+  width: 100%;
+  height: 10px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #edf2f7;
+}
+
+.barra {
+  height: 100%;
+  min-width: 4px;
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+
+.barraAzul {
+  background: #075aa5;
+}
+
+.barraDorado {
+  background: #d5a500;
+}
+
+.barraVerde {
+  background: #238348;
+}
+
+.barraMorado {
+  background: #7750b4;
+}
+
+.detalle {
+  color: #60758c;
+  font-size: 11px;
+}
+
+.vacio {
+  margin: 0;
+  padding: 24px 0;
+  color: #60758c;
+  font-size: 13px;
+  text-align: center;
+}

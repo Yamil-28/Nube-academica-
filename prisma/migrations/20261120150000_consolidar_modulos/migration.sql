@@ -1,246 +1,115 @@
+
 BEGIN;
 
-LOCK TABLE "integrante_proyecto", "proyecto", "seg_avances", "seg_miembros", "seg_proyectos", "seg_hitos", "archivo", "carpeta", "cuota_almacenamiento", "reportes" IN ACCESS EXCLUSIVE MODE;
+-- Completar la tabla proyectos
+ALTER TABLE "proyectos"
+    ADD COLUMN "idPeriodo" INTEGER,
+    ADD COLUMN "creadoEn" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    ADD COLUMN "actualizadoEn" TIMESTAMP(3);
+-- Completar la fecha de actualización de proyectos existentes
+UPDATE "proyectos"
+SET "actualizadoEn" = CURRENT_TIMESTAMP
+WHERE "actualizadoEn" IS NULL;
 
-DO $$
-BEGIN
-    IF EXISTS (SELECT 1 FROM "integrante_proyecto")
-        OR EXISTS (SELECT 1 FROM "proyecto")
-        OR EXISTS (SELECT 1 FROM "seg_avances")
-        OR EXISTS (SELECT 1 FROM "seg_miembros")
-        OR EXISTS (SELECT 1 FROM "seg_proyectos")
-        OR EXISTS (SELECT 1 FROM "seg_hitos")
-        OR EXISTS (SELECT 1 FROM "archivo")
-        OR EXISTS (SELECT 1 FROM "carpeta")
-        OR EXISTS (SELECT 1 FROM "cuota_almacenamiento")
-        OR EXISTS (SELECT 1 FROM "reportes" WHERE "idProyecto" IS NOT NULL) THEN
-        RAISE EXCEPTION 'Consolidacion detenida: existen datos vinculados a proyectos anteriores';
-    END IF;
-END $$;
+-- Establecer la columna como obligatoria
+ALTER TABLE "proyectos"
+    ALTER COLUMN "actualizadoEn" SET NOT NULL;
+-- Completar la tabla avances_proyecto
+ALTER TABLE "avances_proyecto"
+    ADD COLUMN "idHito" INTEGER,
+    ADD COLUMN "titulo" TEXT NOT NULL DEFAULT 'Avance',
+    ADD COLUMN "enlace" TEXT,
+    ADD COLUMN "revisionEstado" "EstadoRevision" NOT NULL DEFAULT 'PENDIENTE',
+    ADD COLUMN "retroalimentacion" TEXT,
+    ADD COLUMN "calificacion" INTEGER,
+    ADD COLUMN "idRevisor" INTEGER,
+    ADD COLUMN "revisadoEn" TIMESTAMP(3);
 
--- CreateEnum
-CREATE TYPE "RolEquipo" AS ENUM ('LIDER', 'INTEGRANTE');
+-- Índices adicionales
+CREATE INDEX "proyectos_materiaId_idx"
+    ON "proyectos"("materiaId");
 
--- DropForeignKey
-ALTER TABLE "archivo" DROP CONSTRAINT "archivo_proyectoId_fkey";
+CREATE INDEX "proyectos_idPeriodo_idx"
+    ON "proyectos"("idPeriodo");
 
--- DropForeignKey
-ALTER TABLE "carpeta" DROP CONSTRAINT "carpeta_proyectoId_fkey";
+-- Relaciones de proyectos
+ALTER TABLE "proyectos"
+    ADD CONSTRAINT "proyectos_materiaId_fkey"
+    FOREIGN KEY ("materiaId") REFERENCES "materias"("id")
+    ON DELETE RESTRICT ON UPDATE CASCADE;
 
--- DropForeignKey
-ALTER TABLE "cuota_almacenamiento" DROP CONSTRAINT "cuota_almacenamiento_proyectoId_fkey";
+ALTER TABLE "proyectos"
+    ADD CONSTRAINT "proyectos_docenteId_fkey"
+    FOREIGN KEY ("docenteId") REFERENCES "usuarios"("id")
+    ON DELETE RESTRICT ON UPDATE CASCADE;
 
--- DropForeignKey
-ALTER TABLE "integrante_proyecto" DROP CONSTRAINT "integrante_proyecto_proyectoId_fkey";
+ALTER TABLE "proyectos"
+    ADD CONSTRAINT "proyectos_creadoPorId_fkey"
+    FOREIGN KEY ("creadoPorId") REFERENCES "usuarios"("id")
+    ON DELETE RESTRICT ON UPDATE CASCADE;
 
--- DropForeignKey
-ALTER TABLE "reportes" DROP CONSTRAINT "reportes_idProyecto_fkey";
+ALTER TABLE "proyectos"
+    ADD CONSTRAINT "proyectos_idPeriodo_fkey"
+    FOREIGN KEY ("idPeriodo") REFERENCES "periodos_academicos"("id")
+    ON DELETE SET NULL ON UPDATE CASCADE;
 
--- DropForeignKey
-ALTER TABLE "seg_avances" DROP CONSTRAINT "seg_avances_idAutor_fkey";
+-- Relaciones de equipos y miembros
+ALTER TABLE "equipos"
+    ADD CONSTRAINT "equipos_creadoPorId_fkey"
+    FOREIGN KEY ("creadoPorId") REFERENCES "usuarios"("id")
+    ON DELETE RESTRICT ON UPDATE CASCADE;
 
--- DropForeignKey
-ALTER TABLE "seg_avances" DROP CONSTRAINT "seg_avances_idHito_fkey";
+ALTER TABLE "miembros_equipo"
+    ADD CONSTRAINT "miembros_equipo_usuarioId_fkey"
+    FOREIGN KEY ("usuarioId") REFERENCES "usuarios"("id")
+    ON DELETE RESTRICT ON UPDATE CASCADE;
 
--- DropForeignKey
-ALTER TABLE "seg_avances" DROP CONSTRAINT "seg_avances_idProyecto_fkey";
+-- Relaciones de hitos y avances
+ALTER TABLE "seg_hitos"
+    ADD CONSTRAINT "seg_hitos_idProyecto_fkey"
+    FOREIGN KEY ("idProyecto") REFERENCES "proyectos"("id")
+    ON DELETE CASCADE ON UPDATE CASCADE;
 
--- DropForeignKey
-ALTER TABLE "seg_avances" DROP CONSTRAINT "seg_avances_idRevisor_fkey";
+ALTER TABLE "avances_proyecto"
+    ADD CONSTRAINT "avances_proyecto_autorId_fkey"
+    FOREIGN KEY ("autorId") REFERENCES "usuarios"("id")
+    ON DELETE RESTRICT ON UPDATE CASCADE;
 
--- DropForeignKey
-ALTER TABLE "seg_hitos" DROP CONSTRAINT "seg_hitos_idProyecto_fkey";
+ALTER TABLE "avances_proyecto"
+    ADD CONSTRAINT "avances_proyecto_idHito_fkey"
+    FOREIGN KEY ("idHito") REFERENCES "seg_hitos"("id")
+    ON DELETE SET NULL ON UPDATE CASCADE;
 
--- DropForeignKey
-ALTER TABLE "seg_miembros" DROP CONSTRAINT "seg_miembros_idProyecto_fkey";
+ALTER TABLE "avances_proyecto"
+    ADD CONSTRAINT "avances_proyecto_idRevisor_fkey"
+    FOREIGN KEY ("idRevisor") REFERENCES "usuarios"("id")
+    ON DELETE SET NULL ON UPDATE CASCADE;
 
--- DropForeignKey
-ALTER TABLE "seg_miembros" DROP CONSTRAINT "seg_miembros_idUsuario_fkey";
+ALTER TABLE "observaciones_proyecto"
+    ADD CONSTRAINT "observaciones_proyecto_docenteId_fkey"
+    FOREIGN KEY ("docenteId") REFERENCES "usuarios"("id")
+    ON DELETE RESTRICT ON UPDATE CASCADE;
 
--- DropForeignKey
-ALTER TABLE "seg_proyectos" DROP CONSTRAINT "seg_proyectos_idDocente_fkey";
+-- Relaciones de reportes
+ALTER TABLE "reportes"
+    ADD CONSTRAINT "reportes_idProyecto_fkey"
+    FOREIGN KEY ("idProyecto") REFERENCES "proyectos"("id")
+    ON DELETE SET NULL ON UPDATE CASCADE;
 
--- DropForeignKey
-ALTER TABLE "seg_proyectos" DROP CONSTRAINT "seg_proyectos_idMateria_fkey";
+-- Relaciones de almacenamiento
+ALTER TABLE "carpeta"
+    ADD CONSTRAINT "carpeta_proyectoId_fkey"
+    FOREIGN KEY ("proyectoId") REFERENCES "proyectos"("id")
+    ON DELETE CASCADE ON UPDATE CASCADE;
 
--- DropForeignKey
-ALTER TABLE "seg_proyectos" DROP CONSTRAINT "seg_proyectos_idPeriodo_fkey";
+ALTER TABLE "archivo"
+    ADD CONSTRAINT "archivo_proyectoId_fkey"
+    FOREIGN KEY ("proyectoId") REFERENCES "proyectos"("id")
+    ON DELETE CASCADE ON UPDATE CASCADE;
 
--- DropTable
-DROP TABLE "integrante_proyecto";
-
--- DropTable
-DROP TABLE "proyecto";
-
--- DropTable
-DROP TABLE "seg_avances";
-
--- DropTable
-DROP TABLE "seg_miembros";
-
--- DropTable
-DROP TABLE "seg_proyectos";
-
-DROP TYPE "EstadoProyecto";
-CREATE TYPE "EstadoProyecto" AS ENUM ('REGISTRADO', 'EN_DESARROLLO', 'EN_REVISION', 'FINALIZADO');
-
--- CreateTable
-CREATE TABLE "proyectos" (
-    "id" SERIAL NOT NULL,
-    "titulo" TEXT NOT NULL,
-    "descripcion" TEXT NOT NULL,
-    "materiaId" INTEGER NOT NULL,
-    "docenteId" INTEGER NOT NULL,
-    "creadoPorId" INTEGER NOT NULL,
-    "idPeriodo" INTEGER,
-    "gestion" INTEGER NOT NULL,
-    "semestre" INTEGER NOT NULL,
-    "estado" "EstadoProyecto" NOT NULL DEFAULT 'REGISTRADO',
-    "fechaInicio" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "fechaCierre" TIMESTAMP(3),
-    "creadoEn" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "actualizadoEn" TIMESTAMP(3) NOT NULL,
-
-    CONSTRAINT "proyectos_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "equipos" (
-    "id" SERIAL NOT NULL,
-    "nombre" TEXT NOT NULL,
-    "proyectoId" INTEGER NOT NULL,
-    "creadoPorId" INTEGER NOT NULL,
-    "creadoEn" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT "equipos_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "miembros_equipo" (
-    "id" SERIAL NOT NULL,
-    "equipoId" INTEGER NOT NULL,
-    "usuarioId" INTEGER NOT NULL,
-    "rolEquipo" "RolEquipo" NOT NULL DEFAULT 'INTEGRANTE',
-    "fechaIngreso" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT "miembros_equipo_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "avances_proyecto" (
-    "id" SERIAL NOT NULL,
-    "proyectoId" INTEGER NOT NULL,
-    "autorId" INTEGER NOT NULL,
-    "descripcion" TEXT NOT NULL,
-    "fecha" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "idHito" INTEGER,
-    "titulo" TEXT NOT NULL DEFAULT 'Avance',
-    "enlace" TEXT,
-    "revisionEstado" "EstadoRevision" NOT NULL DEFAULT 'PENDIENTE',
-    "retroalimentacion" TEXT,
-    "calificacion" INTEGER,
-    "idRevisor" INTEGER,
-    "revisadoEn" TIMESTAMP(3),
-
-    CONSTRAINT "avances_proyecto_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "observaciones_proyecto" (
-    "id" SERIAL NOT NULL,
-    "proyectoId" INTEGER NOT NULL,
-    "docenteId" INTEGER NOT NULL,
-    "texto" TEXT NOT NULL,
-    "fecha" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT "observaciones_proyecto_pkey" PRIMARY KEY ("id")
-);
-
--- CreateIndex
-CREATE INDEX "proyectos_docenteId_idx" ON "proyectos"("docenteId");
-
--- CreateIndex
-CREATE INDEX "proyectos_creadoPorId_idx" ON "proyectos"("creadoPorId");
-
--- CreateIndex
-CREATE INDEX "proyectos_materiaId_idx" ON "proyectos"("materiaId");
-
--- CreateIndex
-CREATE INDEX "proyectos_idPeriodo_idx" ON "proyectos"("idPeriodo");
-
--- CreateIndex
-CREATE UNIQUE INDEX "equipos_proyectoId_key" ON "equipos"("proyectoId");
-
--- CreateIndex
-CREATE INDEX "equipos_creadoPorId_idx" ON "equipos"("creadoPorId");
-
--- CreateIndex
-CREATE INDEX "miembros_equipo_usuarioId_idx" ON "miembros_equipo"("usuarioId");
-
--- CreateIndex
-CREATE UNIQUE INDEX "miembros_equipo_equipoId_usuarioId_key" ON "miembros_equipo"("equipoId", "usuarioId");
-
--- CreateIndex
-CREATE INDEX "avances_proyecto_proyectoId_idx" ON "avances_proyecto"("proyectoId");
-
--- CreateIndex
-CREATE INDEX "observaciones_proyecto_proyectoId_idx" ON "observaciones_proyecto"("proyectoId");
-
--- AddForeignKey
-ALTER TABLE "proyectos" ADD CONSTRAINT "proyectos_materiaId_fkey" FOREIGN KEY ("materiaId") REFERENCES "materias"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "proyectos" ADD CONSTRAINT "proyectos_docenteId_fkey" FOREIGN KEY ("docenteId") REFERENCES "usuarios"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "proyectos" ADD CONSTRAINT "proyectos_creadoPorId_fkey" FOREIGN KEY ("creadoPorId") REFERENCES "usuarios"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "proyectos" ADD CONSTRAINT "proyectos_idPeriodo_fkey" FOREIGN KEY ("idPeriodo") REFERENCES "periodos_academicos"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "equipos" ADD CONSTRAINT "equipos_proyectoId_fkey" FOREIGN KEY ("proyectoId") REFERENCES "proyectos"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "equipos" ADD CONSTRAINT "equipos_creadoPorId_fkey" FOREIGN KEY ("creadoPorId") REFERENCES "usuarios"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "miembros_equipo" ADD CONSTRAINT "miembros_equipo_equipoId_fkey" FOREIGN KEY ("equipoId") REFERENCES "equipos"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "miembros_equipo" ADD CONSTRAINT "miembros_equipo_usuarioId_fkey" FOREIGN KEY ("usuarioId") REFERENCES "usuarios"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "seg_hitos" ADD CONSTRAINT "seg_hitos_idProyecto_fkey" FOREIGN KEY ("idProyecto") REFERENCES "proyectos"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "avances_proyecto" ADD CONSTRAINT "avances_proyecto_proyectoId_fkey" FOREIGN KEY ("proyectoId") REFERENCES "proyectos"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "avances_proyecto" ADD CONSTRAINT "avances_proyecto_autorId_fkey" FOREIGN KEY ("autorId") REFERENCES "usuarios"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "avances_proyecto" ADD CONSTRAINT "avances_proyecto_idHito_fkey" FOREIGN KEY ("idHito") REFERENCES "seg_hitos"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "avances_proyecto" ADD CONSTRAINT "avances_proyecto_idRevisor_fkey" FOREIGN KEY ("idRevisor") REFERENCES "usuarios"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "observaciones_proyecto" ADD CONSTRAINT "observaciones_proyecto_proyectoId_fkey" FOREIGN KEY ("proyectoId") REFERENCES "proyectos"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "observaciones_proyecto" ADD CONSTRAINT "observaciones_proyecto_docenteId_fkey" FOREIGN KEY ("docenteId") REFERENCES "usuarios"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "reportes" ADD CONSTRAINT "reportes_idProyecto_fkey" FOREIGN KEY ("idProyecto") REFERENCES "proyectos"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "carpeta" ADD CONSTRAINT "carpeta_proyectoId_fkey" FOREIGN KEY ("proyectoId") REFERENCES "proyectos"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "archivo" ADD CONSTRAINT "archivo_proyectoId_fkey" FOREIGN KEY ("proyectoId") REFERENCES "proyectos"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "cuota_almacenamiento" ADD CONSTRAINT "cuota_almacenamiento_proyectoId_fkey" FOREIGN KEY ("proyectoId") REFERENCES "proyectos"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "cuota_almacenamiento"
+    ADD CONSTRAINT "cuota_almacenamiento_proyectoId_fkey"
+    FOREIGN KEY ("proyectoId") REFERENCES "proyectos"("id")
+    ON DELETE CASCADE ON UPDATE CASCADE;
 
 COMMIT;

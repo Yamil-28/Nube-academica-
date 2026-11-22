@@ -78,25 +78,7 @@ CREATE TABLE "cuota_almacenamiento" (
     CONSTRAINT "cuota_almacenamiento_pkey" PRIMARY KEY ("id")
 );
 
--- CreateTable
-CREATE TABLE "proyecto" (
-    "id" SERIAL NOT NULL,
-    "titulo" VARCHAR(150) NOT NULL,
-    "docenteId" INTEGER,
-    "creadorId" INTEGER NOT NULL,
-    "creadoEn" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT "proyecto_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "integrante_proyecto" (
-    "proyectoId" INTEGER NOT NULL,
-    "usuarioId" INTEGER NOT NULL,
-    "rolEquipo" VARCHAR(80),
-
-    CONSTRAINT "integrante_proyecto_pkey" PRIMARY KEY ("proyectoId","usuarioId")
-);
 
 -- CreateTable
 CREATE TABLE "registro_actividad" (
@@ -131,13 +113,7 @@ CREATE UNIQUE INDEX "cuota_almacenamiento_proyectoId_key" ON "cuota_almacenamien
 CREATE INDEX "registro_actividad_usuarioId_fecha_idx" ON "registro_actividad"("usuarioId", "fecha");
 
 -- AddForeignKey
-ALTER TABLE "carpeta" ADD CONSTRAINT "carpeta_proyectoId_fkey" FOREIGN KEY ("proyectoId") REFERENCES "proyecto"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
 ALTER TABLE "carpeta" ADD CONSTRAINT "carpeta_carpetaPadreId_fkey" FOREIGN KEY ("carpetaPadreId") REFERENCES "carpeta"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "archivo" ADD CONSTRAINT "archivo_proyectoId_fkey" FOREIGN KEY ("proyectoId") REFERENCES "proyecto"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "archivo" ADD CONSTRAINT "archivo_carpetaId_fkey" FOREIGN KEY ("carpetaId") REFERENCES "carpeta"("id") ON DELETE SET NULL ON UPDATE CASCADE;
@@ -159,9 +135,3 @@ ALTER TABLE "permiso_archivo" ADD CONSTRAINT "permiso_archivo_archivoId_fkey" FO
 
 -- AddForeignKey
 ALTER TABLE "permiso_archivo" ADD CONSTRAINT "permiso_archivo_usuarioId_fkey" FOREIGN KEY ("usuarioId") REFERENCES "usuarios"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "cuota_almacenamiento" ADD CONSTRAINT "cuota_almacenamiento_proyectoId_fkey" FOREIGN KEY ("proyectoId") REFERENCES "proyecto"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "integrante_proyecto" ADD CONSTRAINT "integrante_proyecto_proyectoId_fkey" FOREIGN KEY ("proyectoId") REFERENCES "proyecto"("id") ON DELETE CASCADE ON UPDATE CASCADE;

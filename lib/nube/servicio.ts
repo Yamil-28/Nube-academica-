@@ -244,13 +244,30 @@ export async function eliminarCarpeta(ctx: Contexto, id: number) {
 
 /* ===================== Archivos ===================== */
 
-async function guardarBlob(proyectoId: number, archivo: File): Promise<string> {
+type ArchivoParaSubir = Pick<File, "name" | "size" | "type"> & {
+  stream(): ReadableStream<Uint8Array> | Promise<ReadableStream<Uint8Array>>;
+};
+
+async function guardarBlob(proyectoId: number, archivo: ArchivoParaSubir): Promise<string> {
   const clave = `proyectos/${proyectoId}/${randomUUID()}`;
-  await almacenamiento.guardar(clave, archivo.stream() as ReadableStream<Uint8Array>);
+  await almacenamiento.guardar(clave, await archivo.stream());
   return clave;
 }
 
-export async function subirArchivo(ctx: Contexto, d: { proyectoId: number; carpetaId: number | null; archivo: File; comentario?: string | null }) {
+export async function autorizarCargaDirecta(ctx: Contexto, destino: { proyectoId: number; carpetaId: number | null } | { archivoId: number }, nombre: string, bytes: number) {
+  if ("archivoId" in destino) {
+    const archivo = await cargarArchivo(ctx, destino.archivoId, "subir");
+    validarArchivo(archivo.nombre, bytes);
+    await exigirEspacio(prisma, archivo.proyectoId, bytes);
+  } else {
+    await exigirProyecto(ctx, destino.proyectoId, "subir");
+    validarArchivo(limpiarNombre(nombre), bytes);
+    await exigirCarpeta(destino.proyectoId, destino.carpetaId);
+    await exigirEspacio(prisma, destino.proyectoId, bytes);
+  }
+}
+
+export async function subirArchivo(ctx: Contexto, d: { proyectoId: number; carpetaId: number | null; archivo: ArchivoParaSubir; comentario?: string | null }) {
   await exigirProyecto(ctx, d.proyectoId, "subir");
   const nombre = limpiarNombre(d.archivo.name);
   validarArchivo(nombre, d.archivo.size);
@@ -283,7 +300,7 @@ export async function subirArchivo(ctx: Contexto, d: { proyectoId: number; carpe
   }
 }
 
-export async function subirVersion(ctx: Contexto, archivoId: number, archivo: File, comentario?: string | null) {
+export async function subirVersion(ctx: Contexto, archivoId: number, archivo: ArchivoParaSubir, comentario?: string | null) {
   const a = await cargarArchivo(ctx, archivoId, "subir");
   validarArchivo(a.nombre, archivo.size);
   const clave = await guardarBlob(a.proyectoId, archivo);

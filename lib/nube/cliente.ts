@@ -18,6 +18,21 @@ function formData(archivo: File, extra: Record<string, string | number | null | 
   return f;
 }
 
+async function subir(url: string, archivo: File, destino: { proyectoId: number; carpetaId: number | null } | { archivoId: number }, comentario?: string) {
+  const autorizacion = await pedir<{ directa: false } | { directa: true; clave: string; token: string; comprobante: string }>(
+    "/api/nube/cargas",
+    enviar("POST", { ...destino, nombre: archivo.name, bytes: archivo.size, mime: archivo.type, comentario }),
+  );
+  if (!autorizacion.directa) {
+    return pedir(url, { method: "POST", body: formData(archivo, { comentario, carpetaId: "carpetaId" in destino ? destino.carpetaId : null }) });
+  }
+  const { put } = await import("@vercel/blob/client");
+  await put(autorizacion.clave, archivo, {
+    access: "private", token: autorizacion.token, multipart: true, contentType: "application/octet-stream",
+  });
+  return pedir("/api/nube/cargas", enviar("POST", { comprobante: autorizacion.comprobante }));
+}
+
 export const nube = {
   contenido: (proyectoId: number, carpetaId: number | null) =>
     pedir<ContenidoDTO>(`/api/nube/proyectos/${proyectoId}/contenido${carpetaId ? `?carpetaId=${carpetaId}` : ""}`),
@@ -26,13 +41,13 @@ export const nube = {
   renombrarCarpeta: (id: number, nombre: string) => pedir(`/api/nube/carpetas/${id}`, enviar("PATCH", { nombre })),
   eliminarCarpeta: (id: number) => pedir(`/api/nube/carpetas/${id}`, { method: "DELETE" }),
   subir: (proyectoId: number, archivo: File, carpetaId: number | null, comentario?: string) =>
-    pedir(`/api/nube/proyectos/${proyectoId}/archivos`, { method: "POST", body: formData(archivo, { carpetaId, comentario }) }),
+    subir(`/api/nube/proyectos/${proyectoId}/archivos`, archivo, { proyectoId, carpetaId }, comentario),
   renombrarArchivo: (id: number, nombre: string) => pedir(`/api/nube/archivos/${id}`, enviar("PATCH", { nombre })),
   eliminarArchivo: (id: number) => pedir(`/api/nube/archivos/${id}`, { method: "DELETE" }),
   urlDescarga: (id: number, version?: number) => `/api/nube/archivos/${id}${version ? `?version=${version}` : ""}`,
   versiones: (id: number) => pedir<VersionDTO[]>(`/api/nube/archivos/${id}/versiones`),
   subirVersion: (id: number, archivo: File, comentario?: string) =>
-    pedir(`/api/nube/archivos/${id}/versiones`, { method: "POST", body: formData(archivo, { comentario }) }),
+    subir(`/api/nube/archivos/${id}/versiones`, archivo, { archivoId: id }, comentario),
   permisos: (id: number) => pedir<PermisoDTO[]>(`/api/nube/archivos/${id}/permisos`),
   compartir: (id: number, usuarioId: number, nivel: NivelPermiso) => pedir(`/api/nube/archivos/${id}/permisos`, enviar("POST", { usuarioId, nivel })),
   quitarPermiso: (id: number, usuarioId: number) => pedir(`/api/nube/archivos/${id}/permisos`, enviar("DELETE", { usuarioId })),

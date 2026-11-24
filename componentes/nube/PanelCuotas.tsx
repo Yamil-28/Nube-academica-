@@ -8,7 +8,7 @@ import Dialogo from "./Dialogo";
 import { Icono } from "./iconos";
 import e from "./nube.module.css";
 
-export default function PanelCuotas() {
+export default function PanelCuotas({ revision }: { revision: number }) {
   const [filas, setFilas] = useState<ResumenCuotaDTO[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [aviso, setAviso] = useState<string | null>(null);
@@ -19,7 +19,22 @@ export default function PanelCuotas() {
     try { setFilas(await nube.cuotas()); }
     catch (err) { setError((err as Error).message); }
   }, []);
-  useEffect(() => { void cargar(); }, [cargar]);
+  useEffect(() => {
+    const inicio = window.setTimeout(() => void cargar(), 0);
+    return () => window.clearTimeout(inicio);
+  }, [cargar, revision]);
+  useEffect(() => {
+    if (edicion) return;
+    const actualizar = () => {
+      if (document.visibilityState === "visible") void cargar();
+    };
+    const intervalo = window.setInterval(actualizar, 15000);
+    window.addEventListener("focus", actualizar);
+    return () => {
+      window.clearInterval(intervalo);
+      window.removeEventListener("focus", actualizar);
+    };
+  }, [cargar, edicion]);
 
   async function guardar(valor: string) {
     const mb = Number(valor);
@@ -41,10 +56,11 @@ export default function PanelCuotas() {
 
   return (
     <section>
+      <h2>Almacenamiento por proyecto</h2>
       <div className={e.resumen}>
         <div className={e.stat}><span className={e.statIcono}><Icono nombre="carpeta" /></span><div className={e.statCuerpo}><div className={e.statValor}>{filas.length}</div><div className={e.statEtiqueta}>Proyectos con espacio</div></div></div>
         <div className={e.stat}><span className={e.statIcono}><Icono nombre="disco" /></span><div className={e.statCuerpo}><div className={e.statValor}>{formatoBytes(uso)}</div><div className={e.statEtiqueta}>Espacio usado en total</div></div></div>
-        <div className={e.stat}><span className={e.statIcono}><Icono nombre="nube" /></span><div className={e.statCuerpo}><div className={e.statValor}>{formatoBytes(capacidad)}</div><div className={e.statEtiqueta}>Capacidad asignada</div></div></div>
+        <div className={e.stat}><span className={e.statIcono}><Icono nombre="nube" /></span><div className={e.statCuerpo}><div className={e.statValor}>{formatoBytes(capacidad)}</div><div className={e.statEtiqueta}>Suma de cuotas individuales</div></div></div>
       </div>
 
       {aviso && <p role="status" className={e.bannerOk}><Icono nombre="check" /> {aviso}</p>}
@@ -53,33 +69,40 @@ export default function PanelCuotas() {
       <div className={e.tarjeta}>
         <div className={e.envoltura}>
           <table className={e.tabla}>
-            <thead><tr><th>Proyecto</th><th>Uso</th><th className={e.ocultarMovil}>Límite</th><th className={e.derecha}>Acciones</th></tr></thead>
+            <thead><tr><th>Proyecto</th><th>Materia</th><th>Uso</th><th>Límite aplicable</th><th className={e.derecha}>Acciones</th></tr></thead>
             <tbody>
               {filas.map((f) => {
-                const pct = Math.min(100, Math.round((f.usoBytes / f.limiteBytes) * 100));
+                const limiteAplicable = Math.min(f.limiteBytes, f.limiteMateriaBytes ?? Infinity);
+                const pct = Math.min(100, Math.round((f.usoBytes / limiteAplicable) * 100));
                 const color = pct >= 90 ? e.rellenoRojo : pct >= 70 ? e.rellenoAmbar : e.rellenoVerde;
                 return (
                   <tr key={f.proyectoId}>
                     <td><span className={e.nombreTxt}><span className={`${e.ico} ${e.icoCarpeta}`}><Icono nombre="carpeta" /></span>{f.titulo}</span></td>
-                    <td style={{ minWidth: 220 }}>
+                    <td>{f.materia}</td>
+                    <td style={{ minWidth: 145 }}>
                       {formatoBytes(f.usoBytes)} <small>({pct}%)</small>
                       <div className={e.barra}><div className={`${e.relleno} ${color}`} style={{ width: `${pct}%` }} /></div>
                     </td>
-                    <td className={e.ocultarMovil}>{formatoBytes(f.limiteBytes)}</td>
+                    <td>
+                      <strong>{formatoBytes(limiteAplicable)}</strong>
+                      {f.limiteMateriaBytes !== null && (
+                        <><br /><small>Materia: {formatoBytes(f.limiteMateriaBytes)} compartidos</small></>
+                      )}
+                    </td>
                     <td><div className={e.acciones}>
                       <button type="button" className={e.botonSec} onClick={() => { setError(null); setEdicion(f); }}><Icono nombre="editar" tamano={16} /> Cambiar límite</button>
                     </div></td>
                   </tr>
                 );
               })}
-              {filas.length === 0 && <tr><td colSpan={4}><div className={e.vacio}><strong>No hay proyectos registrados</strong><span>Cuando existan proyectos, aquí verás su consumo de espacio.</span></div></td></tr>}
+              {filas.length === 0 && <tr><td colSpan={5}><div className={e.vacio}><strong>No hay proyectos registrados</strong><span>Cuando existan proyectos, aquí verás su consumo de espacio.</span></div></td></tr>}
             </tbody>
           </table>
         </div>
       </div>
 
       <Dialogo abierto={!!edicion} titulo="Cambiar límite de almacenamiento"
-        descripcion={edicion ? `Proyecto: ${edicion.titulo}. Uso actual: ${formatoBytes(edicion.usoBytes)}.` : undefined}
+        descripcion={edicion ? `Proyecto: ${edicion.titulo}. Uso actual: ${formatoBytes(edicion.usoBytes)}. El límite de la materia también se aplica.` : undefined}
         campo={{ etiqueta: "Nuevo límite (MB)", tipo: "number", min: 1, valor: edicion ? String(Math.round(edicion.limiteBytes / 1048576)) : "" }}
         confirmar="Guardar límite" ocupado={ocupado} error={edicion ? error : null}
         onConfirmar={(v) => void guardar(v)} onCerrar={() => { setEdicion(null); setError(null); }} />

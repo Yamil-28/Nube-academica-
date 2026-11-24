@@ -1,10 +1,10 @@
+import CargandoDashboard from "@/componentes/dashboard/CargandoDashboard";
 
 import Link from "next/link";
 import { Suspense } from "react";
 import {
   UserPlus,
   Users,
-  ArrowLeft,
 } from "lucide-react";
 
 import { protegerRuta } from "@/lib/protegerRuta";
@@ -44,14 +44,6 @@ async function ContenidoUsuarios() {
 
   return (
     <div className={estilos.pagina}>
-      <Link
-        href="/administrador"
-        className={estilos.botonVolver}
-      >
-        <ArrowLeft size={18} />
-        Volver al Dashboard
-      </Link>
-
       <div className={estilos.encabezado}>
         <div>
           <span className={estilos.etiqueta}>
@@ -99,29 +91,9 @@ async function ContenidoUsuarios() {
   );
 }
 
-function CargandoUsuarios() {
-  return (
-    <div
-      className={estilos.pagina}
-      role="status"
-      aria-live="polite"
-    >
-      <div className={estilos.encabezado}>
-        <div>
-          <span className={estilos.etiqueta}>
-            ADMINISTRACIÓN
-          </span>
-          <h1>Gestión de Usuarios</h1>
-          <p>Actualizando información de usuarios...</p>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 export default function PaginaUsuarios() {
   return (
-    <Suspense fallback={<CargandoUsuarios />}>
+    <Suspense fallback={<CargandoDashboard />}>
       <ContenidoUsuarios />
     </Suspense>
   );

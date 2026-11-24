@@ -36,11 +36,34 @@ export default function ExploradorArchivos({ proyectoId }: { proyectoId: number 
   const [dialogo, setDialogo] = useState<Estado | null>(null);
   const entradaArchivo = useRef<HTMLInputElement>(null);
 
-  const cargar = useCallback(async () => {
-    try { setDatos(await nube.contenido(proyectoId, carpetaId)); }
-    catch (err) { setError((err as Error).message); }
+  const ultimaCarga = useRef(0);
+
+  const cargar = useCallback(async (silenciosa = false) => {
+    const solicitud = ++ultimaCarga.current;
+    try {
+      const contenido = await nube.contenido(proyectoId, carpetaId);
+      if (solicitud === ultimaCarga.current) setDatos(contenido);
+    } catch (err) {
+      if (solicitud === ultimaCarga.current && !silenciosa) setError((err as Error).message);
+    }
   }, [proyectoId, carpetaId]);
-  useEffect(() => { void cargar(); }, [cargar]);
+  useEffect(() => {
+    const inicio = window.setTimeout(() => void cargar(), 0);
+    return () => window.clearTimeout(inicio);
+  }, [cargar]);
+
+  useEffect(() => {
+    if (ocupado || dialogo) return;
+    const actualizar = () => {
+      if (document.visibilityState === "visible") void cargar(true);
+    };
+    const intervalo = window.setInterval(actualizar, 15000);
+    window.addEventListener("focus", actualizar);
+    return () => {
+      window.clearInterval(intervalo);
+      window.removeEventListener("focus", actualizar);
+    };
+  }, [cargar, dialogo, ocupado]);
 
   useEffect(() => {
     if (!aviso) return;

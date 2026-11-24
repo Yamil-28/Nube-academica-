@@ -6,7 +6,7 @@
 .piePagina {
   width: 100%;
   flex-shrink: 0;
-  background: var(--color-primario);
+  background: linear-gradient(120deg, #092d55, #0b457d);
   color: #ffffff;
 }
 
@@ -53,27 +53,6 @@
 
 .institucion p {
   margin: 0;
-}
-
-/* ==========================================
-   PIE DE PÁGINA EN DASHBOARDS
-========================================== */
-
-:global(body:has([data-dashboard="siscloud"])) .piePagina {
-  margin-left: var(--dashboard-ancho-lateral, 268px);
-  width: calc(100% - var(--dashboard-ancho-lateral, 268px));
-  box-sizing: border-box;
-}
-
-/* ==========================================
-   DISEÑO RESPONSIVO
-========================================== */
-
-@media (max-width: 900px) {
-  :global(body:has([data-dashboard="siscloud"])) .piePagina {
-    margin-left: 0;
-    width: 100%;
-  }
 }
 
 @media (max-width: 600px) {

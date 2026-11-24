@@ -1,3 +1,4 @@
+import CargandoDashboard from "@/componentes/dashboard/CargandoDashboard";
 import { Suspense } from "react";
 import Link from "next/link";
 import { ClipboardList } from "lucide-react";
@@ -162,7 +163,7 @@ export default function PaginaMisAvances({
   searchParams: Promise<Parametros>;
 }) {
   return (
-    <Suspense fallback={<p>Cargando avances...</p>}>
+    <Suspense fallback={<CargandoDashboard />}>
       <ContenidoAvances parametros={searchParams} />
     </Suspense>
   );

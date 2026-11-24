@@ -3,29 +3,30 @@
   flex-direction: column;
   gap: 20px;
   max-width: 820px;
+  margin-inline: auto;
 }
 
 .etiqueta {
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.08em;
-  color: #1d5f9f;
+  color: var(--color-secundario);
 }
 
 .contenedor h1 {
   margin: 6px 0;
-  font-size: 32px;
-  color: #12284a;
+  font-size: clamp(1.55rem, 3vw, 2rem);
+  color: var(--color-texto);
 }
 
 .contenedor p {
   margin: 0;
-  color: #5b6b82;
+  color: var(--color-texto-secundario);
 }
 
 .panel {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+  background: var(--color-blanco);
+  border: 1px solid var(--color-borde);
   border-radius: 16px;
   padding: 24px;
 }
@@ -49,17 +50,17 @@
   justify-content: space-between;
   gap: 12px;
   flex-wrap: wrap;
-  color: #12284a;
+  color: var(--color-texto);
 }
 
 .itemCabecera span {
   font-size: 13px;
-  color: #5b6b82;
+  color: var(--color-texto-secundario);
 }
 
 .item p {
   margin: 4px 0 0;
-  color: #12284a;
+  color: var(--color-texto);
 }
 
 .vacio {
@@ -69,10 +70,10 @@
   gap: 8px;
   padding: 32px 16px;
   text-align: center;
-  color: #5b6b82;
+  color: var(--color-texto-secundario);
 }
 
 .vacio h3 {
   margin: 0;
-  color: #12284a;
+  color: var(--color-texto);
 }

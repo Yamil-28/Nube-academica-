@@ -1,3 +1,4 @@
+import CargandoDashboard from "@/componentes/dashboard/CargandoDashboard";
 
 import { Suspense } from "react";
 import { Filter, GraduationCap, UsersRound } from "lucide-react";
@@ -13,7 +14,6 @@ import { accionQuitarAsignacion } from "@/lib/academico/acciones";
 import { etiquetaMateria, nombrePeriodo } from "@/lib/academico/tipos";
 
 import EstructuraDashboard from "@/componentes/dashboard/EstructuraDashboard";
-import NavegacionInterna from "@/componentes/dashboard/NavegacionInterna";
 import EncabezadoAcademico from "@/componentes/academico/EncabezadoAcademico";
 import FormularioAsignacion from "@/componentes/academico/FormularioAsignacion";
 import BotonAccion from "@/componentes/academico/BotonAccion";
@@ -58,12 +58,6 @@ async function ContenidoDocentes({ searchParams }: { searchParams: ParametrosBus
   return (
     <EstructuraDashboard usuario={usuario.usuario} rol={usuario.rol}>
       <div className={estilos.contenedor}>
-        <NavegacionInterna
-          titulo="Docentes"
-          nombreSeccion="Gestión académica"
-          rutaInicio="/administrador"
-        />
-
         <EncabezadoAcademico
           etiqueta="GESTIÓN ACADÉMICA"
           titulo="Docentes y materias"
@@ -247,7 +241,7 @@ async function ContenidoDocentes({ searchParams }: { searchParams: ParametrosBus
 
 export default function PaginaDocentes({ searchParams }: { searchParams: ParametrosBusqueda }) {
   return (
-    <Suspense fallback={<p className={estilos.cargando}>Cargando docentes...</p>}>
+    <Suspense fallback={<CargandoDashboard />}>
       <ContenidoDocentes searchParams={searchParams} />
     </Suspense>
   );

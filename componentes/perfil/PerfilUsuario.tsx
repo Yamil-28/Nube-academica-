@@ -1,11 +1,9 @@
 
-import Link from "next/link";
 
 import {
   UserRound,
   ShieldCheck,
   AtSign,
-  ArrowLeft,
   CalendarDays,
 } from "lucide-react";
 
@@ -35,21 +33,9 @@ export default function PerfilUsuario({
   rol,
   creadoEn,
 }: Propiedades) {
-  const rutaInicio =
-    rol === "ADMINISTRADOR"
-      ? "/administrador"
-      : rol === "DOCENTE"
-        ? "/docente"
-        : "/estudiante";
-
   return (
     <div className={estilos.pagina}>
       {/* BOTÓN VOLVER */}
-      <Link href={rutaInicio} className={estilos.volver}>
-        <ArrowLeft size={18} />
-        Volver al Dashboard
-      </Link>
-
       {/* ENCABEZADO */}
       <div className={estilos.encabezado}>
         <span className={estilos.etiqueta}>MI CUENTA</span>

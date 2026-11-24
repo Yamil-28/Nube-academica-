@@ -53,7 +53,8 @@
   overflow: hidden;
   border: 1px solid #dce6f0;
   border-radius: 14px;
-  background: #ffffff;
+  background: var(--color-blanco);
+  box-shadow: var(--sombra-panel);
 }
 
 .panelCabecera {

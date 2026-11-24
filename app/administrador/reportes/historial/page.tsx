@@ -1,3 +1,4 @@
+import CargandoDashboard from "@/componentes/dashboard/CargandoDashboard";
 
 import { Suspense } from "react";
 import { History } from "lucide-react";
@@ -8,7 +9,6 @@ import { obtenerCatalogo } from "@/lib/informes/catalogo";
 import { formatearFechaHora } from "@/lib/informes/formato";
 
 import EstructuraDashboard from "@/componentes/dashboard/EstructuraDashboard";
-import NavegacionInterna from "@/componentes/dashboard/NavegacionInterna";
 import EncabezadoInforme from "@/componentes/informes/EncabezadoInforme";
 import TablaReporte from "@/componentes/informes/TablaReporte";
 
@@ -34,13 +34,6 @@ async function ContenidoHistorial() {
   return (
     <EstructuraDashboard usuario={usuario.usuario} rol={usuario.rol}>
       <div className={estilos.contenedor}>
-        <NavegacionInterna
-          titulo="Historial de reportes"
-          nombreSeccion="Reportes"
-          rutaInicio="/administrador"
-          rutaVolver="/administrador/reportes"
-        />
-
         <EncabezadoInforme
           etiqueta="INFORMES Y REPORTES"
           titulo="Historial de reportes generados"
@@ -82,7 +75,7 @@ async function ContenidoHistorial() {
 
 export default function PaginaHistorialReportes() {
   return (
-    <Suspense fallback={<p className={estilos.cargando}>Cargando historial...</p>}>
+    <Suspense fallback={<CargandoDashboard />}>
       <ContenidoHistorial />
     </Suspense>
   );

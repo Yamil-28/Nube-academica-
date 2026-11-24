@@ -1,3 +1,4 @@
+import CargandoDashboard from "@/componentes/dashboard/CargandoDashboard";
 import { Suspense } from "react";
 import { ClipboardCheck } from "lucide-react";
 
@@ -153,7 +154,7 @@ export default function PaginaRevisionAvances({
   searchParams: Promise<Parametros>;
 }) {
   return (
-    <Suspense fallback={<p>Cargando revisiones...</p>}>
+    <Suspense fallback={<CargandoDashboard />}>
       <ContenidoRevisiones parametros={searchParams} />
     </Suspense>
   );

@@ -6,7 +6,7 @@ import estilos from "./page.module.css";
 
 export default function PaginaIniciarSesion() {
   return (
-    <section className={estilos.paginaAcceso}>
+    <main className={estilos.paginaAcceso}>
       <div className={estilos.accesoContenido}>
         <div className={estilos.accesoInformacion}>
           <Link href="/" className={estilos.accesoVolver}>
@@ -61,6 +61,6 @@ export default function PaginaIniciarSesion() {
           <FormularioAcceso />
         </div>
       </div>
-    </section>
+    </main>
   );
 }

@@ -16,18 +16,18 @@
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.08em;
-  color: #1d5f9f;
+  color: var(--color-secundario);
 }
 
 .encabezado h1 {
   margin: 6px 0;
   font-size: 32px;
-  color: #12284a;
+  color: var(--color-texto);
 }
 
 .encabezado p {
   margin: 0;
-  color: #5b6b82;
+  color: var(--color-texto-secundario);
 }
 
 .botonPrincipal {
@@ -36,15 +36,15 @@
   gap: 8px;
   padding: 10px 18px;
   border-radius: 10px;
-  background: #12284a;
+  background: var(--fondo-accion);
   color: #ffffff;
   font-weight: 600;
   text-decoration: none;
 }
 
 .panel {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+  background: var(--color-blanco);
+  border: 1px solid var(--color-borde);
   border-radius: 16px;
   padding: 24px;
 }
@@ -56,12 +56,12 @@
   gap: 8px;
   padding: 32px 16px;
   text-align: center;
-  color: #5b6b82;
+  color: var(--color-texto-secundario);
 }
 
 .vacio h3 {
   margin: 0;
-  color: #12284a;
+  color: var(--color-texto);
 }
 
 .vacio p {
@@ -90,22 +90,22 @@
 .tabla td {
   text-align: left;
   padding: 12px 10px;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--color-borde);
 }
 
 .tabla th {
   font-size: 12px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: #5b6b82;
+  color: var(--color-texto-secundario);
 }
 
 .estado {
   display: inline-block;
   padding: 4px 10px;
   border-radius: 999px;
-  background: #e8f0fb;
-  color: #1d5f9f;
+  background: var(--superficie-acento);
+  color: var(--color-secundario);
   font-size: 13px;
   font-weight: 600;
 }

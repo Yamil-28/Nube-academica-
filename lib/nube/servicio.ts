@@ -1,16 +1,17 @@
 // LÓGICA DE NEGOCIO de la Nube Académica. No depende de Next ni de HTTP: se puede llamar
 // desde una route, una Server Action, un script o un test.
 import { randomUUID } from "node:crypto";
+import type { Prisma } from "@/app/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 import { almacenamiento } from "./almacenamiento";
-import { proyectosAccesibles, resolverRelacion } from "./acceso";
+import { resolverRelacion } from "./acceso";
 import { registrarActividad } from "./auditoria";
 import { clasificar, CUOTA_DEFECTO, extensionDe, limpiarNombre, validarArchivo } from "./archivos";
 import { etiquetaUsuario } from "./contexto";
 import { permisosDe, puede } from "./politica";
 import {
   ErrorNube, type Accion, type ArchivoDTO, type Contexto, type ContenidoDTO, type CuotaDTO,
-  type CompartidoDTO, type MigaDTO, type NivelPermiso, type PermisoDTO, type Relacion, type ResumenCuotaDTO, type UsuarioListaDTO, type VersionDTO,
+  type CompartidoDTO, type MigaDTO, type NivelPermiso, type PermisoDTO, type Relacion, type ResumenCuotaDTO, type ResumenCuotaMateriaDTO, type UsuarioListaDTO, type VersionDTO,
 } from "./tipos";
 
 /* ===================== Autorización ===================== */
@@ -42,12 +43,12 @@ async function cargarArchivo(ctx: Contexto, archivoId: number, accion: Accion) {
 
 /* ===================== Cuota ===================== */
 
-export async function cuotaDeProyecto(proyectoId: number): Promise<CuotaDTO> {
+export async function cuotaDeProyecto(proyectoId: number, db: Prisma.TransactionClient = prisma): Promise<CuotaDTO> {
   const [uso, cuota] = await Promise.all([
-    prisma.versionArchivo.aggregate({
+    db.versionArchivo.aggregate({
       _sum: { tamanoBytes: true }, where: { archivo: { proyectoId, eliminadoEn: null } },
     }),
-    prisma.cuotaAlmacenamiento.findUnique({ where: { proyectoId } }),
+    db.cuotaAlmacenamiento.findUnique({ where: { proyectoId } }),
   ]);
   return {
     usoBytes: Number(uso._sum.tamanoBytes ?? 0),
@@ -55,29 +56,94 @@ export async function cuotaDeProyecto(proyectoId: number): Promise<CuotaDTO> {
   };
 }
 
-async function exigirEspacio(proyectoId: number, bytes: number) {
-  const c = await cuotaDeProyecto(proyectoId);
+async function bloquearMateria(db: Prisma.TransactionClient, materiaId: number) {
+  const [materia] = await db.$queryRaw<{ limiteNubeBytes: bigint | null }[]>
+    `SELECT "limiteNubeBytes" FROM "materias" WHERE id = ${materiaId} FOR UPDATE`;
+  if (!materia) throw new ErrorNube(404, "MATERIA_NO_ENCONTRADA", "Materia no encontrada");
+  return materia.limiteNubeBytes;
+}
+
+async function usoMateria(db: Prisma.TransactionClient, materiaId: number) {
+  const { _sum } = await db.versionArchivo.aggregate({
+    _sum: { tamanoBytes: true },
+    where: { archivo: { eliminadoEn: null, proyecto: { materiaId } } },
+  });
+  return _sum.tamanoBytes ?? BigInt(0);
+}
+
+async function exigirEspacio(db: Prisma.TransactionClient, proyectoId: number, bytes: number) {
+  const proyecto = await db.proyecto.findUnique({ where: { id: proyectoId }, select: { materiaId: true } });
+  if (!proyecto) throw new ErrorNube(404, "NO_ENCONTRADO", "Proyecto no encontrado");
+  const limiteMateria = await bloquearMateria(db, proyecto.materiaId);
+  if (limiteMateria !== null && (await usoMateria(db, proyecto.materiaId)) + BigInt(bytes) > limiteMateria) {
+    throw new ErrorNube(413, "CUOTA_MATERIA_EXCEDIDA", "La materia no tiene espacio suficiente. Pide al administrador ampliar la cuota.");
+  }
+  const c = await cuotaDeProyecto(proyectoId, db);
   if (c.usoBytes + bytes > c.limiteBytes)
     throw new ErrorNube(413, "CUOTA_EXCEDIDA", "El proyecto no tiene espacio suficiente. Pide al administrador ampliar la cuota.");
 }
 
 export async function fijarCuota(ctx: Contexto, proyectoId: number, limiteBytes: number) {
   await exigirProyecto(ctx, proyectoId, "administrarCuota");
-  if (!Number.isFinite(limiteBytes) || limiteBytes <= 0) throw new ErrorNube(400, "CUOTA_INVALIDA", "Límite inválido");
-  const { usoBytes } = await cuotaDeProyecto(proyectoId);
-  if (limiteBytes < usoBytes) throw new ErrorNube(400, "CUOTA_MENOR_AL_USO", "El límite no puede ser menor al espacio ya usado");
-  await prisma.cuotaAlmacenamiento.upsert({
-    where: { proyectoId },
-    update: { limiteBytes: BigInt(Math.floor(limiteBytes)), administradorId: ctx.usuario.id, fechaAsignacion: new Date() },
-    create: { proyectoId, limiteBytes: BigInt(Math.floor(limiteBytes)), administradorId: ctx.usuario.id },
+  if (!Number.isSafeInteger(limiteBytes) || limiteBytes <= 0) throw new ErrorNube(400, "CUOTA_INVALIDA", "Límite inválido");
+  await prisma.$transaction(async (tx) => {
+    const proyecto = await tx.proyecto.findUniqueOrThrow({ where: { id: proyectoId }, select: { materiaId: true } });
+    await bloquearMateria(tx, proyecto.materiaId);
+    const { usoBytes } = await cuotaDeProyecto(proyectoId, tx);
+    if (limiteBytes < usoBytes) throw new ErrorNube(400, "CUOTA_MENOR_AL_USO", "El límite no puede ser menor al espacio ya usado");
+    await tx.cuotaAlmacenamiento.upsert({
+      where: { proyectoId },
+      update: { limiteBytes: BigInt(limiteBytes), administradorId: ctx.usuario.id, fechaAsignacion: new Date() },
+      create: { proyectoId, limiteBytes: BigInt(limiteBytes), administradorId: ctx.usuario.id },
+    });
   });
   await registrarActividad(ctx, "FIJAR_CUOTA", "proyecto", proyectoId, { limiteBytes });
 }
 
 export async function resumenCuotas(ctx: Contexto): Promise<ResumenCuotaDTO[]> {
   if (ctx.usuario.rol !== "ADMINISTRADOR") throw new ErrorNube(403, "SIN_PERMISO", "Solo el administrador");
-  const proyectos = await proyectosAccesibles(ctx.usuario);
-  return Promise.all(proyectos.map(async (p) => ({ proyectoId: p.id, titulo: p.titulo, ...(await cuotaDeProyecto(p.id)) })));
+  const proyectos = await prisma.proyecto.findMany({
+    orderBy: { titulo: "asc" },
+    select: { id: true, titulo: true, materia: { select: { nombre: true, limiteNubeBytes: true } } },
+  });
+  return Promise.all(proyectos.map(async ({ id, titulo, materia }) => ({
+    proyectoId: id,
+    titulo,
+    materia: materia.nombre,
+    limiteMateriaBytes: materia.limiteNubeBytes === null ? null : Number(materia.limiteNubeBytes),
+    ...(await cuotaDeProyecto(id)),
+  })));
+}
+
+export async function resumenCuotasMaterias(ctx: Contexto): Promise<ResumenCuotaMateriaDTO[]> {
+  if (ctx.usuario.rol !== "ADMINISTRADOR") throw new ErrorNube(403, "SIN_PERMISO", "Solo el administrador");
+  const materias = await prisma.materia.findMany({
+    orderBy: [{ nivel: "asc" }, { nombre: "asc" }],
+    select: { id: true, nombre: true, codigo: true, nivel: true, activa: true, limiteNubeBytes: true, _count: { select: { proyectos: true } } },
+  });
+  return Promise.all(materias.map(async ({ id, limiteNubeBytes, _count, ...materia }) => ({
+    ...materia,
+    materiaId: id,
+    proyectos: _count.proyectos,
+    usoBytes: Number(await usoMateria(prisma, id)),
+    limiteBytes: limiteNubeBytes === null ? null : Number(limiteNubeBytes),
+  })));
+}
+
+export async function fijarCuotaMateria(ctx: Contexto, materiaId: number, limiteBytes: number | null) {
+  if (ctx.usuario.rol !== "ADMINISTRADOR") throw new ErrorNube(403, "SIN_PERMISO", "Solo el administrador");
+  if (limiteBytes !== null && (!Number.isSafeInteger(limiteBytes) || limiteBytes <= 0)) {
+    throw new ErrorNube(400, "CUOTA_INVALIDA", "El límite debe ser un número de bytes mayor que cero");
+  }
+  const limite = limiteBytes === null ? null : BigInt(limiteBytes);
+  await prisma.$transaction(async (tx) => {
+    await bloquearMateria(tx, materiaId);
+    if (limite !== null && limite < await usoMateria(tx, materiaId)) {
+      throw new ErrorNube(400, "CUOTA_MENOR_AL_USO", "El límite no puede ser menor al espacio ya usado por la materia");
+    }
+    await tx.materia.update({ where: { id: materiaId }, data: { limiteNubeBytes: limite } });
+  });
+  await registrarActividad(ctx, "FIJAR_CUOTA_MATERIA", "materia", materiaId, { limiteBytes });
 }
 
 /* ===================== Explorador ===================== */
@@ -193,19 +259,21 @@ export async function subirArchivo(ctx: Contexto, d: { proyectoId: number; carpe
     where: { proyectoId: d.proyectoId, carpetaId: d.carpetaId, nombre, eliminadoEn: null },
   });
   if (repetido) throw new ErrorNube(409, "DUPLICADO", "Ya existe un archivo con ese nombre. Súbelo como nueva versión.");
-  await exigirEspacio(d.proyectoId, d.archivo.size);
 
   const ext = extensionDe(nombre);
   const tipo = await prisma.tipoRecurso.upsert({ where: { nombre: clasificar(ext) }, update: {}, create: { nombre: clasificar(ext) } });
   const clave = await guardarBlob(d.proyectoId, d.archivo);
   try {
     const bytes = BigInt(d.archivo.size);
-    const a = await prisma.archivo.create({
-      data: {
-        proyectoId: d.proyectoId, carpetaId: d.carpetaId, tipoRecursoId: tipo.id, propietarioId: ctx.usuario.id,
-        nombre, extension: ext, mime: d.archivo.type || null, tamanoBytes: bytes,
-        versiones: { create: { usuarioId: ctx.usuario.id, numeroVersion: 1, claveAlmacenamiento: clave, tamanoBytes: bytes, mime: d.archivo.type || null, comentario: d.comentario?.trim() || null } },
-      },
+    const a = await prisma.$transaction(async (tx) => {
+      await exigirEspacio(tx, d.proyectoId, d.archivo.size);
+      return tx.archivo.create({
+        data: {
+          proyectoId: d.proyectoId, carpetaId: d.carpetaId, tipoRecursoId: tipo.id, propietarioId: ctx.usuario.id,
+          nombre, extension: ext, mime: d.archivo.type || null, tamanoBytes: bytes,
+          versiones: { create: { usuarioId: ctx.usuario.id, numeroVersion: 1, claveAlmacenamiento: clave, tamanoBytes: bytes, mime: d.archivo.type || null, comentario: d.comentario?.trim() || null } },
+        },
+      });
     });
     await registrarActividad(ctx, "SUBIR_ARCHIVO", "archivo", a.id, { nombre, bytes: d.archivo.size });
     return { id: a.id, nombre };
@@ -218,17 +286,21 @@ export async function subirArchivo(ctx: Contexto, d: { proyectoId: number; carpe
 export async function subirVersion(ctx: Contexto, archivoId: number, archivo: File, comentario?: string | null) {
   const a = await cargarArchivo(ctx, archivoId, "subir");
   validarArchivo(a.nombre, archivo.size);
-  await exigirEspacio(a.proyectoId, archivo.size);
   const clave = await guardarBlob(a.proyectoId, archivo);
-  const numero = a.versionActual + 1;
+  let numero: number;
   try {
     const bytes = BigInt(archivo.size);
-    await prisma.$transaction([
-      prisma.versionArchivo.create({
+    numero = await prisma.$transaction(async (tx) => {
+      await exigirEspacio(tx, a.proyectoId, archivo.size);
+      const actual = await tx.archivo.findFirst({ where: { id: archivoId, eliminadoEn: null } });
+      if (!actual) throw new ErrorNube(404, "NO_ENCONTRADO", "Archivo no encontrado");
+      const numero = actual.versionActual + 1;
+      await tx.versionArchivo.create({
         data: { archivoId, usuarioId: ctx.usuario.id, numeroVersion: numero, claveAlmacenamiento: clave, tamanoBytes: bytes, mime: archivo.type || null, comentario: comentario?.trim() || null },
-      }),
-      prisma.archivo.update({ where: { id: archivoId }, data: { versionActual: numero, tamanoBytes: bytes, mime: archivo.type || a.mime } }),
-    ]);
+      });
+      await tx.archivo.update({ where: { id: archivoId }, data: { versionActual: numero, tamanoBytes: bytes, mime: archivo.type || actual.mime } });
+      return numero;
+    });
   } catch (e) {
     await almacenamiento.eliminar(clave);
     throw e;

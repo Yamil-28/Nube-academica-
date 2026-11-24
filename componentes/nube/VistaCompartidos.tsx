@@ -2,6 +2,8 @@
 import { obtenerContexto } from "@/lib/nube/contexto";
 import { claseTipo, fechaCorta, formatoBytes } from "@/lib/nube/formato";
 import { listarCompartidosConmigo } from "@/lib/nube/servicio";
+import VersionesCompartidas from "./VersionesCompartidas";
+import ActualizarCompartidos from "./ActualizarCompartidos";
 import CabeceraNube from "./CabeceraNube";
 import { Icono } from "./iconos";
 import NavegacionNube from "./NavegacionNube";
@@ -13,6 +15,7 @@ export default async function VistaCompartidos() {
 
   return (
     <div className={e.raiz}>
+      <ActualizarCompartidos />
       <CabeceraNube rol={ctx.usuario.rol} titulo="Espacios compartidos" subtitulo="Archivos que otras personas compartieron contigo." />
       <NavegacionNube rol={ctx.usuario.rol} activa="compartidos" />
       <div className={e.tarjeta}>
@@ -26,7 +29,7 @@ export default async function VistaCompartidos() {
           <div className={e.envoltura}>
             <table className={e.tabla}>
               <thead>
-                <tr><th>Archivo</th><th className={e.ocultarMovil}>Proyecto</th><th>Compartido por</th><th>Permiso</th><th className={e.ocultarMovil}>Fecha</th><th className={e.derecha}>Descargar</th></tr>
+                <tr><th>Archivo</th><th className={e.ocultarMovil}>Proyecto</th><th>Compartido por</th><th>Permiso</th><th className={e.ocultarMovil}>Fecha</th><th className={e.derecha}>Acciones</th></tr>
               </thead>
               <tbody>
                 {items.map((i) => (
@@ -39,6 +42,7 @@ export default async function VistaCompartidos() {
                     <td className={e.ocultarMovil}>{fechaCorta(i.fecha)}</td>
                     <td><div className={e.acciones}>
                       <a className={e.icono} href={`/api/nube/archivos/${i.archivoId}`} title="Descargar" aria-label={`Descargar ${i.nombre}`}><Icono nombre="descargar" /></a>
+                      <VersionesCompartidas id={i.archivoId} nombre={i.nombre} puedeSubir={i.nivel === "EDICION"} />
                     </div></td>
                   </tr>
                 ))}

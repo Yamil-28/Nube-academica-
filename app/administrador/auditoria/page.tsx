@@ -1,3 +1,4 @@
+import CargandoDashboard from "@/componentes/dashboard/CargandoDashboard";
 
 import { Suspense } from "react";
 import {
@@ -221,7 +222,7 @@ async function ContenidoAuditoria() {
 
 export default function PaginaAuditoria() {
   return (
-    <Suspense fallback={null}>
+    <Suspense fallback={<CargandoDashboard />}>
       <ContenidoAuditoria />
     </Suspense>
   );

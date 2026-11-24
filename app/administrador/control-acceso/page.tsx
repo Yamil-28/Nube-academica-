@@ -1,3 +1,4 @@
+import CargandoDashboard from "@/componentes/dashboard/CargandoDashboard";
 
 import Link from "next/link";
 import { Suspense } from "react";
@@ -274,7 +275,7 @@ async function ContenidoControlAcceso() {
 
 export default function PaginaControlAcceso() {
   return (
-    <Suspense fallback={null}>
+    <Suspense fallback={<CargandoDashboard />}>
       <ContenidoControlAcceso />
     </Suspense>
   );

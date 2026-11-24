@@ -1,3 +1,4 @@
+import CargandoDashboard from "@/componentes/dashboard/CargandoDashboard";
 
 import { Suspense } from "react";
 import { Library } from "lucide-react";
@@ -152,7 +153,7 @@ async function ContenidoRepositorio() {
 
 export default function PaginaRepositorioAcademico() {
   return (
-    <Suspense fallback={null}>
+    <Suspense fallback={<CargandoDashboard />}>
       <ContenidoRepositorio />
     </Suspense>
   );

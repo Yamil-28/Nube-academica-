@@ -1,3 +1,4 @@
+import CargandoDashboard from "@/componentes/dashboard/CargandoDashboard";
 
 import { Suspense } from "react";
 
@@ -20,7 +21,7 @@ async function ContenidoConfiguracionDocente() {
 
 export default function PaginaConfiguracionDocente() {
   return (
-    <Suspense fallback={<p>Cargando configuracion...</p>}>
+    <Suspense fallback={<CargandoDashboard />}>
       <ContenidoConfiguracionDocente />
     </Suspense>
   );

@@ -4,8 +4,7 @@ import estilos from "./layout.module.css";
 
 import { Suspense } from "react";
 
-import CabeceraSegunRuta from "@/componentes/CabeceraSegunRuta";
-import PiePagina from "@/componentes/PiePagina";
+import CabeceraSegunRuta, { PiePublico } from "@/componentes/CabeceraSegunRuta";
 import ProveedorTema from "@/componentes/tema/ProveedorTema";
 
 export default function DisenoPrincipal({
@@ -14,7 +13,7 @@ export default function DisenoPrincipal({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es" suppressHydrationWarning>
+    <html lang="es" data-scroll-behavior="smooth" suppressHydrationWarning>
       <body>
         <ProveedorTema>
           <div className={estilos.estructuraSistema}>
@@ -22,11 +21,13 @@ export default function DisenoPrincipal({
               <CabeceraSegunRuta />
             </Suspense>
 
-            <main className={estilos.contenidoSistema}>
+            <div className={estilos.contenidoSistema}>
               {children}
-            </main>
+            </div>
 
-            <PiePagina />
+            <Suspense fallback={null}>
+              <PiePublico />
+            </Suspense>
           </div>
         </ProveedorTema>
       </body>

@@ -13,8 +13,13 @@ function crearPrisma() {
     throw new Error("No se encontró DATABASE_URL en .env.local");
   }
 
+  const url = new URL(conexion);
+  if (url.hostname.endsWith(".neon.tech") && url.searchParams.get("sslmode") === "require" && !url.searchParams.has("uselibpqcompat")) {
+    url.searchParams.set("sslmode", "verify-full");
+  }
+
   const adaptador = new PrismaPg({
-    connectionString: conexion,
+    connectionString: url.href,
   });
 
   return new PrismaClient({

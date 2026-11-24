@@ -2,6 +2,7 @@
 import { Suspense, type ReactNode } from "react";
 
 import { protegerRuta } from "@/lib/protegerRuta";
+import CargandoDashboard from "@/componentes/dashboard/CargandoDashboard";
 import EstructuraDashboard from "@/componentes/dashboard/EstructuraDashboard";
 
 type Propiedades = {
@@ -27,7 +28,7 @@ export default function LayoutAdministrador({
   children,
 }: Propiedades) {
   return (
-    <Suspense fallback={null}>
+    <Suspense fallback={<CargandoDashboard />}>
       <ContenidoLayout>
         {children}
       </ContenidoLayout>

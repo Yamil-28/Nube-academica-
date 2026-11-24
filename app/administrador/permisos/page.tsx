@@ -1,8 +1,8 @@
+import CargandoDashboard from "@/componentes/dashboard/CargandoDashboard";
 
 import Link from "next/link";
 import { Suspense } from "react";
 import {
-  ArrowLeft,
   ShieldCheck,
   GraduationCap,
   UserRound,
@@ -175,14 +175,6 @@ async function ContenidoPermisos() {
 
   return (
     <div className={estilos.pagina}>
-      <Link
-        href="/administrador/usuarios"
-        className={estilos.botonVolver}
-      >
-        <ArrowLeft size={18} />
-        Volver a Gestión de Usuarios
-      </Link>
-
       <div className={estilos.encabezado}>
         <div>
           <span className={estilos.etiqueta}>
@@ -338,7 +330,7 @@ function FragmentoPermisos({
 
 export default function PaginaPermisos() {
   return (
-    <Suspense fallback={null}>
+    <Suspense fallback={<CargandoDashboard />}>
       <ContenidoPermisos />
     </Suspense>
   );

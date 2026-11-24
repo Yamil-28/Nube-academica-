@@ -21,7 +21,10 @@ export default function PanelCompartir({ archivo }: { archivo: ArchivoDTO }) {
       setPermisos(p); setUsuarios(u);
     } catch (err) { setError((err as Error).message); }
   }, [archivo.id]);
-  useEffect(() => { void cargar(); }, [cargar]);
+  useEffect(() => {
+    const inicio = window.setTimeout(() => void cargar(), 0);
+    return () => window.clearTimeout(inicio);
+  }, [cargar]);
 
   async function accion(fn: () => Promise<unknown>) {
     setOcupado(true); setError(null);

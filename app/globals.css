@@ -18,6 +18,13 @@
   --sombra-tarjeta: 0 15px 45px rgba(7, 59, 112, 0.12);
   --radio-tarjeta: 18px;
   --radio-boton: 10px;
+  --superficie-suave: #f2f6fc;
+  --superficie-acento: #e8f1fb;
+  --sombra-panel: 0 6px 22px rgb(7 59 112 / 7%);
+  --fondo-dashboard: radial-gradient(ellipse at top right, #e5effb, transparent 55%), var(--color-fondo);
+  --fondo-encabezado: linear-gradient(120deg, var(--color-blanco), var(--superficie-suave));
+  --fondo-accion: linear-gradient(125deg, #073b70, #0b60ad);
+  --dorado-institucional: #e9b927;
 }
 
 /* ==========================================
@@ -39,6 +46,10 @@
   --color-borde: #334155;
 
   --sombra-tarjeta: 0 15px 45px rgba(0, 0, 0, 0.3);
+  --superficie-suave: #142037;
+  --superficie-acento: #203552;
+  --sombra-panel: 0 6px 22px rgb(0 0 0 / 15%);
+  --fondo-dashboard: radial-gradient(ellipse at top right, #162a46, transparent 55%), var(--color-fondo);
 }
 
 /* ==========================================
@@ -75,7 +86,9 @@ body {
 ========================================== */
 
 button,
-input {
+input,
+select,
+textarea {
   font: inherit;
 }
 
@@ -92,7 +105,10 @@ a {
 ========================================== */
 
 a:focus-visible,
-button:focus-visible {
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
   outline: 3px solid var(--color-acento);
   outline-offset: 3px;
 }
@@ -107,4 +123,14 @@ button:focus-visible {
 body:has([data-pagina="inicio-emi"])
 footer[class*="PiePagina_piePagina"] {
   display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  body {
+    transition: none;
+  }
 }

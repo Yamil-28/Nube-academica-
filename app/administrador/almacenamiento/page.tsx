@@ -1,5 +1,5 @@
+import CargandoDashboard from "@/componentes/dashboard/CargandoDashboard";
 import { Suspense } from "react";
-import CargandoNube from "@/componentes/nube/CargandoNube";
 import VistaAlmacenamiento from "@/componentes/nube/VistaAlmacenamiento";
 import { exigirRol } from "@/lib/nube/guardia";
 
@@ -10,7 +10,7 @@ async function Contenido() {
 
 export default function Pagina() {
   return (
-    <Suspense fallback={<CargandoNube />}>
+    <Suspense fallback={<CargandoDashboard />}>
       <Contenido />
     </Suspense>
   );

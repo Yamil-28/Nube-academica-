@@ -7,7 +7,7 @@ import type { ArchivoDTO, VersionDTO } from "@/lib/nube/tipos";
 import { Icono } from "./iconos";
 import e from "./nube.module.css";
 
-interface Props { archivo: ArchivoDTO; puedeDescargar: boolean; puedeSubir: boolean; onCambio: () => void }
+interface Props { archivo: Pick<ArchivoDTO, "id" | "nombre">; puedeDescargar: boolean; puedeSubir: boolean; onCambio: () => void }
 
 export default function PanelVersiones({ archivo, puedeDescargar, puedeSubir, onCambio }: Props) {
   const [versiones, setVersiones] = useState<VersionDTO[] | null>(null);
@@ -20,7 +20,10 @@ export default function PanelVersiones({ archivo, puedeDescargar, puedeSubir, on
     try { setVersiones(await nube.versiones(archivo.id)); }
     catch (err) { setError((err as Error).message); }
   }, [archivo.id]);
-  useEffect(() => { void cargar(); }, [cargar]);
+  useEffect(() => {
+    const inicio = window.setTimeout(() => void cargar(), 0);
+    return () => window.clearTimeout(inicio);
+  }, [cargar]);
 
   async function subir(f: File) {
     setOcupado(true); setError(null);

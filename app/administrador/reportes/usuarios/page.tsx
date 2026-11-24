@@ -1,3 +1,4 @@
+import CargandoDashboard from "@/componentes/dashboard/CargandoDashboard";
 
 import { Suspense } from "react";
 import { FileDown, FileSpreadsheet, FileText, Users } from "lucide-react";
@@ -15,7 +16,6 @@ import {
 import { formatearFechaHora, pluralizar } from "@/lib/informes/formato";
 
 import EstructuraDashboard from "@/componentes/dashboard/EstructuraDashboard";
-import NavegacionInterna from "@/componentes/dashboard/NavegacionInterna";
 import EncabezadoInforme from "@/componentes/informes/EncabezadoInforme";
 import FiltrosUsuarios from "@/componentes/informes/FiltrosUsuarios";
 import TablaReporte from "@/componentes/informes/TablaReporte";
@@ -63,13 +63,6 @@ async function ContenidoInformeUsuarios({
   return (
     <EstructuraDashboard usuario={usuario.usuario} rol={usuario.rol}>
       <div className={estilos.contenedor}>
-        <NavegacionInterna
-          titulo="Informe de usuarios"
-          nombreSeccion="Reportes"
-          rutaInicio="/administrador"
-          rutaVolver="/administrador/reportes"
-        />
-
         <EncabezadoInforme
           etiqueta="REPORTES GENERALES"
           titulo="Informe de usuarios"
@@ -181,7 +174,7 @@ export default function PaginaInformeUsuarios({
 }) {
   return (
     <Suspense
-      fallback={<p className={estilos.cargando}>Generando informe...</p>}
+      fallback={<CargandoDashboard />}
     >
       <ContenidoInformeUsuarios searchParams={searchParams} />
     </Suspense>

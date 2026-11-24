@@ -168,6 +168,7 @@ export function obtenerMenus(rol: RolUsuario): MenuDashboard[] {
       icono: "nube",
       submenus: [
         { nombre: "Mis archivos", ruta: "/estudiante/nube" },
+        { nombre: "Espacios compartidos", ruta: "/estudiante/compartidos" },
       ],
     },
     {
@@ -184,6 +185,7 @@ export function obtenerMenus(rol: RolUsuario): MenuDashboard[] {
       icono: "seguimiento",
       submenus: [
         { nombre: "Actividades", ruta: "/estudiante/actividades" },
+        { nombre: "Estado de proyectos", ruta: "/estudiante/seguimiento" },
         { nombre: "Observaciones docentes", ruta: "/estudiante/observaciones" },
       ],
     },

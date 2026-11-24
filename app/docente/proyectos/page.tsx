@@ -1,3 +1,4 @@
+import CargandoDashboard from "@/componentes/dashboard/CargandoDashboard";
 import { Suspense } from "react";
 import { FolderKanban } from "lucide-react";
 
@@ -90,7 +91,7 @@ async function ContenidoProyectosAsignados() {
 
 export default function PaginaProyectosAsignados() {
   return (
-    <Suspense fallback={<p>Cargando proyectos asignados...</p>}>
+    <Suspense fallback={<CargandoDashboard />}>
       <ContenidoProyectosAsignados />
     </Suspense>
   );

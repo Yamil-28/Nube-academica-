@@ -1,3 +1,4 @@
+import CargandoDashboard from "@/componentes/dashboard/CargandoDashboard";
 import { Suspense } from "react";
 import Link from "next/link";
 
@@ -112,7 +113,7 @@ export default function PaginaNuevoProyecto({
   searchParams: Promise<{ error?: string }>;
 }) {
   return (
-    <Suspense fallback={<p>Cargando formulario...</p>}>
+    <Suspense fallback={<CargandoDashboard />}>
       <ContenidoNuevo parametros={searchParams} />
     </Suspense>
   );

@@ -1,3 +1,4 @@
+import CargandoDashboard from "@/componentes/dashboard/CargandoDashboard";
 import { Suspense } from "react";
 import Link from "next/link";
 import { Users, UserPlus } from "lucide-react";
@@ -111,7 +112,7 @@ export default function PaginaMisEquipos({
   searchParams: Promise<Parametros>;
 }) {
   return (
-    <Suspense fallback={<p>Cargando equipos...</p>}>
+    <Suspense fallback={<CargandoDashboard />}>
       <ContenidoMisEquipos parametros={searchParams} />
     </Suspense>
   );

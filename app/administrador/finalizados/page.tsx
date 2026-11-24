@@ -1,3 +1,4 @@
+import CargandoDashboard from "@/componentes/dashboard/CargandoDashboard";
 
 import { Suspense } from "react";
 import { Archive } from "lucide-react";
@@ -118,7 +119,7 @@ async function ContenidoFinalizados() {
 
 export default function PaginaProyectosFinalizados() {
   return (
-    <Suspense fallback={null}>
+    <Suspense fallback={<CargandoDashboard />}>
       <ContenidoFinalizados />
     </Suspense>
   );

@@ -1,3 +1,4 @@
+import CargandoDashboard from "@/componentes/dashboard/CargandoDashboard";
 import { Suspense } from "react";
 import Link from "next/link";
 import { FolderKanban, FolderPlus } from "lucide-react";
@@ -97,7 +98,7 @@ export default function PaginaMisProyectos({
   searchParams: Promise<{ creado?: string }>;
 }) {
   return (
-    <Suspense fallback={<p>Cargando proyectos...</p>}>
+    <Suspense fallback={<CargandoDashboard />}>
       <ContenidoProyectos parametros={searchParams} />
     </Suspense>
   );

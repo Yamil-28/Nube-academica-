@@ -99,11 +99,19 @@ export default function EncabezadoDashboard({
           <Bell size={20} />
         </button>
 
-        <div className={estilos.dashboardPerfilContenedor}>
+        <div
+          className={estilos.dashboardPerfilContenedor}
+          onPointerEnter={(evento) => {
+            if (evento.pointerType === "mouse") establecerPerfilAbierto(true);
+          }}
+          onPointerLeave={(evento) => {
+            if (evento.pointerType === "mouse") establecerPerfilAbierto(false);
+          }}
+        >
           <button
             type="button"
             className={estilos.dashboardPerfilBoton}
-            onClick={() => establecerPerfilAbierto(!perfilAbierto)}
+            onClick={() => establecerPerfilAbierto((abierto) => !abierto)}
             aria-expanded={perfilAbierto}
           >
             <span className={estilos.dashboardAvatar}>

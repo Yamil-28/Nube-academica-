@@ -39,6 +39,7 @@ export default function FormularioAcceso() {
 
     establecerProcesando(true);
     establecerMensaje("");
+    let redirigiendo = false;
 
     try {
       const respuesta = await fetch("/api/iniciar-sesion", {
@@ -57,8 +58,6 @@ export default function FormularioAcceso() {
       const resultado = await respuesta.json();
 
       if (respuesta.ok && resultado.correcto) {
-        establecerMensaje("Inicio de sesión correcto. Redirigiendo...");
-
         // Solo permitir rutas conocidas
         const rutasPermitidas = [
           "/administrador",
@@ -70,8 +69,9 @@ export default function FormularioAcceso() {
           typeof resultado.ruta === "string" &&
           rutasPermitidas.includes(resultado.ruta)
         ) {
+          establecerMensaje("Inicio de sesión correcto. Redirigiendo...");
           router.replace(resultado.ruta);
-          router.refresh();
+          redirigiendo = true;
           return;
         }
 
@@ -86,8 +86,10 @@ export default function FormularioAcceso() {
         "Error de conexión. Inténtalo nuevamente."
       );
     } finally {
-      establecerProcesando(false);
-      actualizarCaptcha();
+      if (!redirigiendo) {
+        establecerProcesando(false);
+        actualizarCaptcha();
+      }
     }
   }
 

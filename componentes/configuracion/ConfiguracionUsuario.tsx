@@ -1,10 +1,8 @@
 
 "use client";
 
-import Link from "next/link";
 
 import {
-  ArrowLeft,
   Settings,
   Sun,
   Moon,
@@ -32,21 +30,9 @@ export default function ConfiguracionUsuario({
 }: Propiedades) {
   const { tema, cambiarTema } = usarTema();
 
-  const rutaInicio =
-    rol === "ADMINISTRADOR"
-      ? "/administrador"
-      : rol === "DOCENTE"
-        ? "/docente"
-        : "/estudiante";
-
   return (
     <div className={estilos.pagina}>
       {/* VOLVER AL DASHBOARD */}
-      <Link href={rutaInicio} className={estilos.volver}>
-        <ArrowLeft size={18} />
-        Volver al Dashboard
-      </Link>
-
       {/* ENCABEZADO */}
       <div className={estilos.encabezado}>
         <span className={estilos.etiqueta}>

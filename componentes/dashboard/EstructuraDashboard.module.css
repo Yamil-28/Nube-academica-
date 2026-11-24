@@ -8,10 +8,12 @@
   --dashboard-ancho-lateral: 268px;
   --dashboard-azul: #092d55;
   --dashboard-azul-claro: #14558a;
-  --dashboard-amarillo: #f4c542;
+  --dashboard-amarillo: var(--dorado-institucional);
+  --dashboard-ancho-contenido: 90rem;
 
   min-height: 100dvh;
-  background: #f4f7fb;
+  padding-top: var(--dashboard-alto);
+  background: var(--fondo-dashboard);
 
   transition:
     background-color 0.2s ease,
@@ -25,9 +27,7 @@
 :global(html[data-tema="oscuro"]) .dashboardEstructura {
   --dashboard-azul: #111e33;
   --dashboard-azul-claro: #1e3554;
-  --dashboard-amarillo: #f4c542;
 
-  background: var(--color-fondo);
   color: var(--color-texto);
 }
 
@@ -36,16 +36,53 @@
 ========================================== */
 
 .dashboardContenido {
-  display: block;
-  flex: 1 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, var(--dashboard-ancho-contenido));
+  justify-content: center;
+  align-content: start;
   min-height: calc(100dvh - var(--dashboard-alto));
+  margin-inline-start: var(--dashboard-ancho-lateral);
+  padding: clamp(16px, 2vw, 30px) clamp(16px, 2.4vw, 36px) 36px;
+}
 
-  margin: 0 0 0 var(--dashboard-ancho-lateral);
+.dashboardEstructura:not(:has(.dashboardContenido > nav)) {
+  background: #f4f7fb;
+}
+
+:global(html[data-tema="oscuro"]) .dashboardEstructura:not(:has(.dashboardContenido > nav)) {
+  background: var(--color-fondo);
+}
+
+.dashboardContenido:not(:has(> nav)) {
+  display: block;
   padding: 0 30px 32px;
+}
 
-  align-content: normal;
-  justify-content: flex-start;
-  align-items: stretch;
+.dashboardContenido:has(> nav) {
+  padding-block-start: 0;
+}
+
+.dashboardContenido > :where(div, section, article, form, nav) {
+  width: 100%;
+  min-width: 0;
+  margin-inline: auto;
+}
+
+.dashboardContenido :where(input, select, textarea, img) {
+  max-width: 100%;
+}
+
+.dashboardContenido :where(h1, h2, h3, th, td) {
+  overflow-wrap: anywhere;
+}
+
+.dashboardContenido :where(thead) {
+  background: var(--superficie-suave);
+  color: var(--color-texto);
+}
+
+.dashboardContenido :where(tbody tr:hover) {
+  background: var(--superficie-suave);
 }
 
 /* ==========================================
@@ -54,14 +91,39 @@
 
 @media (max-width: 900px) {
   .dashboardContenido {
-    margin-left: 0;
-    padding: calc(var(--dashboard-alto) + 16px) 20px 28px;
+    margin-inline-start: 0;
+    padding-bottom: 28px;
+  }
+
+  .dashboardContenido:not(:has(> nav)) {
+    padding: 16px 20px 28px;
   }
 }
 
 @media (max-width: 600px) {
-  .dashboardContenido {
+  .dashboardContenido,
+  .dashboardContenido:not(:has(> nav)) {
     padding-left: 15px;
     padding-right: 15px;
+  }
+}
+
+.dashboardCargando {
+  padding: 36px 0;
+  text-align: center;
+  color: var(--color-texto-secundario, #536984);
+}
+
+.dashboardPie {
+  margin-left: var(--dashboard-ancho-lateral);
+}
+
+.dashboardEstructura:has([data-cargando-dashboard]:not([hidden], [hidden] *)) .dashboardPie {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .dashboardPie {
+    margin-left: 0;
   }
 }

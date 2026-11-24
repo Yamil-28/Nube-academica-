@@ -137,6 +137,18 @@ export default function BarraLateral({
               <div
                 key={menu.nombre}
                 className={estilos.dashboardGrupoMenu}
+                onPointerEnter={(evento) => {
+                  if (evento.pointerType !== "mouse") return;
+                  establecerMenusAbiertos((anteriores) =>
+                    anteriores.includes(menu.nombre) ? anteriores : [...anteriores, menu.nombre]
+                  );
+                }}
+                onPointerLeave={(evento) => {
+                  if (evento.pointerType !== "mouse") return;
+                  establecerMenusAbiertos((anteriores) =>
+                    anteriores.filter((nombre) => nombre !== menu.nombre)
+                  );
+                }}
               >
                 <button
                   type="button"

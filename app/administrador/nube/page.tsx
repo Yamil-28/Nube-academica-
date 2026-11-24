@@ -1,5 +1,5 @@
+import CargandoDashboard from "@/componentes/dashboard/CargandoDashboard";
 import { Suspense } from "react";
-import CargandoNube from "@/componentes/nube/CargandoNube";
 import VistaNube from "@/componentes/nube/VistaNube";
 import { exigirRol } from "@/lib/nube/guardia";
 
@@ -14,7 +14,7 @@ async function Contenido({ searchParams }: Props) {
 
 export default function Pagina(props: Props) {
   return (
-    <Suspense fallback={<CargandoNube />}>
+    <Suspense fallback={<CargandoDashboard />}>
       <Contenido searchParams={props.searchParams} />
     </Suspense>
   );

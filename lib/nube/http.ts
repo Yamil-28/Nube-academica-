@@ -1,5 +1,5 @@
 // Envoltorio reutilizable para route handlers: autentica, convierte errores a JSON y valida ids.
-import { NextResponse, type NextRequest } from "next/server";
+import { connection, NextResponse, type NextRequest } from "next/server";
 import { obtenerContexto } from "./contexto";
 import { ErrorNube, type Contexto } from "./tipos";
 
@@ -9,6 +9,7 @@ export function manejar<P = Record<string, string>>(
   fn: (req: NextRequest, ctx: Contexto, params: P) => Promise<Response>,
 ) {
   return async (req: NextRequest, { params }: { params: Promise<P> }) => {
+    await connection();
     try {
       return await fn(req, await obtenerContexto(req), await params);
     } catch (e) {

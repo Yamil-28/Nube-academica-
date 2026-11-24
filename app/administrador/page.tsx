@@ -1,3 +1,4 @@
+import CargandoDashboard from "@/componentes/dashboard/CargandoDashboard";
 
 import { Suspense } from "react";
 import Link from "next/link";
@@ -311,7 +312,7 @@ async function ContenidoAdministrador() {
 
 export default function PaginaAdministrador() {
   return (
-    <Suspense fallback={null}>
+    <Suspense fallback={<CargandoDashboard />}>
       <ContenidoAdministrador />
     </Suspense>
   );

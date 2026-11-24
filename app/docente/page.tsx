@@ -1,3 +1,4 @@
+import CargandoDashboard from "@/componentes/dashboard/CargandoDashboard";
 
 import { Suspense } from "react";
 import Link from "next/link";
@@ -154,7 +155,7 @@ async function ContenidoDocente() {
 
 export default function PaginaDocente() {
   return (
-    <Suspense fallback={<p>Cargando panel docente...</p>}>
+    <Suspense fallback={<CargandoDashboard />}>
       <ContenidoDocente />
     </Suspense>
   );

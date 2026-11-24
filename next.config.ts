@@ -4,6 +4,8 @@ const nextConfig: NextConfig = {
   /* config options here */
   experimental: {
     agentFeedback: true,
+    // Las rutas protegidas pueden redirigir mientras se valida la sesión.
+    instantInsights: { validationLevel: "manual-warning" },
   },
   cacheComponents: true,
   // Librerías de exportación de reportes (PDF y Excel): se cargan

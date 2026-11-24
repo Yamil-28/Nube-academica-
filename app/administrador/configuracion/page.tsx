@@ -1,3 +1,4 @@
+import CargandoDashboard from "@/componentes/dashboard/CargandoDashboard";
 
 import { Suspense } from "react";
 
@@ -20,7 +21,7 @@ async function ContenidoConfiguracionAdministrador() {
 
 export default function PaginaConfiguracionAdministrador() {
   return (
-    <Suspense fallback={<p>Cargando configuracion...</p>}>
+    <Suspense fallback={<CargandoDashboard />}>
       <ContenidoConfiguracionAdministrador />
     </Suspense>
   );

@@ -1,3 +1,4 @@
+import CargandoDashboard from "@/componentes/dashboard/CargandoDashboard";
 import { Suspense } from "react";
 import Link from "next/link";
 import { Users } from "lucide-react";
@@ -204,7 +205,7 @@ export default function PaginaIntegrantes({
   searchParams: Promise<Parametros>;
 }) {
   return (
-    <Suspense fallback={<p>Cargando integrantes...</p>}>
+    <Suspense fallback={<CargandoDashboard />}>
       <ContenidoIntegrantes parametros={searchParams} />
     </Suspense>
   );

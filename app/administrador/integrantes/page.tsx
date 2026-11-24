@@ -1,3 +1,4 @@
+import CargandoDashboard from "@/componentes/dashboard/CargandoDashboard";
 
 import { Suspense } from "react";
 import { Users } from "lucide-react";
@@ -178,7 +179,7 @@ export default function PaginaIntegrantesAdministrador({
   searchParams: Promise<Parametros>;
 }) {
   return (
-    <Suspense fallback={null}>
+    <Suspense fallback={<CargandoDashboard />}>
       <ContenidoIntegrantesAdmin
         parametros={searchParams}
       />

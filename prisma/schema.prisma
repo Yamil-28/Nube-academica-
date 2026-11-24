@@ -103,6 +103,7 @@ model PeriodoAcademico {
 }
 
 model Materia {
+  limiteNubeBytes BigInt?
   id          Int      @id @default(autoincrement())
   codigo      String?  @unique
   nombre      String   @unique

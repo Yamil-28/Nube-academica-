@@ -1,6 +1,7 @@
 
 import "server-only";
 
+import { cache } from "react";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import {
@@ -9,7 +10,7 @@ import {
   type RolUsuario,
 } from "@/lib/sesion";
 
-export async function protegerRuta(rolPermitido: RolUsuario) {
+export const protegerRuta = cache(async (rolPermitido: RolUsuario) => {
   // 1. Comprobar si existe una sesión válida
   const sesion = await obtenerSesion();
 
@@ -50,4 +51,4 @@ export async function protegerRuta(rolPermitido: RolUsuario) {
   }
 
   return usuario;
-}
+});

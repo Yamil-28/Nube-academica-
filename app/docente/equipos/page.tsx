@@ -1,3 +1,4 @@
+import CargandoDashboard from "@/componentes/dashboard/CargandoDashboard";
 import { Suspense } from "react";
 import { Users } from "lucide-react";
 
@@ -91,7 +92,7 @@ async function ContenidoEquiposDocente() {
 
 export default function PaginaEquiposDocente() {
   return (
-    <Suspense fallback={<p>Cargando equipos...</p>}>
+    <Suspense fallback={<CargandoDashboard />}>
       <ContenidoEquiposDocente />
     </Suspense>
   );

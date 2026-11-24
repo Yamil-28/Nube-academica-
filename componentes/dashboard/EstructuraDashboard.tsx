@@ -2,6 +2,8 @@
 
 import { createContext, useContext, useState, type ReactNode } from "react";
 
+import PiePagina from "@/componentes/PiePagina";
+import NavegacionInterna from "./NavegacionInterna";
 import BarraLateral from "./BarraLateral";
 import EncabezadoDashboard from "./EncabezadoDashboard";
 
@@ -28,26 +30,31 @@ export default function EstructuraDashboard({
 
   return (
     <DashboardContext.Provider value={true}>
-    <div
-      className={estilos.dashboardEstructura}
-      data-dashboard="siscloud"
-    >
-      <EncabezadoDashboard
-        usuario={usuario}
-        rol={rol}
-        abrirMenu={() => establecerMenuAbierto(!menuAbierto)}
-      />
+      <div
+        className={estilos.dashboardEstructura}
+        data-dashboard="siscloud"
+      >
+        <EncabezadoDashboard
+          usuario={usuario}
+          rol={rol}
+          abrirMenu={() => establecerMenuAbierto(!menuAbierto)}
+        />
 
-      <BarraLateral
-        rol={rol}
-        abierto={menuAbierto}
-        cerrar={() => establecerMenuAbierto(false)}
-      />
+        <BarraLateral
+          rol={rol}
+          abierto={menuAbierto}
+          cerrar={() => establecerMenuAbierto(false)}
+        />
 
-      <main className={estilos.dashboardContenido}>
-        {children}
-      </main>
-    </div>
+        <main className={estilos.dashboardContenido}>
+          <NavegacionInterna rol={rol} />
+          {children}
+        </main>
+
+        <div className={estilos.dashboardPie}>
+          <PiePagina />
+        </div>
+      </div>
     </DashboardContext.Provider>
   );
 }

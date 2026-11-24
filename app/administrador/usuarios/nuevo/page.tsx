@@ -1,7 +1,7 @@
+import CargandoDashboard from "@/componentes/dashboard/CargandoDashboard";
 
-import Link from "next/link";
 import { Suspense } from "react";
-import { ArrowLeft, UserPlus } from "lucide-react";
+import { UserPlus } from "lucide-react";
 
 import { protegerRuta } from "@/lib/protegerRuta";
 import FormularioRegistro from "./FormularioRegistro";
@@ -14,14 +14,6 @@ async function ContenidoRegistro() {
 
   return (
     <div className={estilos.pagina}>
-      <Link
-        href="/administrador/usuarios"
-        className={estilos.botonVolver}
-      >
-        <ArrowLeft size={18} />
-        Volver a Gestión de Usuarios
-      </Link>
-
       <div className={estilos.encabezado}>
         <span className={estilos.etiqueta}>
           GESTIÓN DE USUARIOS
@@ -49,7 +41,7 @@ async function ContenidoRegistro() {
 
 export default function PaginaNuevoUsuario() {
   return (
-    <Suspense fallback={null}>
+    <Suspense fallback={<CargandoDashboard />}>
       <ContenidoRegistro />
     </Suspense>
   );

@@ -11,6 +11,7 @@
   gap: 14px;
 
   width: 100%;
+  padding-top: 24px;
   margin-bottom: 20px;
 }
 
@@ -104,6 +105,15 @@
 /* ==========================================
    ADAPTACIÓN A MÓVILES
 ========================================== */
+
+:global(html[data-tema="oscuro"]) .dashboardMigas,
+:global(html[data-tema="oscuro"]) .dashboardMigas strong {
+  color: var(--color-texto);
+}
+
+:global(html[data-tema="oscuro"]) .dashboardMigas a {
+  color: #9dccff;
+}
 
 @media (max-width: 600px) {
   .dashboardNavegacionInterna {

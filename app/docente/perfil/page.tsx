@@ -1,3 +1,4 @@
+import CargandoDashboard from "@/componentes/dashboard/CargandoDashboard";
 
 import { Suspense } from "react";
 import { protegerRuta } from "@/lib/protegerRuta";
@@ -29,7 +30,7 @@ async function ContenidoPerfil() {
 
 export default function PaginaPerfil() {
   return (
-    <Suspense fallback={<p>Cargando perfil...</p>}>
+    <Suspense fallback={<CargandoDashboard />}>
       <ContenidoPerfil />
     </Suspense>
   );

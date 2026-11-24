@@ -1,3 +1,4 @@
+import CargandoDashboard from "@/componentes/dashboard/CargandoDashboard";
 
 import { Suspense } from "react";
 import Link from "next/link";
@@ -15,7 +16,6 @@ import { NIVEL_MAXIMO, NIVEL_MINIMO } from "@/lib/academico/validaciones";
 import { etiquetaMateria } from "@/lib/academico/tipos";
 
 import EstructuraDashboard from "@/componentes/dashboard/EstructuraDashboard";
-import NavegacionInterna from "@/componentes/dashboard/NavegacionInterna";
 import EncabezadoAcademico from "@/componentes/academico/EncabezadoAcademico";
 import FormularioMateria from "@/componentes/academico/FormularioMateria";
 import BotonAccion from "@/componentes/academico/BotonAccion";
@@ -68,12 +68,6 @@ async function ContenidoMaterias({ searchParams }: { searchParams: ParametrosBus
   return (
     <EstructuraDashboard usuario={usuario.usuario} rol={usuario.rol}>
       <div className={estilos.contenedor}>
-        <NavegacionInterna
-          titulo="Materias"
-          nombreSeccion="Gestión académica"
-          rutaInicio="/administrador"
-        />
-
         <EncabezadoAcademico
           etiqueta="GESTIÓN ACADÉMICA"
           titulo="Materias"
@@ -230,7 +224,7 @@ async function ContenidoMaterias({ searchParams }: { searchParams: ParametrosBus
 
 export default function PaginaMaterias({ searchParams }: { searchParams: ParametrosBusqueda }) {
   return (
-    <Suspense fallback={<p className={estilos.cargando}>Cargando materias...</p>}>
+    <Suspense fallback={<CargandoDashboard />}>
       <ContenidoMaterias searchParams={searchParams} />
     </Suspense>
   );

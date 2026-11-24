@@ -5,7 +5,7 @@ import { useEffect, useRef, type ReactNode } from "react";
 import { Icono } from "./iconos";
 import e from "./nube.module.css";
 
-export interface CampoDialogo { etiqueta: string; valor?: string; placeholder?: string; tipo?: "text" | "number"; min?: number }
+export interface CampoDialogo { etiqueta: string; valor?: string; placeholder?: string; tipo?: "text" | "number"; min?: number; paso?: number | "any"; requerido?: boolean }
 
 interface Props {
   abierto: boolean;
@@ -41,6 +41,7 @@ export default function Dialogo({
     <dialog
       ref={ref}
       className={`${e.dialogo} ${amplio ? e.dialogoAmplio : ""}`}
+      onCancel={(ev) => { if (ocupado) ev.preventDefault(); }}
       onClose={onCerrar}
       onClick={(ev) => { if (ev.target === ref.current) onCerrar(); }}
     >
@@ -61,8 +62,8 @@ export default function Dialogo({
             {campo && (
               <label className={e.campo}>
                 <span>{campo.etiqueta}</span>
-                <input name="valor" type={campo.tipo ?? "text"} min={campo.min} defaultValue={campo.valor}
-                  placeholder={campo.placeholder} autoFocus required />
+                <input name="valor" type={campo.tipo ?? "text"} min={campo.min} step={campo.paso} defaultValue={campo.valor}
+                  placeholder={campo.placeholder} autoFocus required={campo.requerido ?? true} />
               </label>
             )}
             {children}

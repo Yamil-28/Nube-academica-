@@ -3,30 +3,31 @@
   flex-direction: column;
   gap: 20px;
   max-width: 900px;
+  margin-inline: auto;
 }
 
 .etiqueta {
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.08em;
-  color: #1d5f9f;
+  color: var(--color-secundario);
 }
 
 .contenedor h1 {
   margin: 6px 0;
-  font-size: 32px;
-  color: #12284a;
+  font-size: clamp(1.55rem, 3vw, 2rem);
+  color: var(--color-texto);
 }
 
 .contenedor p {
   margin: 0;
-  color: #5b6b82;
+  color: var(--color-texto-secundario);
 }
 
 .panel,
 .tarjeta {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+  background: var(--color-blanco);
+  border: 1px solid var(--color-borde);
   border-radius: 16px;
   padding: 24px;
 }
@@ -48,15 +49,15 @@
 .tarjetaCabecera h2 {
   margin: 0 0 4px;
   font-size: 22px;
-  color: #12284a;
+  color: var(--color-texto);
 }
 
 .estado {
   display: inline-block;
   padding: 4px 10px;
   border-radius: 999px;
-  background: #e8f0fb;
-  color: #1d5f9f;
+  background: var(--superficie-acento);
+  color: var(--color-secundario);
   font-size: 13px;
   font-weight: 600;
 }
@@ -64,7 +65,7 @@
 .subtitulo {
   margin: 0;
   font-size: 16px;
-  color: #12284a;
+  color: var(--color-texto);
 }
 
 .lista {
@@ -83,12 +84,12 @@
 
 .item span {
   font-size: 13px;
-  color: #5b6b82;
+  color: var(--color-texto-secundario);
 }
 
 .item p {
   margin: 2px 0 0;
-  color: #12284a;
+  color: var(--color-texto);
 }
 
 .formulario {
@@ -96,7 +97,7 @@
   flex-direction: column;
   gap: 12px;
   padding-top: 12px;
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid var(--color-borde);
 }
 
 .formulario label {
@@ -104,12 +105,12 @@
   flex-direction: column;
   gap: 6px;
   font-weight: 600;
-  color: #12284a;
+  color: var(--color-texto);
 }
 
 .formulario textarea {
   padding: 10px 12px;
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--color-borde);
   border-radius: 10px;
   font: inherit;
   font-weight: 400;
@@ -124,7 +125,7 @@
   padding: 10px 18px;
   border: none;
   border-radius: 10px;
-  background: #12284a;
+  background: var(--fondo-accion);
   color: #ffffff;
   font-weight: 600;
   cursor: pointer;
@@ -140,8 +141,8 @@
   padding: 10px 18px;
   border: 1px solid #12284a;
   border-radius: 10px;
-  background: #ffffff;
-  color: #12284a;
+  background: var(--color-blanco);
+  color: var(--color-texto);
   font-weight: 600;
   cursor: pointer;
 }
@@ -153,16 +154,16 @@
   gap: 8px;
   padding: 32px 16px;
   text-align: center;
-  color: #5b6b82;
+  color: var(--color-texto-secundario);
 }
 
 .vacio h3 {
   margin: 0;
-  color: #12284a;
+  color: var(--color-texto);
 }
 
 .textoSuave {
-  color: #5b6b82;
+  color: var(--color-texto-secundario);
   font-size: 14px;
 }
 
@@ -179,4 +180,14 @@
   border-radius: 10px;
   background: #fdecec;
   color: #a12626 !important;
+}
+@media (max-width: 600px) {
+  .formulario {
+    padding-inline: 16px;
+  }
+
+  .formulario :is(input, select, textarea) {
+    width: 100%;
+    min-width: 0;
+  }
 }

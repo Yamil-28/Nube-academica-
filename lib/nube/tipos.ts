@@ -39,7 +39,12 @@ export interface VersionDTO {
 }
 export type NivelPermiso = "LECTURA" | "EDICION";
 export interface PermisoDTO { usuarioId: number; etiqueta: string; nivel: NivelPermiso }
-export interface ResumenCuotaDTO { proyectoId: number; titulo: string; usoBytes: number; limiteBytes: number }
+export interface ResumenCuotaDTO extends CuotaDTO {
+  proyectoId: number;
+  titulo: string;
+  materia: string;
+  limiteMateriaBytes: number | null;
+}
 
 export const RUTA_BASE: Record<Rol, string> = {
   ESTUDIANTE: "/estudiante", DOCENTE: "/docente", ADMINISTRADOR: "/administrador",
@@ -50,3 +55,14 @@ export interface CompartidoDTO {
   nivel: NivelPermiso; fecha: string;
 }
 export interface UsuarioListaDTO { id: number; nombre: string; usuario: string; rol: Rol }
+
+export interface ResumenCuotaMateriaDTO {
+  materiaId: number;
+  nombre: string;
+  codigo: string | null;
+  nivel: number;
+  activa: boolean;
+  proyectos: number;
+  usoBytes: number;
+  limiteBytes: number | null;
+}

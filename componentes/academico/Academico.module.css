@@ -28,6 +28,13 @@
 ========================================== */
 
 .encabezado {
+  padding: clamp(16px, 2.3vw, 28px);
+  border: 1px solid var(--color-borde);
+  border-inline-start: 4px solid var(--dorado-institucional);
+  border-radius: var(--radio-tarjeta);
+  background: var(--fondo-encabezado);
+  box-shadow: var(--sombra-panel);
+
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -109,7 +116,8 @@
   overflow: hidden;
   border: 1px solid #dce6f0;
   border-radius: 14px;
-  background: #ffffff;
+  background: var(--color-blanco);
+  box-shadow: var(--sombra-panel);
 }
 
 .panelCabecera {

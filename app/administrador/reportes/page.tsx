@@ -1,3 +1,4 @@
+import CargandoDashboard from "@/componentes/dashboard/CargandoDashboard";
 
 import { Suspense } from "react";
 import Link from "next/link";
@@ -7,7 +8,6 @@ import { protegerRuta } from "@/lib/protegerRuta";
 import { obtenerCatalogo } from "@/lib/informes/catalogo";
 
 import EstructuraDashboard from "@/componentes/dashboard/EstructuraDashboard";
-import NavegacionInterna from "@/componentes/dashboard/NavegacionInterna";
 import EncabezadoInforme from "@/componentes/informes/EncabezadoInforme";
 import CatalogoReportes from "@/componentes/informes/CatalogoReportes";
 
@@ -21,12 +21,6 @@ async function ContenidoReportes() {
   return (
     <EstructuraDashboard usuario={usuario.usuario} rol={usuario.rol}>
       <div className={estilos.contenedor}>
-        <NavegacionInterna
-          titulo="Reportes"
-          nombreSeccion="Informes y reportes"
-          rutaInicio="/administrador"
-        />
-
         <EncabezadoInforme
           etiqueta="INFORMES Y REPORTES"
           titulo="Reportes generales"
@@ -72,7 +66,7 @@ async function ContenidoReportes() {
 export default function PaginaReportes() {
   return (
     <Suspense
-      fallback={<p className={estilos.cargando}>Cargando reportes...</p>}
+      fallback={<CargandoDashboard />}
     >
       <ContenidoReportes />
     </Suspense>

@@ -1,3 +1,4 @@
+import CargandoDashboard from "@/componentes/dashboard/CargandoDashboard";
 
 import { Suspense } from "react";
 import { Users } from "lucide-react";
@@ -135,7 +136,7 @@ async function ContenidoTodosLosEquipos() {
 
 export default function PaginaTodosLosEquipos() {
   return (
-    <Suspense fallback={null}>
+    <Suspense fallback={<CargandoDashboard />}>
       <ContenidoTodosLosEquipos />
     </Suspense>
   );

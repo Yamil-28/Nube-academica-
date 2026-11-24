@@ -1,8 +1,8 @@
+import CargandoDashboard from "@/componentes/dashboard/CargandoDashboard";
 
-import Link from "next/link";
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
-import { ArrowLeft, Pencil } from "lucide-react";
+import { Pencil } from "lucide-react";
 
 import { protegerRuta } from "@/lib/protegerRuta";
 import { prisma } from "@/lib/prisma";
@@ -51,14 +51,6 @@ async function ContenidoEdicion({ params }: Propiedades) {
   // 4. Mostrar el contenido dentro del layout compartido
   return (
     <div className={estilos.pagina}>
-      <Link
-        href="/administrador/usuarios"
-        className={estilos.botonVolver}
-      >
-        <ArrowLeft size={18} />
-        Volver a Gestión de Usuarios
-      </Link>
-
       <div className={estilos.encabezado}>
         <span className={estilos.etiqueta}>
           GESTIÓN DE USUARIOS
@@ -96,7 +88,7 @@ export default function PaginaEditarUsuario(
   propiedades: Propiedades
 ) {
   return (
-    <Suspense fallback={null}>
+    <Suspense fallback={<CargandoDashboard />}>
       <ContenidoEdicion {...propiedades} />
     </Suspense>
   );

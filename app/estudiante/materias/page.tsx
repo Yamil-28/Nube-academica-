@@ -1,3 +1,4 @@
+import CargandoDashboard from "@/componentes/dashboard/CargandoDashboard";
 
 import { Suspense } from "react";
 import { BookOpen, CalendarCheck, GraduationCap } from "lucide-react";
@@ -11,7 +12,6 @@ import {
 import { nombrePeriodo } from "@/lib/academico/tipos";
 
 import EstructuraDashboard from "@/componentes/dashboard/EstructuraDashboard";
-import NavegacionInterna from "@/componentes/dashboard/NavegacionInterna";
 import EncabezadoAcademico from "@/componentes/academico/EncabezadoAcademico";
 
 import estilos from "@/componentes/academico/Academico.module.css";
@@ -38,12 +38,6 @@ async function ContenidoMateriasEstudiante() {
   return (
     <EstructuraDashboard usuario={usuario.usuario} rol={usuario.rol}>
       <div className={estilos.contenedor}>
-        <NavegacionInterna
-          titulo="Materias"
-          nombreSeccion="Gestión académica"
-          rutaInicio="/estudiante"
-        />
-
         <EncabezadoAcademico
           etiqueta="GESTIÓN ACADÉMICA"
           titulo="Materias de la Carrera"
@@ -114,7 +108,7 @@ async function ContenidoMateriasEstudiante() {
 
 export default function PaginaMateriasEstudiante() {
   return (
-    <Suspense fallback={<p className={estilos.cargando}>Cargando materias...</p>}>
+    <Suspense fallback={<CargandoDashboard />}>
       <ContenidoMateriasEstudiante />
     </Suspense>
   );

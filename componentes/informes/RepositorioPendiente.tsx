@@ -1,7 +1,6 @@
 
 import { Archive, BookOpen, CalendarDays, Search } from "lucide-react";
 
-import NavegacionInterna from "@/componentes/dashboard/NavegacionInterna";
 import EncabezadoInforme from "@/componentes/informes/EncabezadoInforme";
 
 import estilos from "@/componentes/informes/PaginaInforme.module.css";
@@ -17,7 +16,6 @@ import estilosCatalogo from "@/componentes/informes/CatalogoReportes.module.css"
 ========================================== */
 
 type Propiedades = {
-  rutaInicio: string;
   descripcion: string;
 };
 
@@ -39,15 +37,9 @@ const funciones = [
   },
 ];
 
-export default function RepositorioPendiente({ rutaInicio, descripcion }: Propiedades) {
+export default function RepositorioPendiente({ descripcion }: Propiedades) {
   return (
     <div className={estilos.contenedor}>
-      <NavegacionInterna
-        titulo="Repositorio académico"
-        nombreSeccion="Informes y reportes"
-        rutaInicio={rutaInicio}
-      />
-
       <EncabezadoInforme
         etiqueta="INFORMES Y REPORTES"
         titulo="Repositorio académico"

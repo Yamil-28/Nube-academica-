@@ -14,7 +14,6 @@ import {
 import { formatearFechaHora } from "@/lib/informes/formato";
 
 import EstructuraDashboard from "@/componentes/dashboard/EstructuraDashboard";
-import NavegacionInterna from "@/componentes/dashboard/NavegacionInterna";
 import EncabezadoInforme from "@/componentes/informes/EncabezadoInforme";
 import FiltrosReporte from "@/componentes/informes/FiltrosReporte";
 import TablaReporte from "@/componentes/informes/TablaReporte";
@@ -67,13 +66,6 @@ export default async function VistaReporte({ rol, parametros, busqueda }: Propie
   return (
     <EstructuraDashboard usuario={usuario.usuario} rol={usuario.rol}>
       <div className={estilos.contenedor}>
-        <NavegacionInterna
-          titulo={definicion.titulo}
-          nombreSeccion="Informes y reportes"
-          rutaInicio={rutaInicio}
-          rutaVolver={rutaReportes}
-        />
-
         <EncabezadoInforme
           etiqueta="INFORMES Y REPORTES"
           titulo={definicion.titulo}

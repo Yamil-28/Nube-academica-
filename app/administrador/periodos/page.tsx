@@ -1,3 +1,4 @@
+import CargandoDashboard from "@/componentes/dashboard/CargandoDashboard";
 
 import { Suspense } from "react";
 import { CalendarCheck, CalendarDays } from "lucide-react";
@@ -11,7 +12,6 @@ import {
 import { nombrePeriodo } from "@/lib/academico/tipos";
 
 import EstructuraDashboard from "@/componentes/dashboard/EstructuraDashboard";
-import NavegacionInterna from "@/componentes/dashboard/NavegacionInterna";
 import EncabezadoAcademico from "@/componentes/academico/EncabezadoAcademico";
 import FormularioPeriodo from "@/componentes/academico/FormularioPeriodo";
 import BotonAccion from "@/componentes/academico/BotonAccion";
@@ -41,12 +41,6 @@ async function ContenidoPeriodos() {
   return (
     <EstructuraDashboard usuario={usuario.usuario} rol={usuario.rol}>
       <div className={estilos.contenedor}>
-        <NavegacionInterna
-          titulo="Periodos académicos"
-          nombreSeccion="Gestión académica"
-          rutaInicio="/administrador"
-        />
-
         <EncabezadoAcademico
           etiqueta="GESTIÓN ACADÉMICA"
           titulo="Periodos académicos"
@@ -162,7 +156,7 @@ async function ContenidoPeriodos() {
 
 export default function PaginaPeriodos() {
   return (
-    <Suspense fallback={<p className={estilos.cargando}>Cargando periodos...</p>}>
+    <Suspense fallback={<CargandoDashboard />}>
       <ContenidoPeriodos />
     </Suspense>
   );

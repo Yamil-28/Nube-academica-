@@ -1,3 +1,4 @@
+import CargandoDashboard from "@/componentes/dashboard/CargandoDashboard";
 import { Suspense } from "react";
 import Link from "next/link";
 import { FolderPlus } from "lucide-react";
@@ -105,7 +106,7 @@ export default function PaginaCrearEquipo({
   searchParams: Promise<Parametros>;
 }) {
   return (
-    <Suspense fallback={<p>Cargando formulario...</p>}>
+    <Suspense fallback={<CargandoDashboard />}>
       <ContenidoNuevoEquipo parametros={searchParams} />
     </Suspense>
   );

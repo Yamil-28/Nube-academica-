@@ -5,7 +5,7 @@ import estilos from "./page.module.css";
 
 export default function PaginaPrincipal() {
   return (
-    <div
+    <main
      className={estilos.emiInicio}
      data-pagina="inicio-emi"
      >
@@ -76,6 +76,6 @@ export default function PaginaPrincipal() {
           </div>
         </div>
       </section>
-    </div>
+    </main>
   );
 }

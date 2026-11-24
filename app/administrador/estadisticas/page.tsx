@@ -1,3 +1,4 @@
+import CargandoDashboard from "@/componentes/dashboard/CargandoDashboard";
 import { Suspense } from "react";
 
 import {
@@ -21,7 +22,6 @@ import { obtenerEstadisticasAcademicas } from "@/lib/informes/estadisticasAcadem
 import { formatearFechaHora, pluralizar } from "@/lib/informes/formato";
 
 import EstructuraDashboard from "@/componentes/dashboard/EstructuraDashboard";
-import NavegacionInterna from "@/componentes/dashboard/NavegacionInterna";
 import TarjetaEstadistica from "@/componentes/dashboard/TarjetaEstadistica";
 import GraficoBarrasHorizontales, {
   type ColorBarra,
@@ -79,12 +79,6 @@ async function ContenidoEstadisticas() {
   return (
     <EstructuraDashboard usuario={usuario.usuario} rol={usuario.rol}>
       <div className={estilos.estadisticas}>
-        <NavegacionInterna
-          titulo="Estadísticas generales"
-          nombreSeccion="Informes y reportes"
-          rutaInicio="/administrador"
-        />
-
         {/* ENCABEZADO */}
         <div className={estilos.estadisticasEncabezado}>
           <div>
@@ -322,11 +316,7 @@ async function ContenidoEstadisticas() {
 export default function PaginaEstadisticas() {
   return (
     <Suspense
-      fallback={
-        <p className={estilos.estadisticasCargando}>
-          Cargando estadísticas...
-        </p>
-      }
+      fallback={<CargandoDashboard />}
     >
       <ContenidoEstadisticas />
     </Suspense>

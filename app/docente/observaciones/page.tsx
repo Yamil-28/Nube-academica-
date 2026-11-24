@@ -1,3 +1,4 @@
+import CargandoDashboard from "@/componentes/dashboard/CargandoDashboard";
 import { Suspense } from "react";
 import { MessageSquareText } from "lucide-react";
 
@@ -34,7 +35,7 @@ async function ContenidoObservaciones() {
             <div className={estilos.vacio}>
               <MessageSquareText size={35} />
               <h3>Aún no registraste observaciones</h3>
-              <p>Las que escribas en "Revisión de avances" aparecerán aquí.</p>
+              <p>Las que escribas en «Revisión de avances» aparecerán aquí.</p>
             </div>
           ) : (
             <ul className={estilos.lista}>
@@ -57,7 +58,7 @@ async function ContenidoObservaciones() {
 
 export default function PaginaObservaciones() {
   return (
-    <Suspense fallback={<p>Cargando observaciones...</p>}>
+    <Suspense fallback={<CargandoDashboard />}>
       <ContenidoObservaciones />
     </Suspense>
   );

@@ -1,8 +1,8 @@
 // Cliente fetch tipado para usar desde componentes "use client".
-import type { CompartidoDTO, ContenidoDTO, NivelPermiso, PermisoDTO, ResumenCuotaDTO, UsuarioListaDTO, VersionDTO } from "./tipos";
+import type { CompartidoDTO, ContenidoDTO, NivelPermiso, PermisoDTO, ResumenCuotaDTO, ResumenCuotaMateriaDTO, UsuarioListaDTO, VersionDTO } from "./tipos";
 
 async function pedir<T>(url: string, init?: RequestInit): Promise<T> {
-  const r = await fetch(url, init);
+  const r = await fetch(url, { cache: "no-store", ...init });
   if (!r.ok) {
     const e = await r.json().catch(() => null);
     throw new Error(e?.error?.mensaje ?? `Error ${r.status}`);
@@ -38,6 +38,8 @@ export const nube = {
   quitarPermiso: (id: number, usuarioId: number) => pedir(`/api/nube/archivos/${id}/permisos`, enviar("DELETE", { usuarioId })),
   compartidos: () => pedir<CompartidoDTO[]>("/api/nube/compartidos"),
   usuarios: () => pedir<UsuarioListaDTO[]>("/api/nube/usuarios"),
+  cuotasMaterias: () => pedir<ResumenCuotaMateriaDTO[]>("/api/nube/cuotas/materias"),
+  fijarCuotaMateria: (materiaId: number, limiteBytes: number | null) => pedir("/api/nube/cuotas/materias", enviar("PUT", { materiaId, limiteBytes })),
   cuotas: () => pedir<ResumenCuotaDTO[]>("/api/nube/cuotas"),
   fijarCuota: (proyectoId: number, limiteBytes: number) => pedir("/api/nube/cuotas", enviar("PUT", { proyectoId, limiteBytes })),
 };

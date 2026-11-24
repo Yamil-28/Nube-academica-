@@ -3,8 +3,10 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import AvatarPerfil from "@/componentes/perfil/AvatarPerfil";
 import {
   Bell,
+  Camera,
   ChevronDown,
   Cloud,
   LogOut,
@@ -19,6 +21,7 @@ import estilos from "./EncabezadoDashboard.module.css";
 type Propiedades = {
   usuario: string;
   rol: RolUsuario;
+  fotoRevision?: string;
   abrirMenu: () => void;
 };
 
@@ -31,6 +34,7 @@ const nombresRoles: Record<RolUsuario, string> = {
 export default function EncabezadoDashboard({
   usuario,
   rol,
+  fotoRevision,
   abrirMenu,
 }: Propiedades) {
   const [perfilAbierto, establecerPerfilAbierto] = useState(false);
@@ -115,7 +119,7 @@ export default function EncabezadoDashboard({
             aria-expanded={perfilAbierto}
           >
             <span className={estilos.dashboardAvatar}>
-              <UserRound size={21} />
+              <AvatarPerfil revision={fotoRevision} ancho={40} icono={21} />
             </span>
 
             <span className={estilos.dashboardPerfilDatos}>
@@ -139,6 +143,11 @@ export default function EncabezadoDashboard({
               >
                 <UserRound size={17} />
                 Mi perfil
+              </Link>
+
+              <Link href={rutaBase + "/perfil#foto-de-perfil"} onClick={() => establecerPerfilAbierto(false)}>
+                <Camera size={17} />
+                {fotoRevision ? "Cambiar foto" : "Subir foto"}
               </Link>
 
               <Link

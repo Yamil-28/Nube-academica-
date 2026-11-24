@@ -20,6 +20,7 @@ async function ContenidoPerfil() {
         nombre={cuenta.nombre}
         usuario={cuenta.usuario}
         rol={cuenta.rol}
+        fotoRevision={sesion.fotoPerfil?.revision}
         creadoEn={cuenta.creadoEn.toLocaleDateString("es-BO", {
           timeZone: "America/La_Paz",
         })}

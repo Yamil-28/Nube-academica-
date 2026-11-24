@@ -9,6 +9,7 @@ import {
 
 import type { RolUsuario } from "@/lib/sesion";
 
+import FormularioFotoPerfil from "./FormularioFotoPerfil";
 import FormularioEditarNombre from "./FormularioEditarNombre";
 import FormularioCambioContrasena from "./FormularioCambioContrasena";
 
@@ -19,6 +20,7 @@ type Propiedades = {
   usuario: string;
   rol: RolUsuario;
   creadoEn: string;
+  fotoRevision?: string;
 };
 
 const nombresRoles: Record<RolUsuario, string> = {
@@ -32,6 +34,7 @@ export default function PerfilUsuario({
   usuario,
   rol,
   creadoEn,
+  fotoRevision,
 }: Propiedades) {
   return (
     <div className={estilos.pagina}>
@@ -51,9 +54,7 @@ export default function PerfilUsuario({
       {/* INFORMACIÓN PERSONAL */}
       <section className={estilos.tarjeta}>
         <div className={estilos.perfilSuperior}>
-          <div className={estilos.avatar}>
-            <UserRound size={34} />
-          </div>
+          <FormularioFotoPerfil revision={fotoRevision} />
 
           <div>
             <h2>{nombre}</h2>

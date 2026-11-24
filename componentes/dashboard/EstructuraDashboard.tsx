@@ -15,12 +15,14 @@ const DashboardContext = createContext(false);
 type Propiedades = {
   usuario: string;
   rol: RolUsuario;
+  fotoRevision?: string;
   children: ReactNode;
 };
 
 export default function EstructuraDashboard({
   usuario,
   rol,
+  fotoRevision,
   children,
 }: Propiedades) {
   const dashboardExistente = useContext(DashboardContext);
@@ -37,6 +39,7 @@ export default function EstructuraDashboard({
         <EncabezadoDashboard
           usuario={usuario}
           rol={rol}
+          fotoRevision={fotoRevision}
           abrirMenu={() => establecerMenuAbierto(!menuAbierto)}
         />
 

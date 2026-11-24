@@ -39,6 +39,7 @@ model Usuario {
   creadoEn      DateTime @default(now())
   versionSesion Int      @default(0)
 
+  fotoPerfil FotoPerfil?
   auditorias Auditoria[]
   asignaciones AsignacionDocente[]
 
@@ -59,6 +60,15 @@ model Usuario {
   permisosNube PermisoArchivo[] @relation("PermisoUsuario")
 
   @@map("usuarios")
+}
+
+model FotoPerfil {
+  usuarioId Int    @id
+  imagen    Bytes
+  revision  String @db.Uuid
+  usuario   Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@map("fotos_perfil")
 }
 
 model Auditoria {

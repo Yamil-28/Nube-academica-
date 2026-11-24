@@ -58,6 +58,7 @@
   display: flex;
   align-items: center;
   gap: 20px;
+  flex-wrap: wrap;
   padding-bottom: 24px;
   border-bottom: 1px solid #dce6f0;
 }
@@ -70,6 +71,7 @@
   justify-content: center;
   flex-shrink: 0;
   border-radius: 18px;
+  overflow: hidden;
   background: #e8f3ff;
   color: #075aa5;
 }
@@ -479,4 +481,46 @@
 :global(html[data-tema="oscuro"])
 .formularioGuardar:hover:not(:disabled) {
   background: #3479c5;
+}
+
+.fotoPerfil {
+  display: grid;
+  justify-items: start;
+  gap: 8px;
+  max-width: 14rem;
+  scroll-margin-top: calc(var(--dashboard-alto, 76px) + 1rem);
+}
+
+.fotoPerfil small {
+  color: var(--color-texto-secundario);
+}
+
+.fotoPerfil .errorFoto {
+  color: #a61b29;
+}
+
+:global(html[data-tema="oscuro"]) .fotoPerfil .errorFoto {
+  color: #ffacb4;
+}
+
+.botonFoto {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 11px;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-boton);
+  background: var(--color-blanco);
+  color: var(--color-secundario);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.botonFoto:hover:not(:disabled) {
+  background: var(--superficie-acento);
+}
+
+.botonFoto:disabled {
+  cursor: wait;
+  opacity: .7;
 }

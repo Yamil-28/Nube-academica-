@@ -28,6 +28,7 @@ export const protegerRuta = cache(async (rolPermitido: RolUsuario) => {
       rol: true,
       activo: true,
       versionSesion: true,
+      fotoPerfil: { select: { revision: true } },
     },
   });
 

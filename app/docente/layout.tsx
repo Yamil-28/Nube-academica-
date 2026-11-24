@@ -18,6 +18,7 @@ async function ContenidoLayout({
     <EstructuraDashboard
       usuario={sesion.usuario}
       rol={sesion.rol}
+      fotoRevision={sesion.fotoPerfil?.revision}
     >
       {children}
     </EstructuraDashboard>

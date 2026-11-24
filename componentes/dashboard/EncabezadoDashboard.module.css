@@ -140,6 +140,7 @@
   height: 40px;
 
   border-radius: 50%;
+  overflow: hidden;
   background: var(--dashboard-hover);
   color: var(--dashboard-amarillo);
 }

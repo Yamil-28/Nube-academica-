@@ -97,15 +97,6 @@
   line-height: 1.55;
 }
 
-.accesoBeneficios {
-  display: grid;
-  gap: 9px;
-  margin-top: 18px;
-  color: var(--color-primario);
-  font-size: 14px;
-  font-weight: 600;
-}
-
 .accesoCarrera {
   display: flex;
   align-items: center;
@@ -183,12 +174,6 @@
     margin-top: 14px;
     font-size: 15px;
     line-height: 1.6;
-  }
-
-  .accesoBeneficios {
-    margin-top: 18px;
-    gap: 10px;
-    font-size: 13px;
   }
 
   .accesoCarrera {

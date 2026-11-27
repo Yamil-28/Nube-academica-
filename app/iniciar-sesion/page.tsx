@@ -30,16 +30,11 @@ export default function PaginaIniciarSesion() {
           </h1>
 
           <p className={estilos.accesoDescripcion}>
-            Gestiona tus proyectos académicos, organiza
-            documentos y colabora con tu equipo desde
-            un solo lugar.
+            SISCloud es la plataforma de la EMI para gestionar proyectos
+            académicos. Aquí puedes organizar los archivos de tu equipo,
+            consultar el estado de cada proyecto y seguir los avances
+            y las observaciones docentes.
           </p>
-
-          <div className={estilos.accesoBeneficios}>
-            <p>✓ Organización de proyectos académicos</p>
-            <p>✓ Trabajo colaborativo</p>
-            <p>✓ Seguimiento y revisión docente</p>
-          </div>
 
           <div className={estilos.accesoCarrera}>
             <Image

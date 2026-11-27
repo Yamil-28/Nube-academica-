@@ -55,6 +55,36 @@
   margin: 0;
 }
 
+.enlaces {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.enlaces a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border: 1px solid #ffffff66;
+  border-radius: 8px;
+  background: #ffffff12;
+  color: #fff;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.enlaces a:hover {
+  background: #ffffff2b;
+}
+
+.enlaces a:focus-visible {
+  outline: 2px solid #ffd45b;
+  outline-offset: 2px;
+}
+
 @media (max-width: 600px) {
   .contenedor {
     width: calc(100% - 32px);
@@ -65,5 +95,9 @@
 
   .institucion {
     text-align: left;
+  }
+
+  .enlaces {
+    justify-content: flex-start;
   }
 }

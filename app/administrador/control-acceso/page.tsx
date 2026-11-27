@@ -1,3 +1,5 @@
+import { TipoEventoAuditoria } from "@/app/generated/prisma/enums";
+import FiltrosListado, { coincide, parametro, type ParametrosListado } from "@/componentes/dashboard/FiltrosListado";
 import CargandoDashboard from "@/componentes/dashboard/CargandoDashboard";
 
 import Link from "next/link";
@@ -18,9 +20,21 @@ import { protegerRuta } from "@/lib/protegerRuta";
 
 import estilos from "./page.module.css";
 
-async function ContenidoControlAcceso() {
+async function ContenidoControlAcceso({ searchParams }: { searchParams: Promise<ParametrosListado> }) {
   // Verificar permisos del Administrador
   await protegerRuta("ADMINISTRADOR");
+  const filtros = await searchParams;
+  const q = parametro(filtros, "q");
+  const tipos = [TipoEventoAuditoria.INICIO_SESION_FALLIDO, TipoEventoAuditoria.ACCESO_DENEGADO];
+  const tipo = tipos.find((valor) => valor === parametro(filtros, "tipo"));
+  const busqueda = q ? {
+    OR: [
+      { descripcion: { contains: q, mode: "insensitive" as const } },
+      { usuarioNombre: { contains: q, mode: "insensitive" as const } },
+      { tipo: { in: tipos.filter((valor) => coincide(q, valor, valor.replaceAll("_", " "))) } },
+      ...(/^\d+$/.test(q) && Number(q) <= 2147483647 ? [{ entidadId: Number(q) }] : []),
+    ],
+  } : {};
 
   // Obtener información de PostgreSQL (Neon)
   const [
@@ -55,14 +69,7 @@ async function ContenidoControlAcceso() {
     }),
 
     prisma.auditoria.findMany({
-      where: {
-        tipo: {
-          in: [
-            "INICIO_SESION_FALLIDO",
-            "ACCESO_DENEGADO",
-          ],
-        },
-      },
+      where: { ...busqueda, tipo: tipo ?? { in: tipos } },
       orderBy: {
         fecha: "desc",
       },
@@ -110,6 +117,7 @@ async function ContenidoControlAcceso() {
       icono: LockKeyhole,
     },
   ];
+
 
   return (
     <div className={estilos.pagina}>
@@ -179,6 +187,8 @@ async function ContenidoControlAcceso() {
       </section>
 
       {/* Eventos de seguridad */}
+
+      <FiltrosListado ruta="/administrador/control-acceso" filtros={filtros} etiqueta="Buscar evento o usuario" selectores={[{ nombre: "tipo", todos: "Todos los eventos", opciones: tipos.map((valor) => ({ valor, etiqueta: valor.replaceAll("_", " ") })) }]} />
       <section className={estilos.panel}>
         <div className={estilos.panelEncabezado}>
           <div>
@@ -193,7 +203,7 @@ async function ContenidoControlAcceso() {
 
         {eventos.length === 0 ? (
           <p className={estilos.vacio}>
-            No existen eventos de seguridad registrados.
+            No se encontraron eventos de seguridad.
           </p>
         ) : (
           <div className={estilos.tablaContenedor}>
@@ -273,10 +283,10 @@ async function ContenidoControlAcceso() {
   );
 }
 
-export default function PaginaControlAcceso() {
+export default function PaginaControlAcceso({ searchParams }: { searchParams: Promise<ParametrosListado> }) {
   return (
     <Suspense fallback={<CargandoDashboard />}>
-      <ContenidoControlAcceso />
+      <ContenidoControlAcceso searchParams={searchParams} />
     </Suspense>
   );
 }

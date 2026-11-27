@@ -1,3 +1,4 @@
+import FiltrosListado, { coincide, parametro, type ParametrosListado } from "@/componentes/dashboard/FiltrosListado";
 import CargandoDashboard from "@/componentes/dashboard/CargandoDashboard";
 
 import { Suspense } from "react";
@@ -10,9 +11,11 @@ import { obtenerMaterias } from "@/lib/proyectos/materiasSimuladas";
 
 import estilos from "../proyectos/page.module.css";
 
-async function ContenidoRepositorio() {
+async function ContenidoRepositorio({ searchParams }: { searchParams: Promise<ParametrosListado> }) {
   // Verificar acceso del Administrador
   await protegerRuta("ADMINISTRADOR");
+  const filtros = await searchParams;
+  const q = parametro(filtros, "q");
 
   // Obtener todos los proyectos
   const todos = await listarProyectos();
@@ -38,9 +41,24 @@ async function ContenidoRepositorio() {
 
   // Organizar por gestión y semestre
   // Del período más reciente al más antiguo
+  const materia = parametro(filtros, "materia");
+  const periodo = parametro(filtros, "periodo");
+  const periodosDisponibles = [...new Set(finalizados.map((p) => `${p.gestion}-${p.semestre}`))].sort().reverse();
+  const visibles = finalizados.filter((p) =>
+    (!materia || String(p.materiaId) === materia) &&
+    (!periodo || `${p.gestion}-${p.semestre}` === periodo) &&
+    coincide(q, p.titulo, nombreMateria.get(p.materiaId), nombres.get(p.docenteId), p.gestion));
+  const selectores = [
+    { nombre: "materia", todos: "Todas las materias", opciones: materias.map((m) => ({ valor: String(m.id), etiqueta: m.nombre })) },
+    { nombre: "periodo", todos: "Todos los periodos", opciones: periodosDisponibles.map((valor) => {
+      const [gestion, semestre] = valor.split("-");
+      return { valor, etiqueta: `${semestre === "1" ? "I" : "II"}/${gestion}` };
+    }) },
+  ];
+
   const periodos = [
     ...new Set(
-      finalizados.map(
+      visibles.map(
         (p) => `${p.gestion}-${p.semestre}`
       )
     ),
@@ -63,6 +81,8 @@ async function ContenidoRepositorio() {
           semestre y materia para su consulta posterior.
         </p>
       </section>
+      <FiltrosListado ruta="/administrador/repositorio" filtros={filtros} etiqueta="Buscar proyecto, materia, docente o gestión" selectores={selectores} />
+
 
       {/* REPOSITORIO */}
       {periodos.length === 0 ? (
@@ -70,7 +90,7 @@ async function ContenidoRepositorio() {
           <div className={estilos.vacio}>
             <Library size={35} />
 
-            <h3>El repositorio está vacío</h3>
+            <h3>{finalizados.length ? "No hay proyectos que coincidan" : "El repositorio está vacío"}</h3>
 
             <p>
               Los proyectos finalizados se conservarán
@@ -80,7 +100,7 @@ async function ContenidoRepositorio() {
         </section>
       ) : (
         periodos.map((periodo) => {
-          const delPeriodo = finalizados.filter(
+          const delPeriodo = visibles.filter(
             (p) =>
               `${p.gestion}-${p.semestre}` === periodo
           );
@@ -151,10 +171,10 @@ async function ContenidoRepositorio() {
   );
 }
 
-export default function PaginaRepositorioAcademico() {
+export default function PaginaRepositorioAcademico({ searchParams }: { searchParams: Promise<ParametrosListado> }) {
   return (
     <Suspense fallback={<CargandoDashboard />}>
-      <ContenidoRepositorio />
+      <ContenidoRepositorio searchParams={searchParams} />
     </Suspense>
   );
 }

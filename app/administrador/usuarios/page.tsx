@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 
 import { protegerRuta } from "@/lib/protegerRuta";
+import { esAdministradorPrincipal, puedeAdministrarCuenta } from "@/lib/administradorPrincipal";
 import { prisma } from "@/lib/prisma";
 import TablaUsuarios from "./TablaUsuarios";
 
@@ -15,7 +16,7 @@ import estilos from "./page.module.css";
 
 async function ContenidoUsuarios() {
   // Verificar permisos en el servidor
-  await protegerRuta("ADMINISTRADOR");
+  const sesion = await protegerRuta("ADMINISTRADOR");
 
   // Consultar usuarios en Neon
   const usuarios = await prisma.usuario.findMany({
@@ -37,6 +38,8 @@ async function ContenidoUsuarios() {
   // Convertir fechas antes de enviar datos al cliente
   const datosUsuarios = usuarios.map((cuenta) => ({
     ...cuenta,
+    principal: esAdministradorPrincipal(cuenta),
+    editable: puedeAdministrarCuenta(sesion, cuenta),
     creadoEn: cuenta.creadoEn.toLocaleDateString("es-BO", {
       timeZone: "America/La_Paz",
     }),

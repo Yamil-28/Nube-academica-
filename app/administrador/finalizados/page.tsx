@@ -1,3 +1,4 @@
+import FiltrosListado, { coincide, parametro, type ParametrosListado } from "@/componentes/dashboard/FiltrosListado";
 import CargandoDashboard from "@/componentes/dashboard/CargandoDashboard";
 
 import { Suspense } from "react";
@@ -10,9 +11,11 @@ import { obtenerMaterias } from "@/lib/proyectos/materiasSimuladas";
 
 import estilos from "../proyectos/page.module.css";
 
-async function ContenidoFinalizados() {
+async function ContenidoFinalizados({ searchParams }: { searchParams: Promise<ParametrosListado> }) {
   // Verificar acceso del Administrador
   await protegerRuta("ADMINISTRADOR");
+  const filtros = await searchParams;
+  const q = parametro(filtros, "q");
 
   // Obtener proyectos
   const todos = await listarProyectos();
@@ -36,6 +39,21 @@ async function ContenidoFinalizados() {
     materias.map((m) => [m.id, m.nombre])
   );
 
+  const materia = parametro(filtros, "materia");
+  const periodo = parametro(filtros, "periodo");
+  const periodosDisponibles = [...new Set(finalizados.map((p) => `${p.gestion}-${p.semestre}`))].sort().reverse();
+  const visibles = finalizados.filter((p) =>
+    (!materia || String(p.materiaId) === materia) &&
+    (!periodo || `${p.gestion}-${p.semestre}` === periodo) &&
+    coincide(q, p.titulo, nombreMateria.get(p.materiaId), nombres.get(p.docenteId), p.gestion));
+  const selectores = [
+    { nombre: "materia", todos: "Todas las materias", opciones: materias.map((m) => ({ valor: String(m.id), etiqueta: m.nombre })) },
+    { nombre: "periodo", todos: "Todos los periodos", opciones: periodosDisponibles.map((valor) => {
+      const [gestion, semestre] = valor.split("-");
+      return { valor, etiqueta: `${semestre === "1" ? "I" : "II"}/${gestion}` };
+    }) },
+  ];
+
   return (
     <div className={estilos.contenedor}>
       {/* ENCABEZADO */}
@@ -51,10 +69,12 @@ async function ContenidoFinalizados() {
           cerrados por el docente.
         </p>
       </section>
+      <FiltrosListado ruta="/administrador/finalizados" filtros={filtros} etiqueta="Buscar proyecto, materia, docente o gestión" selectores={selectores} />
+
 
       {/* TABLA DE PROYECTOS FINALIZADOS */}
       <section className={estilos.panel}>
-        {finalizados.length === 0 ? (
+        {visibles.length === 0 ? (
           <div className={estilos.vacio}>
             <Archive size={35} />
 
@@ -79,7 +99,7 @@ async function ContenidoFinalizados() {
               </thead>
 
               <tbody>
-                {finalizados.map((p) => (
+                {visibles.map((p) => (
                   <tr key={p.id}>
                     <td>{p.titulo}</td>
 
@@ -117,10 +137,10 @@ async function ContenidoFinalizados() {
   );
 }
 
-export default function PaginaProyectosFinalizados() {
+export default function PaginaProyectosFinalizados({ searchParams }: { searchParams: Promise<ParametrosListado> }) {
   return (
     <Suspense fallback={<CargandoDashboard />}>
-      <ContenidoFinalizados />
+      <ContenidoFinalizados searchParams={searchParams} />
     </Suspense>
   );
 }

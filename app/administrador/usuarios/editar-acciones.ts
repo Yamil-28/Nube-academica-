@@ -4,6 +4,7 @@
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { protegerRuta } from "@/lib/protegerRuta";
+import { esAdministradorPrincipal, esNombreReservado, puedeAdministrarCuenta } from "@/lib/administradorPrincipal";
 
 export type EstadoEdicion = {
   error: string;
@@ -104,6 +105,18 @@ export async function actualizarUsuario(
 
         if (!cuenta) {
           return "El usuario no existe.";
+        }
+
+        if (!puedeAdministrarCuenta(administrador, cuenta)) {
+          return "Solo el administrador principal puede gestionar esta cuenta.";
+        }
+
+        if (rol === "ADMINISTRADOR" && cuenta.rol !== rol && !esAdministradorPrincipal(administrador)) {
+          return "Solo el administrador principal puede asignar el rol de administrador.";
+        }
+
+        if (esNombreReservado(usuario) && usuario !== cuenta.usuario) {
+          return "Ese nombre de usuario está reservado para la cuenta principal.";
         }
 
         // Proteger la propia cuenta del administrador

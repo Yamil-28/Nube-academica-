@@ -1,10 +1,11 @@
 import CargandoDashboard from "@/componentes/dashboard/CargandoDashboard";
 
 import { Suspense } from "react";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { Pencil } from "lucide-react";
 
 import { protegerRuta } from "@/lib/protegerRuta";
+import { esAdministradorPrincipal, puedeAdministrarCuenta } from "@/lib/administradorPrincipal";
 import { prisma } from "@/lib/prisma";
 import FormularioEditar from "./FormularioEditar";
 import FormularioRestablecer from "./FormularioRestablecer";
@@ -47,6 +48,7 @@ async function ContenidoEdicion({ params }: Propiedades) {
   if (!cuenta) {
     notFound();
   }
+  if (!puedeAdministrarCuenta(sesion, cuenta)) redirect("/administrador/usuarios");
 
   // 4. Mostrar el contenido dentro del layout compartido
   return (
@@ -56,7 +58,7 @@ async function ContenidoEdicion({ params }: Propiedades) {
           GESTIÓN DE USUARIOS
         </span>
 
-        <h1>Editar usuario</h1>
+        <h1>{esAdministradorPrincipal(cuenta) ? "Cuenta del superadministrador" : "Editar usuario"}</h1>
 
         <p>
           Modifica la información, los permisos y la
@@ -73,6 +75,7 @@ async function ContenidoEdicion({ params }: Propiedades) {
         <FormularioEditar
           cuenta={cuenta}
           esCuentaPropia={cuenta.id === sesion.id}
+          puedeAsignarAdministrador={esAdministradorPrincipal(sesion)}
         />
       </section>
 

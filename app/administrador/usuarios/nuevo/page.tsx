@@ -4,13 +4,14 @@ import { Suspense } from "react";
 import { UserPlus } from "lucide-react";
 
 import { protegerRuta } from "@/lib/protegerRuta";
+import { esAdministradorPrincipal } from "@/lib/administradorPrincipal";
 import FormularioRegistro from "./FormularioRegistro";
 
 import estilos from "./page.module.css";
 
 async function ContenidoRegistro() {
   // Verificar que sea un administrador
-  await protegerRuta("ADMINISTRADOR");
+  const sesion = await protegerRuta("ADMINISTRADOR");
 
   return (
     <div className={estilos.pagina}>
@@ -33,7 +34,7 @@ async function ContenidoRegistro() {
           <h2>Información de la nueva cuenta</h2>
         </div>
 
-        <FormularioRegistro />
+        <FormularioRegistro puedeCrearAdministrador={esAdministradorPrincipal(sesion)} />
       </section>
     </div>
   );

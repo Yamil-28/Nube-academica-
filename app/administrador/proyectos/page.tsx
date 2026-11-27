@@ -1,3 +1,6 @@
+import FiltrosListado, { coincide, parametro, type ParametrosListado } from "@/componentes/dashboard/FiltrosListado";
+import opciones from "@/componentes/dashboard/DetallesListado.module.css";
+import Link from "next/link";
 import CargandoDashboard from "@/componentes/dashboard/CargandoDashboard";
 
 import { Suspense } from "react";
@@ -17,7 +20,7 @@ import {
 
 import estilos from "./page.module.css";
 
-type Parametros = { estado?: string };
+type Parametros = ParametrosListado;
 
 async function ContenidoTodosLosProyectos({
   parametros,
@@ -27,7 +30,10 @@ async function ContenidoTodosLosProyectos({
   // Verificar acceso del Administrador
   await protegerRuta("ADMINISTRADOR");
 
-  const { estado } = await parametros;
+  const filtros = await parametros;
+  const estado = parametro(filtros, "estado");
+  const q = parametro(filtros, "q");
+  const materia = parametro(filtros, "materia");
 
   // Solo se acepta un estado válido
   const filtro = ESTADOS_PROYECTO.find(
@@ -37,7 +43,7 @@ async function ContenidoTodosLosProyectos({
   // Consultar proyectos
   const todos = await listarProyectos();
 
-  const proyectos = filtro
+  const porEstado = filtro
     ? todos.filter((p) => p.estado === filtro)
     : todos;
 
@@ -49,7 +55,7 @@ async function ContenidoTodosLosProyectos({
   );
 
   const nombres = await obtenerNombresUsuarios(
-    proyectos.flatMap((p) => [
+    porEstado.flatMap((p) => [
       p.creadoPorId,
       p.docenteId,
     ])
@@ -58,6 +64,8 @@ async function ContenidoTodosLosProyectos({
   const nombreMateria = new Map(
     materias.map((m) => [m.id, m.nombre])
   );
+
+  const proyectos = porEstado.filter((p) => (!materia || String(p.materiaId) === materia) && coincide(q, p.titulo, p.gestion, nombres.get(p.creadoPorId), nombres.get(p.docenteId), nombreMateria.get(p.materiaId)));
 
   const cantidadAvances = (id: number) =>
     avances.filter((a) => a.proyectoId === id).length;
@@ -71,6 +79,8 @@ async function ContenidoTodosLosProyectos({
         </span>
 
         <h1>Todos los proyectos</h1>
+        <Link className={opciones.boton} href="/administrador/gestion?modo=proyecto">Crear proyecto</Link>
+        {parametro(filtros, "guardado") === "proyecto" && <p role="status">Proyecto creado correctamente.</p>}
 
         <p>
           Supervisión general de los proyectos registrados en SISCloud.
@@ -99,33 +109,10 @@ async function ContenidoTodosLosProyectos({
         ))}
       </section>
 
-      {/* FILTRO POR ESTADO */}
-      <form
-        method="get"
-        className={estilos.filtro}
-      >
-        <select
-          name="estado"
-          defaultValue={filtro ?? ""}
-        >
-          <option value="">
-            Todos los estados
-          </option>
-
-          {ESTADOS_PROYECTO.map((e) => (
-            <option key={e} value={e}>
-              {ETIQUETA_ESTADO[e]}
-            </option>
-          ))}
-        </select>
-
-        <button
-          type="submit"
-          className={estilos.botonFiltro}
-        >
-          Filtrar
-        </button>
-      </form>
+      <FiltrosListado ruta="/administrador/proyectos" filtros={filtros} etiqueta="Buscar proyecto, materia, docente o responsable" selectores={[
+        { nombre: "estado", todos: "Todos los estados", opciones: ESTADOS_PROYECTO.map((valor) => ({ valor, etiqueta: ETIQUETA_ESTADO[valor] })) },
+        { nombre: "materia", todos: "Todas las materias", opciones: materias.map((m) => ({ valor: String(m.id), etiqueta: m.nombre })) },
+      ]} />
 
       {/* TABLA DE PROYECTOS */}
       <section className={estilos.panel}>

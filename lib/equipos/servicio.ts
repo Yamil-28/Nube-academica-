@@ -60,7 +60,8 @@ type EquipoCompleto = NonNullable<
 // y que el proyecto no esté finalizado
 async function cargarParaLider(
   equipoId: number,
-  solicitanteId: number
+  solicitanteId: number,
+  esAdministrador = false
 ): Promise<
   { ok: true; equipo: EquipoCompleto } | { ok: false; error: ErrorEquipo }
 > {
@@ -72,7 +73,7 @@ async function cargarParaLider(
   const esLider = equipo.miembros.some(
     (m) => m.usuarioId === solicitanteId && m.rolEquipo === "LIDER"
   );
-  if (!esLider) return fallo("sin_permiso");
+  if (!esLider && !esAdministrador) return fallo("sin_permiso");
 
   if (equipo.proyecto.estado === "FINALIZADO") {
     return fallo("proyecto_finalizado");
@@ -183,6 +184,7 @@ export async function crearEquipo(datos: {
   nombre: string;
   proyectoId: number;
   solicitanteId: number;
+  esAdministrador?: boolean;
 }): Promise<Resultado<{ equipoId: number }>> {
   if (!idValido(datos.proyectoId)) return fallo("proyecto_invalido");
 
@@ -190,12 +192,15 @@ export async function crearEquipo(datos: {
     where: { id: datos.proyectoId },
     select: {
       creadoPorId: true,
+      creador: { select: { rol: true, activo: true } },
       estado: true,
       equipo: { select: { id: true } },
     },
   });
 
-  if (!proyecto || proyecto.creadoPorId !== datos.solicitanteId) {
+  if (!proyecto || (datos.esAdministrador
+    ? proyecto.creador.rol !== "ESTUDIANTE" || !proyecto.creador.activo
+    : proyecto.creadoPorId !== datos.solicitanteId)) {
     return fallo("proyecto_invalido");
   }
   if (proyecto.estado === "FINALIZADO") return fallo("proyecto_finalizado");
@@ -208,7 +213,7 @@ export async function crearEquipo(datos: {
         proyectoId: datos.proyectoId,
         creadoPorId: datos.solicitanteId,
         miembros: {
-          create: { usuarioId: datos.solicitanteId, rolEquipo: "LIDER" },
+          create: { usuarioId: proyecto.creadoPorId, rolEquipo: "LIDER" },
         },
       },
       select: { id: true },
@@ -226,10 +231,11 @@ export async function agregarMiembro(datos: {
   equipoId: number;
   usuarioId: number;
   solicitanteId: number;
+  esAdministrador?: boolean;
 }): Promise<Resultado> {
   if (!idValido(datos.usuarioId)) return fallo("estudiante_invalido");
 
-  const carga = await cargarParaLider(datos.equipoId, datos.solicitanteId);
+  const carga = await cargarParaLider(datos.equipoId, datos.solicitanteId, datos.esAdministrador);
   if (!carga.ok) return fallo(carga.error);
 
   const estudiante = await prisma.usuario.findFirst({

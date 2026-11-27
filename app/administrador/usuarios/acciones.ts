@@ -7,6 +7,7 @@ import bcrypt from "bcryptjs";
 
 import { prisma } from "@/lib/prisma";
 import { protegerRuta } from "@/lib/protegerRuta";
+import { esAdministradorPrincipal, esNombreReservado } from "@/lib/administradorPrincipal";
 
 export type EstadoRegistro = {
   error: string;
@@ -70,6 +71,13 @@ export async function registrarUsuario(
   }
 
   // 5. Comprobar nombre de usuario
+  if (esNombreReservado(usuario)) {
+    return { error: "Ese nombre de usuario está reservado para la cuenta principal." };
+  }
+  if (rol === "ADMINISTRADOR" && !esAdministradorPrincipal(sesion)) {
+    return { error: "Solo el administrador principal puede registrar otros administradores." };
+  }
+
   const existente = await prisma.usuario.findUnique({
     where: { usuario },
     select: { id: true },

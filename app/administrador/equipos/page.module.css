@@ -93,12 +93,20 @@
 
 .estado {
   display: inline-block;
-  padding: 4px 10px;
+  padding: 3px 8px;
   border-radius: 999px;
   background: var(--superficie-acento);
   color: var(--color-secundario);
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
+  white-space: nowrap;
+}
+
+.accionesFila {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  width: max-content;
 }
 
 .rolLider {

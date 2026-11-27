@@ -6,6 +6,7 @@ import { revalidatePath } from "next/cache";
 
 import { prisma } from "@/lib/prisma";
 import { protegerRuta } from "@/lib/protegerRuta";
+import { puedeAdministrarCuenta } from "@/lib/administradorPrincipal";
 
 export type EstadoRestablecimiento = {
   error: string;
@@ -72,6 +73,7 @@ export async function restablecerContrasena(
     // en una única transacción
     const resultado = await prisma.$transaction(
       async (tx) => {
+        await tx.$executeRaw`SELECT pg_advisory_xact_lock(719221)`;
         // Comprobar que el administrador
         // continúa autorizado
         const administrador = await tx.usuario.findUnique({
@@ -99,11 +101,16 @@ export async function restablecerContrasena(
           select: {
             id: true,
             usuario: true,
+            rol: true,
           },
         });
 
         if (!usuario) {
           return "El usuario no existe.";
+        }
+
+        if (!puedeAdministrarCuenta(administrador, usuario)) {
+          return "Solo el administrador principal puede restablecer la contraseña de esta cuenta.";
         }
 
         // 7. Cambiar contraseña e invalidar

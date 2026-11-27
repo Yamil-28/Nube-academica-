@@ -9,7 +9,7 @@ import estilos from "./page.module.css";
 
 const estadoInicial = { error: "" };
 
-export default function FormularioRegistro() {
+export default function FormularioRegistro({ puedeCrearAdministrador }: { puedeCrearAdministrador: boolean }) {
   const [estado, accion, pendiente] = useActionState(
     registrarUsuario,
     estadoInicial
@@ -47,7 +47,7 @@ export default function FormularioRegistro() {
           <option value="" disabled>
             Seleccionar rol
           </option>
-          <option value="ADMINISTRADOR">Administrador</option>
+          {puedeCrearAdministrador && <option value="ADMINISTRADOR">Administrador</option>}
           <option value="DOCENTE">Docente</option>
           <option value="ESTUDIANTE">Estudiante</option>
         </select>

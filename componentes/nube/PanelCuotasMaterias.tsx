@@ -60,7 +60,7 @@ export default function PanelCuotasMaterias({ iniciales, onCambio }: { iniciales
   }
 
   return (
-    <section>
+    <section id="almacenamiento-materias">
       <h2>Almacenamiento por materia</h2>
       {aviso && <p role="status" className={e.bannerOk}>{aviso}</p>}
       <div className={e.tarjeta}>

@@ -21,6 +21,8 @@ type Usuario = {
   rol: Rol;
   activo: boolean;
   creadoEn: string;
+  principal: boolean;
+  editable: boolean;
 };
 
 type Propiedades = {
@@ -157,7 +159,7 @@ export default function TablaUsuarios({
 
                 <td>@{cuenta.usuario}</td>
 
-                <td>{nombresRoles[cuenta.rol]}</td>
+                <td>{cuenta.principal ? "Superadministrador" : nombresRoles[cuenta.rol]}</td>
 
                 <td>
                   <span
@@ -176,14 +178,14 @@ export default function TablaUsuarios({
                 </td>
 
                 <td>
-                  <Link
+                  {cuenta.editable ? <Link
                     href={`/administrador/usuarios/${cuenta.id}/editar`}
                     className={estilos.botonEditar}
                     aria-label={`Editar usuario ${cuenta.nombre}`}
                   >
                     <Pencil size={15} />
                     Editar
-                  </Link>
+                  </Link> : <span>Cuenta protegida</span>}
                 </td>
               </tr>
             ))}

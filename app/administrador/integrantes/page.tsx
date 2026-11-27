@@ -1,3 +1,7 @@
+import FiltrosListado, { coincide, parametro, type ParametrosListado } from "@/componentes/dashboard/FiltrosListado";
+import DetallesListado from "@/componentes/dashboard/DetallesListado";
+import opciones from "@/componentes/dashboard/DetallesListado.module.css";
+import Link from "next/link";
 import CargandoDashboard from "@/componentes/dashboard/CargandoDashboard";
 
 import { Suspense } from "react";
@@ -14,7 +18,7 @@ import { listarProyectos } from "@/lib/proyectos/servicio";
 
 import estilos from "../equipos/page.module.css";
 
-type Parametros = { rol?: string };
+type Parametros = ParametrosListado;
 
 async function ContenidoIntegrantesAdmin({
   parametros,
@@ -24,7 +28,10 @@ async function ContenidoIntegrantesAdmin({
   // Verificar acceso del Administrador
   await protegerRuta("ADMINISTRADOR");
 
-  const { rol } = await parametros;
+  const filtros = await parametros;
+  const rol = parametro(filtros, "rol");
+  const q = parametro(filtros, "q");
+  const equipoId = parametro(filtros, "equipo");
 
   // Solo se acepta un rol válido
   const filtro: RolEquipo | undefined =
@@ -51,6 +58,7 @@ async function ContenidoIntegrantesAdmin({
     .flatMap((e) =>
       e.miembros.map((m) => ({
         id: m.id,
+        equipoId: e.id,
         nombre: nombres.get(m.usuarioId) ?? "Usuario",
         rolEquipo: m.rolEquipo,
         equipo: e.nombre,
@@ -58,7 +66,7 @@ async function ContenidoIntegrantesAdmin({
         ingreso: m.fechaIngreso,
       }))
     )
-    .filter((f) => !filtro || f.rolEquipo === filtro)
+    .filter((f) => (!filtro || f.rolEquipo === filtro) && (!equipoId || String(f.equipoId) === equipoId) && coincide(q, f.nombre, f.equipo, f.proyecto))
     .sort((a, b) =>
       a.nombre.localeCompare(b.nombre, "es")
     );
@@ -72,38 +80,18 @@ async function ContenidoIntegrantesAdmin({
         </span>
 
         <h1>Integrantes</h1>
+        <Link className={opciones.boton} href="/administrador/gestion?modo=integrante">Añadir integrante</Link>
 
         <p>
           Todas las personas que forman parte de algún equipo.
         </p>
       </section>
 
-      {/* FILTRO POR ROL */}
-      <form method="get" className={estilos.filtro}>
-        <select
-          name="rol"
-          defaultValue={filtro ?? ""}
-        >
-          <option value="">
-            Todos los roles
-          </option>
-
-          <option value="LIDER">
-            Líderes
-          </option>
-
-          <option value="INTEGRANTE">
-            Integrantes
-          </option>
-        </select>
-
-        <button
-          type="submit"
-          className={estilos.botonFiltro}
-        >
-          Filtrar
-        </button>
-      </form>
+      {parametro(filtros, "guardado") === "integrante" && <p role="status">Integrante añadido correctamente.</p>}
+      <FiltrosListado ruta="/administrador/integrantes" filtros={filtros} etiqueta="Buscar integrante, equipo o proyecto" selectores={[
+        { nombre: "rol", todos: "Todos los roles", opciones: Object.entries(ETIQUETA_ROL_EQUIPO).map(([valor, etiqueta]) => ({ valor, etiqueta })) },
+        { nombre: "equipo", todos: "Todos los equipos", opciones: equipos.map((e) => ({ valor: String(e.id), etiqueta: e.nombre })) },
+      ]} />
 
       {/* TABLA DE INTEGRANTES */}
       <section className={estilos.panel}>
@@ -129,6 +117,7 @@ async function ContenidoIntegrantesAdmin({
                   <th>Equipo</th>
                   <th>Proyecto</th>
                   <th>Ingreso</th>
+                  <th>Acciones</th>
                 </tr>
               </thead>
 
@@ -162,6 +151,13 @@ async function ContenidoIntegrantesAdmin({
                         "es-BO"
                       )}
                     </td>
+                    <td><DetallesListado titulo={f.nombre}>
+                      <p>Equipo <strong>{f.equipo}</strong></p>
+                      <p>Proyecto <strong>{f.proyecto}</strong></p>
+                      <p>Rol <strong>{ETIQUETA_ROL_EQUIPO[f.rolEquipo]}</strong></p>
+                      <p>Fecha de ingreso <strong>{f.ingreso.toLocaleDateString("es-BO")}</strong></p>
+                      <Link className={opciones.boton} href={`/administrador/equipos?q=${encodeURIComponent(f.equipo)}`}>Ver equipo</Link>
+                    </DetallesListado></td>
                   </tr>
                 ))}
               </tbody>

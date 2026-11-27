@@ -21,6 +21,7 @@ type Cuenta = {
 type Propiedades = {
   cuenta: Cuenta;
   esCuentaPropia: boolean;
+  puedeAsignarAdministrador: boolean;
 };
 
 const estadoInicial: EstadoEdicion = {
@@ -31,6 +32,7 @@ const estadoInicial: EstadoEdicion = {
 export default function FormularioEditar({
   cuenta,
   esCuentaPropia,
+  puedeAsignarAdministrador,
 }: Propiedades) {
   const [estado, accion, pendiente] = useActionState(
     actualizarUsuario.bind(null, cuenta.id),
@@ -73,7 +75,8 @@ export default function FormularioEditar({
           disabled={esCuentaPropia}
           required
         >
-          <option value="ADMINISTRADOR">Administrador</option>
+          {(puedeAsignarAdministrador || cuenta.rol === "ADMINISTRADOR") &&
+            <option value="ADMINISTRADOR">Administrador</option>}
           <option value="DOCENTE">Docente</option>
           <option value="ESTUDIANTE">Estudiante</option>
         </select>

@@ -197,3 +197,27 @@
     transition: none;
   }
 }
+
+.distribucion {
+  display: grid;
+  gap: .85rem;
+  padding: 1.25rem;
+  margin: 1rem 0;
+  border: 1px solid var(--color-borde, #d6e2ef);
+  border-radius: 1rem;
+  background: var(--color-superficie, #fff);
+}
+.distribucion h3, .distribucion p { margin: 0; }
+.distribucionFila { display: flex; justify-content: space-between; gap: 1rem; margin-bottom: .35rem; }
+.resumenCapacidad { display: flex; flex-wrap: wrap; gap: .8rem 2rem; }
+.resumenCapacidad > div { display: grid; gap: .25rem; }
+.resumenCapacidad span { font-size: .88rem; }
+.resumenCapacidad strong { font-size: 1.15rem; }
+.buscarCuotas { display: grid; gap: .4rem; max-width: 26rem; margin-bottom: 1rem; }
+.buscarCuotas input {
+  padding: .65rem;
+  border: 1px solid var(--color-borde, #d6e2ef);
+  border-radius: .65rem;
+  background: var(--color-superficie, #fff);
+  color: inherit;
+}

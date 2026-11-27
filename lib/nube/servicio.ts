@@ -104,10 +104,11 @@ export async function resumenCuotas(ctx: Contexto): Promise<ResumenCuotaDTO[]> {
   if (ctx.usuario.rol !== "ADMINISTRADOR") throw new ErrorNube(403, "SIN_PERMISO", "Solo el administrador");
   const proyectos = await prisma.proyecto.findMany({
     orderBy: { titulo: "asc" },
-    select: { id: true, titulo: true, materia: { select: { nombre: true, limiteNubeBytes: true } } },
+    select: { id: true, titulo: true, materiaId: true, materia: { select: { nombre: true, limiteNubeBytes: true } } },
   });
-  return Promise.all(proyectos.map(async ({ id, titulo, materia }) => ({
+  return Promise.all(proyectos.map(async ({ id, titulo, materiaId, materia }) => ({
     proyectoId: id,
+    materiaId,
     titulo,
     materia: materia.nombre,
     limiteMateriaBytes: materia.limiteNubeBytes === null ? null : Number(materia.limiteNubeBytes),

@@ -1,3 +1,5 @@
+import { TipoEventoAuditoria } from "@/app/generated/prisma/enums";
+import FiltrosListado, { coincide, parametro, type ParametrosListado } from "@/componentes/dashboard/FiltrosListado";
 import CargandoDashboard from "@/componentes/dashboard/CargandoDashboard";
 
 import { Suspense } from "react";
@@ -11,12 +13,25 @@ import {
 import { protegerRuta } from "@/lib/protegerRuta";
 import { prisma } from "@/lib/prisma";
 
-async function ContenidoAuditoria() {
+async function ContenidoAuditoria({ searchParams }: { searchParams: Promise<ParametrosListado> }) {
   // Verificar que sea un administrador
   await protegerRuta("ADMINISTRADOR");
+  const filtros = await searchParams;
+  const q = parametro(filtros, "q");
+  const tipos = Object.values(TipoEventoAuditoria);
+  const tipo = tipos.find((valor) => valor === parametro(filtros, "tipo"));
+  const busqueda = q ? {
+    OR: [
+      { descripcion: { contains: q, mode: "insensitive" as const } },
+      { usuarioNombre: { contains: q, mode: "insensitive" as const } },
+      { tipo: { in: tipos.filter((valor) => coincide(q, valor, valor.replaceAll("_", " "))) } },
+      ...(/^\d+$/.test(q) && Number(q) <= 2147483647 ? [{ entidadId: Number(q) }] : []),
+    ],
+  } : {};
 
   // Obtener los últimos 100 registros de Neon
   const registros = await prisma.auditoria.findMany({
+    where: { ...busqueda, tipo },
     orderBy: {
       fecha: "desc",
     },
@@ -30,6 +45,7 @@ async function ContenidoAuditoria() {
       fecha: true,
     },
   });
+
 
   return (
     <div
@@ -67,6 +83,8 @@ async function ContenidoAuditoria() {
         en SISCloud.
       </p>
 
+
+      <FiltrosListado ruta="/administrador/auditoria" filtros={filtros} etiqueta="Buscar actividad, usuario o entidad" selectores={[{ nombre: "tipo", todos: "Todos los tipos", opciones: tipos.map((valor) => ({ valor, etiqueta: valor.replaceAll("_", " ") })) }]} />
       <section
         style={{
           marginTop: "24px",
@@ -104,7 +122,7 @@ async function ContenidoAuditoria() {
                 color: "var(--color-texto-secundario)",
               }}
             >
-              Mostrando los últimos {registros.length}
+              Mostrando {registros.length}
               {" "}registros.
             </p>
           </div>
@@ -220,10 +238,10 @@ async function ContenidoAuditoria() {
   );
 }
 
-export default function PaginaAuditoria() {
+export default function PaginaAuditoria({ searchParams }: { searchParams: Promise<ParametrosListado> }) {
   return (
     <Suspense fallback={<CargandoDashboard />}>
-      <ContenidoAuditoria />
+      <ContenidoAuditoria searchParams={searchParams} />
     </Suspense>
   );
 }

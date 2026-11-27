@@ -55,7 +55,7 @@ export default function EstructuraDashboard({
         </main>
 
         <div className={estilos.dashboardPie}>
-          <PiePagina />
+          <PiePagina mostrarEnlaces />
         </div>
       </div>
     </DashboardContext.Provider>

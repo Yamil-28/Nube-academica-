@@ -4,6 +4,8 @@ import Link from "next/link";
 import { Users } from "lucide-react";
 
 import EstructuraDashboard from "@/componentes/dashboard/EstructuraDashboard";
+import DetallesListado from "@/componentes/dashboard/DetallesListado";
+import FiltrosListado, { coincide, parametro, type ParametrosListado } from "@/componentes/dashboard/FiltrosListado";
 import {
   listarEquiposDeUsuario,
   listarEstudiantesDisponibles,
@@ -21,7 +23,7 @@ import { obtenerProyecto } from "@/lib/proyectos/servicio";
 import { agregarIntegrante, cambiarRol, quitarIntegrante } from "./acciones";
 import estilos from "./page.module.css";
 
-type Parametros = { ok?: string; error?: string };
+type Parametros = ParametrosListado;
 
 const MENSAJE_OK: Record<string, string> = {
   agregado: "Integrante agregado al equipo.",
@@ -45,7 +47,12 @@ async function ContenidoIntegrantes({
   parametros: Promise<Parametros>;
 }) {
   const usuario = await protegerRuta("ESTUDIANTE");
-  const { ok, error } = await parametros;
+  const filtros = await parametros;
+  const ok = parametro(filtros, "ok");
+  const error = parametro(filtros, "error");
+  const rol = parametro(filtros, "rol");
+  const q = parametro(filtros, "q");
+  const equipoId = parametro(filtros, "equipo");
 
   const equipos = await listarEquiposDeUsuario(usuario.id);
   const titulos = await titulosDeProyectos(equipos.map((e) => e.proyectoId));
@@ -72,6 +79,14 @@ async function ContenidoIntegrantes({
     }
   }
 
+  const visibles = equipos.filter((equipo) => !equipoId || String(equipo.id) === equipoId)
+    .map((equipo) => ({
+      ...equipo,
+      miembrosVisibles: equipo.miembros.filter((miembro) =>
+        (!rol || miembro.rolEquipo === rol) && coincide(q, nombres.get(miembro.usuarioId), equipo.nombre, titulos.get(equipo.proyectoId))),
+    }))
+    .filter((equipo) => equipo.miembrosVisibles.length > 0);
+
   const mensajeError = textoDeError(error);
   const mensajeOk = ok ? MENSAJE_OK[ok] : undefined;
 
@@ -87,19 +102,23 @@ async function ContenidoIntegrantes({
         {mensajeOk && <p className={estilos.aviso}>{mensajeOk}</p>}
         {mensajeError && <p className={estilos.error}>{mensajeError}</p>}
 
-        {equipos.length === 0 ? (
+        <FiltrosListado ruta="/estudiante/integrantes" filtros={filtros} etiqueta="Buscar integrante, equipo o proyecto" selectores={[
+          { nombre: "rol", todos: "Todos los roles", opciones: Object.entries(ETIQUETA_ROL_EQUIPO).map(([valor, etiqueta]) => ({ valor, etiqueta })) },
+          { nombre: "equipo", todos: "Todos los equipos", opciones: equipos.map((equipo) => ({ valor: String(equipo.id), etiqueta: equipo.nombre })) },
+        ]} />
+        {visibles.length === 0 ? (
           <section className={estilos.panel}>
             <div className={estilos.vacio}>
               <Users size={35} />
-              <h3>Aún no formas parte de ningún equipo</h3>
-              <p>
+              <h3>{equipos.length ? "No hay integrantes que coincidan" : "Aún no formas parte de ningún equipo"}</h3>
+              {equipos.length === 0 && <p>
                 <Link href="/estudiante/equipos/nuevo">Crea un equipo</Link> para
                 empezar a agregar integrantes.
-              </p>
+              </p>}
             </div>
           </section>
         ) : (
-          equipos.map((equipo) => {
+          visibles.map((equipo) => {
             const puedeEditar = editables.has(equipo.id);
             const candidatos = disponibles.get(equipo.id) ?? [];
 
@@ -118,7 +137,7 @@ async function ContenidoIntegrantes({
                 )}
 
                 <ul className={estilos.lista}>
-                  {equipo.miembros.map((m) => (
+                  {equipo.miembrosVisibles.map((m) => (
                     <li key={m.id} className={estilos.miembro}>
                       <div className={estilos.miembroDatos}>
                         <span>{nombres.get(m.usuarioId) ?? "Usuario"}</span>
@@ -132,6 +151,13 @@ async function ContenidoIntegrantes({
                           {ETIQUETA_ROL_EQUIPO[m.rolEquipo]}
                         </span>
                       </div>
+
+                      <DetallesListado titulo={nombres.get(m.usuarioId) ?? "Integrante"}>
+                        <p>Equipo <strong>{equipo.nombre}</strong></p>
+                        <p>Proyecto <strong>{titulos.get(equipo.proyectoId) ?? "—"}</strong></p>
+                        <p>Rol <strong>{ETIQUETA_ROL_EQUIPO[m.rolEquipo]}</strong></p>
+                        <p>Fecha de ingreso <strong>{m.fechaIngreso.toLocaleDateString("es-BO")}</strong></p>
+                      </DetallesListado>
 
                       {puedeEditar && (
                         <div className={estilos.acciones}>

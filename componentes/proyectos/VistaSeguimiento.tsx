@@ -1,4 +1,5 @@
 import Link from "next/link";
+import FiltrosListado, { coincide, parametro, type ParametrosListado } from "@/componentes/dashboard/FiltrosListado";
 
 import {
   listarAvancesDeProyectos,
@@ -14,6 +15,7 @@ import estilos from "./VistaSeguimiento.module.css";
 type Propiedades = {
   rol: "DOCENTE" | "ESTUDIANTE";
   vista: "actividades" | "estado" | "observaciones";
+  searchParams: Promise<ParametrosListado>;
 };
 
 const FECHA = new Intl.DateTimeFormat("es-BO", {
@@ -27,14 +29,36 @@ const TITULOS = {
   observaciones: "Observaciones docentes",
 };
 
-export default async function VistaSeguimiento({ rol, vista }: Propiedades) {
+const TIPOS_ACTIVIDAD = [
+  { valor: "avance", etiqueta: "Avance" },
+  { valor: "observacion", etiqueta: "Observación docente" },
+];
+
+const FILTROS_POR_VISTA = {
+  estado: { segmento: "seguimiento", etiqueta: "Buscar proyecto o estado" },
+  actividades: { segmento: "actividades", etiqueta: "Buscar proyecto o actividad" },
+  observaciones: { segmento: "observaciones", etiqueta: "Buscar proyecto u observación" },
+};
+
+export default async function VistaSeguimiento({ rol, vista, searchParams }: Propiedades) {
   const usuario = await protegerRuta(rol);
   const docente = rol === "DOCENTE";
+  const esEstado = vista === "estado";
+  const filtros = await searchParams;
+  const filtroVista = FILTROS_POR_VISTA[vista];
+  const q = parametro(filtros, "q");
+  const estado = esEstado ? parametro(filtros, "estado") : "";
+  const tipo = vista === "actividades" ? parametro(filtros, "tipo") : "";
   const proyectos = await (docente
     ? listarProyectosDeDocente(usuario.id)
     : listarProyectosDeUsuario(usuario.id));
   const ids = proyectos.map(({ id }) => id);
   const proyectosPorId = new Map(proyectos.map((proyecto) => [proyecto.id, proyecto]));
+  const proyectoSeleccionado = parametro(filtros, "proyecto");
+  const proyectosVisibles = proyectos.filter((proyecto) =>
+    (!estado || proyecto.estado === estado) &&
+    coincide(q, proyecto.titulo, ETIQUETA_ESTADO[proyecto.estado])
+  );
   const [avances, observaciones] = await Promise.all([
     vista === "actividades" ? listarAvancesDeProyectos(ids) : [],
     vista !== "estado" ? listarObservacionesDeProyectos(ids) : [],
@@ -42,6 +66,7 @@ export default async function VistaSeguimiento({ rol, vista }: Propiedades) {
   const actividades = [
     ...avances.map((avance) => ({
       clave: "avance-" + avance.id,
+      categoria: "avance",
       tipo: "Avance",
       texto: avance.descripcion,
       fecha: avance.fecha,
@@ -49,6 +74,7 @@ export default async function VistaSeguimiento({ rol, vista }: Propiedades) {
     })),
     ...observaciones.map((observacion) => ({
       clave: "observacion-" + observacion.id,
+      categoria: "observacion",
       tipo: "Observación docente",
       texto: observacion.texto,
       fecha: observacion.fecha,
@@ -56,7 +82,11 @@ export default async function VistaSeguimiento({ rol, vista }: Propiedades) {
     })),
   ].sort((a, b) => b.fecha.getTime() - a.fecha.getTime());
 
-  const esEstado = vista === "estado";
+  const actividadesVisibles = actividades.filter((actividad) =>
+    (!tipo || actividad.categoria === tipo) &&
+    (!proyectoSeleccionado || String(actividad.proyectoId) === proyectoSeleccionado) &&
+    coincide(q, actividad.texto, actividad.tipo, proyectosPorId.get(actividad.proyectoId)?.titulo)
+  );
   const rutaAccion = docente ? "/docente/revisiones" : "/estudiante/avances";
   const textoAccion = docente ? "Revisar avances" : "Ir a Mis avances";
 
@@ -88,16 +118,33 @@ export default async function VistaSeguimiento({ rol, vista }: Propiedades) {
         </dl>
       )}
 
+      {proyectos.length > 0 && (
+        <FiltrosListado
+          ruta={`/${docente ? "docente" : "estudiante"}/${filtroVista.segmento}`}
+          filtros={filtros}
+          etiqueta={filtroVista.etiqueta}
+          selectores={esEstado ? [
+            { nombre: "estado", todos: "Todos los estados", opciones: ESTADOS_PROYECTO.map((valor) => ({ valor, etiqueta: ETIQUETA_ESTADO[valor] })) },
+          ] : [
+            { nombre: "proyecto", todos: "Todos los proyectos", opciones: proyectos.map(({ id, titulo }) => ({ valor: String(id), etiqueta: titulo })) },
+            ...(vista === "actividades" ? [{ nombre: "tipo", todos: "Todos los tipos", opciones: TIPOS_ACTIVIDAD }] : []),
+          ]}
+        />
+      )}
+
       {proyectos.length === 0 ? (
         <p className={estilos.panel}>{docente ? "Aún no tienes proyectos asignados." : "Aún no participas en proyectos."}</p>
       ) : esEstado ? (
+        proyectosVisibles.length === 0 ? (
+          <p className={estilos.panel}>No hay proyectos que coincidan con los filtros.</p>
+        ) : (
         <div className={estilos.panel}>
           <table className={estilos.tabla} aria-label="Estado de mis proyectos">
             <thead>
               <tr><th scope="col">Proyecto</th><th scope="col">Estado</th><th scope="col">Inicio</th><th scope="col">Cierre</th></tr>
             </thead>
             <tbody>
-              {proyectos.map((proyecto) => (
+              {proyectosVisibles.map((proyecto) => (
                 <tr key={proyecto.id}>
                   <th scope="row">{proyecto.titulo}</th>
                   <td><span className={estilos.estado}>{ETIQUETA_ESTADO[proyecto.estado]}</span></td>
@@ -108,11 +155,14 @@ export default async function VistaSeguimiento({ rol, vista }: Propiedades) {
             </tbody>
           </table>
         </div>
+        )
       ) : actividades.length === 0 ? (
         <p className={estilos.panel}>Todavía no hay {vista === "observaciones" ? "observaciones" : "actividades"} registradas.</p>
+      ) : actividadesVisibles.length === 0 ? (
+        <p className={estilos.panel}>No hay {vista === "observaciones" ? "observaciones" : "actividades"} que coincidan con los filtros.</p>
       ) : (
         <ul className={estilos.lista}>
-          {actividades.map(({ clave, tipo, texto, fecha, proyectoId }) => (
+          {actividadesVisibles.map(({ clave, tipo, texto, fecha, proyectoId }) => (
             <li className={estilos.panel} key={clave}>
               <div className={estilos.actividad}>
                 <strong>{proyectosPorId.get(proyectoId)?.titulo}</strong>

@@ -41,6 +41,7 @@ export type NivelPermiso = "LECTURA" | "EDICION";
 export interface PermisoDTO { usuarioId: number; etiqueta: string; nivel: NivelPermiso }
 export interface ResumenCuotaDTO extends CuotaDTO {
   proyectoId: number;
+  materiaId: number;
   titulo: string;
   materia: string;
   limiteMateriaBytes: number | null;
